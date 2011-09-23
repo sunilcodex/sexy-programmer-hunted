@@ -2,6 +2,7 @@ package com.hunted;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -18,6 +20,7 @@ import android.widget.Gallery;
 import android.widget.ImageButton;
 import android.widget.ImageView.ScaleType;
 import android.widget.RelativeLayout;
+import android.view.MotionEvent;
 
 public class UIOverlayTest extends Activity {
 	
@@ -38,64 +41,113 @@ public class UIOverlayTest extends Activity {
 		setRequestedOrientation(1);
 		
 		// create button
-		ImageButton btnSinglePlayer = this.getButton(R.drawable.button_single_player);
-		ImageButton btnNewGame = this.getButton(R.drawable.button_new_game);
-		ImageButton btnJoinGame = this.getButton(R.drawable.button_join_game);
+		final ImageButton btnSinglePlayer = this.getButton(R.drawable.button_single_player);
+		final ImageButton btnNewGame = this.getButton(R.drawable.button_new_game);
+		final ImageButton btnJoinGame = this.getButton(R.drawable.button_join_game);
 		
-		//host game
-		btnNewGame.setOnClickListener(new Button.OnClickListener()
-        {
-          public void onClick(View v)
-          {
+		//Single player button
+		btnSinglePlayer.setOnTouchListener(new ImageButton.OnTouchListener(){
+			@Override  
+			 public boolean onTouch(View v, MotionEvent event) {
+				if(event.getAction() == MotionEvent.ACTION_DOWN){
+					btnSinglePlayer.setImageResource(R.drawable.button_single_player2);
+				}
+				else if(event.getAction() == MotionEvent.ACTION_UP){
+					btnSinglePlayer.setImageResource(R.drawable.button_single_player);
+				}
+				 return false;  
+		}
+    });
+		
+		
+		//New game dialog
+		btnNewGame.setOnTouchListener(new ImageButton.OnTouchListener()
+{
+			@Override  
+			 public boolean onTouch(View v, MotionEvent event) {
+				if(event.getAction() == MotionEvent.ACTION_DOWN){
+					btnNewGame.setImageResource(R.drawable.button_new_game2);
+				}
+				else if(event.getAction() == MotionEvent.ACTION_UP){
+					btnNewGame.setImageResource(R.drawable.button_new_game);
+					final Dialog dialog = new Dialog(UIOverlayTest.this, R.style.MyDialog);
+		        	//set ContentView
+		        	  dialog.setContentView(R.layout.host_dialog);
+		        	 
+		        	  //OK button
+		        	  Button OK = (Button) dialog.findViewById(R.id.ok2);
+		        	  OK.setOnClickListener(new Button.OnClickListener()
+		              {
+		        		  public void onClick(View v)
+		                  {
+		      	            // new一個Intent物件，並指定要啟動的class 
+		      	            Intent intent = new Intent();
+		      	        	intent.setClass(UIOverlayTest.this, joib_game.class);        	        	  
+		      	        	//呼叫一個新的Activity 
+		      	        	startActivity(intent);  
+		                  }
+		              });
+		        	  
+		        	  //Cancel button
+		        	  Button cancel = (Button) dialog.findViewById(R.id.cancel2);
+		        	  cancel.setOnClickListener(new Button.OnClickListener()
+		              {
+		        		  public void onClick(View v)
+		                  {
+		      	           dialog.dismiss(); 
+		                  }
+		              });
+		        	  dialog.show();
+                } 
 
-        	    
-        	            // new一個Intent物件，並指定要啟動的class 
-        	            Intent intent = new Intent();
-        	        	intent.setClass(UIOverlayTest.this, joib_game.class);        	        	  
-        	        	//呼叫一個新的Activity 
-        	        	startActivity(intent);
-        	        	//關閉原本的Activity 
-        	        	//UIOverlayTest.this.finish();
-        			   
-        			   //textOut.setText(editText.getText().toString());     
+        	  return false;   
           }
         });
 		
 		
 		
-		//join button dialog
-        btnJoinGame.setOnClickListener(new Button.OnClickListener()
+		//Join game dialog
+        btnJoinGame.setOnTouchListener(new ImageButton.OnTouchListener()
         {
-          public void onClick(View v)
-          {
-
-        	   AlertDialog.Builder editDialog = new AlertDialog.Builder(UIOverlayTest.this); 
-        	   editDialog.setTitle("Host ID:");  
-        	   final EditText editText = new EditText(UIOverlayTest.this);
-        	   //editText.setText(textOut.getText());  
-        	   editDialog.setView(editText); 
-        	   editDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() 
-        	   {    
-        		   // do something when the button is clicked    
-        		   public void onClick(DialogInterface arg0, int arg1) {  
-        	            // new一個Intent物件，並指定要啟動的class 
-        	            Intent intent = new Intent();
-        	        	intent.setClass(UIOverlayTest.this, joib_game.class);        	        	  
-        	        	//呼叫一個新的Activity 
-        	        	startActivity(intent);
-        	        	//關閉原本的Activity 
-        	        	//UIOverlayTest.this.finish();
-        			   
-        			   //textOut.setText(editText.getText().toString());    
-        		   }    
-        	   });  
-        	   editDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-        		   // do something when the button is clicked  
-        		   public void onClick(DialogInterface arg0, int arg1) { 
-        			   //...    
-        		   }   
-        	   });  
-        	   editDialog.show();
+        	@Override  
+			 public boolean onTouch(View v, MotionEvent event) {
+				if(event.getAction() == MotionEvent.ACTION_DOWN){
+					btnJoinGame.setImageResource(R.drawable.button_join_game2);
+				}
+				else if(event.getAction() == MotionEvent.ACTION_UP){
+					btnJoinGame.setImageResource(R.drawable.button_join_game);
+					final Dialog dialog = new Dialog(UIOverlayTest.this, R.style.MyDialog);
+		        	//set ContentView
+		        	  dialog.setContentView(R.layout.joindialog);
+		        	 
+		        	  //OK button
+		        	  Button OK = (Button) dialog.findViewById(R.id.ok);
+		        	  OK.setOnClickListener(new Button.OnClickListener()
+		              {
+		        		  public void onClick(View v)
+		                  {
+		      	            // new一個Intent物件，並指定要啟動的class 
+		      	            Intent intent = new Intent();
+		      	        	intent.setClass(UIOverlayTest.this, joib_game.class);        	        	  
+		      	        	//呼叫一個新的Activity 
+		      	        	startActivity(intent);  
+		                  }
+		              });
+		        	  
+		        	  //Cancel button
+		        	  Button cancel = (Button) dialog.findViewById(R.id.cancel);
+		        	  cancel.setOnClickListener(new Button.OnClickListener()
+		              {
+		        		  public void onClick(View v)
+		                  {
+		      	           dialog.dismiss(); 
+		                  }
+		              });
+		        	  dialog.show();
+				}
+          
+        	  
+        	  return false; 
           }
         });
 		
