@@ -1,0 +1,257 @@
+=========================
+<Free>
+
+- Client:
+	GET\n
+
+
+OKbutton:new game
+	GET\n
+	NEW_GAME\n
+	NICKNAME:xxx\n
+
+
+OKbutton:join game
+	GET\n
+	JOIN_GAME\n
+	GROUP_ID:xxx\n
+	NICKNAME:xxx\n
+
+- Server:
+	STATE_FREE\n
+	SESSION_ID:group_id,user_id\n
+
+=========================
+<Host Waiting>
+
+- Client:
+	GET:<session-id>\n
+
+	GET:<session-id>\n
+	USER:1,H\n
+
+	GET:<session-id>\n
+	START\n
+
+	GET:<session-id>\n
+	CANCEL\n
+
+- Server:
+	STATE_HOST_WAITING\n
+	GROUP_ID:ooo\n
+	USER:001,Player1,H,O\n
+	USER:002,Player2,P,X\n
+
+=========================
+<Player Waiting>
+
+- Client:
+	GET:<session-id>\n
+
+	GET:<session-id>\n
+	READY\n
+
+	GET:<session-id>\n
+	CANCEL\n
+
+- Server:
+	STATE_PLAYER_WAITING\n
+	USER:001,Player1,H,O\n
+	USER:002,Player2,P,X\n
+
+=========================
+<Waiting Others>
+
+- Client:
+	GET:<session-id>\n
+
+	GET:<session-id>\n
+	CANCEL\n
+
+- Server:
+	STATE_WAITING_OTHERS\n
+	USER:001,Player1,H,O\n
+	USER:002,Player2,P,X\n
+
+=========================
+<Count Down>
+
+- Client:
+	GET:<session-id>\n
+
+- Server:
+	STATE_COUNT_DOWN\n
+	TIME:30\n
+
+=========================
+<Hunter in Game>
+
+- Client:
+	GET:<session-id>\n
+	GPS:123.0,456.0\n
+
+- Server:
+	STATE_HUNTER_IN_GAME\n
+	PLAYER:10\n
+	HUNTER:5\n
+	CAUGHT:1\n
+	TIME:30:00\n
+	USER:001,Hunter1:100.0,200.0\n 
+	USER:002,Hunter2:300.0,400.0\n
+
+=========================
+<Hunter Timeout>
+
+- Client:
+	GET:<session-id>\n
+
+	GET:<session-id>\n
+	QUIT\n
+
+- Server:
+	STATE_HUNTER_TIMEOUT\n
+	PLAYER:10\n
+	HUNTER:5\n
+	CAUGHT:1\n
+	TIME:30:00\n
+	USER:001,Hunter1:100.0,200.0\n
+	USER:002,Hunter2:300.0,400.0\n
+	USER:003,Player1:500.0,600.0\n
+	USER:004,Player2:700.0,800.0\n
+
+=========================
+<Hunter Failed>
+
+- Client:
+	GET:<session-id>\n
+
+	GET:<session-id>\n
+	QUIT\n
+
+- Server:
+	STATE_HUNTER_FAILED\n
+
+=========================
+<Hunter Win>
+
+- Client:
+	GET:<session-id>\n
+
+	GET:<session-id>\n
+	QUIT\n
+
+- Server:
+	STATE_HUNTER_WIN\n
+
+=========================
+<Player in Game>
+
+- Client:
+	GET:<session-id>\n
+	GPS:123.0,456.0\n
+
+	GET:<session-id>\n
+	GPS:123.0,456.0\n
+	WITHDREW\n
+
+- Server:
+	STATE_PLAYER_IN_GAME\n
+	PLAYER:10\n
+	HUNTER:5\n
+	CAUGHT:1\n
+	TIME:30:00\n
+	MONEY:100\n
+	USER:001,Player1:100.0,200.0\n
+	USER:002,Player2:300.0,400.0\n
+
+=========================
+<Player Caught>
+
+- Client:
+	GET:<session-id>\n
+
+	GET:<session-id>\n
+	QUIT\n
+
+- Server:
+	STATE_PLAYER_CAUGHT\n
+	PLAYER:10\n
+	HUNTER:5\n
+	CAUGHT:1\n
+	TIME:30:00\n
+	MONEY:100\n
+	USER:001,H,Hunter1:100.0,200.0\n
+	USER:002,H,Hunter2:300.0,400.0\n
+	USER:003,P,Player1:500.0,600.0\n
+	USER:004,P,Player2:700.0,800.0\n
+
+=========================
+<Player Withdrew>
+
+- Client:
+	GET:<session-id>\n
+
+	GET:<session-id>\n
+	QUIT\n
+
+- Server:
+	STATE_PLAYER_WITHDREW\n
+	PLAYER:10\n
+	HUNTER:5\n
+	CAUGHT:1\n
+	TIME:30:00\n
+	MONEY:100\n
+	H,Hunter1:100.0,200.0\n
+	H,Hunter2:300.0,400.0\n
+	P,Player1:500.0,600.0\n
+	P,Player2:700.0,800.0\n
+
+=========================
+<Player Timeout>
+
+- Client:
+	GET:<session-id>\n
+
+	GET:<session-id>\n
+	QUIT\n
+
+- Server:
+	STATE_PLAYER_TIMEOUT\n
+	PLAYER:10\n
+	HUNTER:5\n
+	CAUGHT:1\n
+	TIME:30:00\n
+	MONEY:100\n
+	H,Hunter1:100.0,200.0\n
+	H,Hunter2:300.0,400.0\n
+	P,Player1:500.0,600.0\n
+	P,Player2:700.0,800.0\n
+
+=========================
+<Player Failed>
+
+- Client:
+	GET:<session-id>\n
+
+	GET:<session-id>\n
+	QUIT\n
+
+- Server:
+	STATE_PLAYER_FAILED\n
+	MONEY:100\n
+
+=========================
+<Player Win>
+
+- Client:
+	GET:<session-id>\n
+
+	GET:<session-id>\n
+	QUIT\n
+
+- Server:
+	STATE_PLAYER_WIN\n
+	MONEY:100\n
+
+=========================
+
