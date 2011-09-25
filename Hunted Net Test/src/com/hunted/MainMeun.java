@@ -23,7 +23,7 @@ import android.widget.RelativeLayout;
 import android.view.MotionEvent;
 
 public class MainMeun extends Activity {
-	
+	public static final int requestCode01 = (int) 0x1001;
 	RelativeLayout _mainLayout;
 	
     /** Called when the activity is first created. */
@@ -44,11 +44,32 @@ public class MainMeun extends Activity {
 		final ImageButton btnSinglePlayer = this.getButton(R.drawable.button_single_player);
 		final ImageButton btnNewGame = this.getButton(R.drawable.button_new_game);
 		final ImageButton btnJoinGame = this.getButton(R.drawable.button_join_game);
-		
-		//Single player button
+				
+		//Single player button  call 主畫面 project
 		btnSinglePlayer.setOnTouchListener(new ImageButton.OnTouchListener(){
 			@Override  
 			 public boolean onTouch(View v, MotionEvent event) {
+				
+				// TODO Auto-generated method stub
+		        try
+		        {
+		          Intent intent = new Intent();
+		          // 傳入package名稱及package名稱加class名稱
+		          intent.setClassName("irdc.ex09_05", "irdc.ex09_05.EX09_05");
+		          // 將值傳給EX09_05
+		          Bundle bundle = new Bundle();
+		          //bundle.putString("STR_INPUT", "HI, 我來自EX03_25...");
+		          intent.putExtras(bundle);
+
+		          startActivityForResult(intent, requestCode01);
+		        } catch (Exception e)
+		        {
+		          // Log.e(TAG, e.toString());
+		         // e.printStackTrace();
+		          //TextView01.setText("請先安裝EX03_25_B這支程式!");
+		        }
+				
+				
 				if(event.getAction() == MotionEvent.ACTION_DOWN){
 					btnSinglePlayer.setImageResource(R.drawable.button_single_player2);
 				}
