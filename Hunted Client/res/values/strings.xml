@@ -2,4 +2,9 @@
 <resources>
     <string name="hello">Hello World</string>
     <string name="app_name">Hunted</string>
+	<string name="str_longitude">經度(Longitude)：</string>
+	<string name="str_latitude">緯度(Latitude)：</string>
+	<string name="str_err_address">地址不存在</string>
+	<string name="str_err_location">無法取得Location</string>
+	<string name="str_my_location">目前所在地址：</string>
 </resources>
