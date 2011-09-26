@@ -71,7 +71,6 @@ public class GameActivity extends MapActivity
 	
 	private Player _player;
 	private Player[] _players;
-	private PlayerMapOverlay _playerMapOverlay;
 
 	@Override
 	protected void onCreate(Bundle icicle)
