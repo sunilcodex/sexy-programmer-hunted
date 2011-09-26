@@ -7,19 +7,33 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
+import com.google.android.maps.Projection;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Canvas.VertexMode;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
+import android.graphics.Point;
+import android.graphics.Shader.TileMode;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.FaceDetector.Face;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.provider.Settings.System;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Gallery;
@@ -56,6 +70,7 @@ public class GameActivity extends MapActivity
 	private TextView _txtTime;
 	
 	private Player _player;
+	private Player[] _players;
 	private PlayerMapOverlay _playerMapOverlay;
 
 	@Override
@@ -111,6 +126,10 @@ public class GameActivity extends MapActivity
 
 	private void initComponents()
 	{
+		// create UI helper for ui scaling
+		Display display = ((WindowManager) this.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+		UIHelper uiHelper = new UIHelper(display.getWidth(), display.getHeight());
+				
 		LayoutInflater inflater = LayoutInflater.from(this);
 		_mainLayout = (RelativeLayout) inflater.inflate(R.layout.game, null);
 		
@@ -121,9 +140,20 @@ public class GameActivity extends MapActivity
 		_txtTime = (TextView)_mainLayout.findViewById(R.id.textView3);
 		_txtMoney = (TextView) _mainLayout.findViewById(R.id.textView4);
 		
-		// create UI helper for ui scaling
-		Display display = ((WindowManager) this.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-		UIHelper uiHelper = new UIHelper(display.getWidth(), display.getHeight());
+		mMapView01.setClickable(false);
+		
+		// Create players and map
+		_player = new Player(PlayerType.Player, "Test Man");
+				
+		// For test
+		_players = new Player[2];
+		_players[0] = _player;
+		_players[1] = new Player(PlayerType.Hunter, "Test Hunter");
+		_players[1].setLocation(new GeoPoint(24789810, 121003450));
+		
+		GameMapView gameMapView = new GameMapView(this, mMapView01, uiHelper, _players);
+		_mainLayout.addView(gameMapView);
+		
 		
 		// create button
 		ImageView bottom = this.getImageView(R.drawable.bottom);
@@ -182,14 +212,6 @@ public class GameActivity extends MapActivity
 		_txtMoney.setText("0");
 		_txtMoney.setLayoutParams(params);
 		_txtMoney.setTextSize(TypedValue.COMPLEX_UNIT_PX, uiHelper.scaleHeight(1280, 65));
-		
-		// For map view
-		List<com.google.android.maps.Overlay> mapOverlays = mMapView01.getOverlays();
-		
-		// Create player map overlay
-		_player = new Player(PlayerType.Player, "Test Man");
-		_playerMapOverlay = new PlayerMapOverlay(this, uiHelper, _player);
-		mapOverlays.add(_playerMapOverlay);
 		
 		setContentView(_mainLayout);
 	}
@@ -316,8 +338,8 @@ public class GameActivity extends MapActivity
 		try
 		{
 			_player.setLocation(gp);
-			
-			mv.displayZoomControls(true);
+
+			//mv.displayZoomControls(true);
 			/* 取得MapView的MapController */
 			MapController mc = mv.getController();
 			/* 移至該地理座標位址 */
@@ -388,4 +410,6 @@ public class GameActivity extends MapActivity
 		image.setScaleType(ScaleType.FIT_XY);
 		return image;
 	}
+	
+	
 }
