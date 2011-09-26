@@ -12,7 +12,7 @@ public class SocketConnect{
 	   private BufferedWriter writer = null;
 	   private InetAddress host;
 	   private int port;
-	   private SocketConnect client_tmp;
+	  
 
 	   
 	   public SocketConnect(String address, int port) throws IOException
@@ -54,8 +54,10 @@ public class SocketConnect{
 	         client.send("GET\nNEW_GAME\nNICKNAME:"+name+"\n");
 	         String response = client.recv();
 	         //System.out.println(response);
-	         String[] tmp = response.split(":");
-	         String[] Id = tmp[1].split(",");       
+        	 String[] tmp = response.split(":");
+        	 String[] tmp2 = tmp[1].split("\n");
+        	 String[] Id = tmp2[0].split(",");
+	      
 			return Id;
 
 	   }
@@ -70,38 +72,68 @@ public class SocketConnect{
 	         }
 	         else{
 	        	 String[] tmp = response.split(":");
-	        	 String[] Id = tmp[1].split(",");
+	        	 String[] tmp2 = tmp[1].split("\n");
+	        	 String[] Id = tmp2[0].split(",");
 	        	 return Id;  
 	         }
 	   }
 	   
 	   
-	   public void Host_waiting(SocketConnect client, String[] ID) throws IOException{
-		   client.send("GET:"+ID[0]+","+ID[1]);
+	   public String Host_waiting(SocketConnect client, String[] ID) throws IOException{
+		   client.send("GET:"+ID[0]+","+ID[1]+"\n");
 		   //System.out.print("GET:"+id[0]+","+id[1]+"\n");
 		   String response = client.recv();
 			System.out.println("HOST wait:"+response);
+			return response;
 
 		//return wait_msg;
 	   
 	   }
 	   
-	   public void HostStart(SocketConnect client, String[] ID) throws IOException{
-	         client.send("GET:"+ID[0]+","+ID[1] + "START\n");
+	   public String HostStart(SocketConnect client, String[] ID) throws IOException{
+	         client.send("GET:"+ID[0]+","+ID[1] + "\nSTART\n");
 	         String response = client.recv();
-	         System.out.println("HOST START:"+response);
+	         System.out.println("HOST START:\n"+response);
+			return response;
+	   }
+	   
+	   public String PlayerInGame(SocketConnect client, String[] ID, String gpsX, String gpsY ,boolean withdraw) throws IOException{
+	       String response;	       
+		   if(withdraw){
+	    	   client.send("GET:"+ID[0]+","+ID[1] + "\nGPS:"+gpsX+","+gpsY+"\nWITHDREW\n");
+		       response = client.recv();
+		       System.out.println("HOST in game:\n"+response);  	    	   
+	       }	       
+	       else{	       
+	    	   client.send("GET:"+ID[0]+","+ID[1] + "\nGPS:"+gpsX+","+gpsY+"\n");
+	    	   
+		       response = client.recv();
+		       System.out.println("HOST in game:\n"+response); 	    	   
+	       }
+			return response;
 	   }
 	   
 	   
-	   
-	   
 	   public void Client_waiting(SocketConnect client, String[] ID) throws IOException{
-		   		client.send("GET:"+ID[0]+","+ID[1]);
+		   		client.send("GET:"+ID[0]+","+ID[1]+"\n");
 		   		String response  = client.recv();
 				System.out.println(response);
   
 	   }
 	   
+	   public String Player_Withdrew(SocketConnect client, String[] ID) throws IOException{
+	   		client.send("GET:"+ID[0]+","+ID[1]+"\n");
+	   		String response  = client.recv();
+			System.out.println(response);
+			return response;
+
+	   }
+	   public String Player_Quit(SocketConnect client, String[] ID) throws IOException{
+	   		client.send("GET:"+ID[0]+","+ID[1]+"\nQUIT\n");
+	   		String response  = client.recv();
+			System.out.println(response);
+			return response;
+	   }
 	   
 
 }

@@ -6,6 +6,7 @@ import java.net.*;
 public class ClientTest {	
 	static String serveraddress = "140.113.166.42";
 	static SocketConnect client;
+	static boolean withdraw = true;
 	   public static void main(String[] args)
 	   {
 	      try {
@@ -17,6 +18,8 @@ public class ClientTest {
 	    	  //set name, Id
 	    	  String name = "test";
 	    	  String ID = "6";
+	    	  
+	    	  
 	    	  ///////////////////////////////////
 	    	  
 	    	  
@@ -30,15 +33,38 @@ public class ClientTest {
 	    	  String[] joinGroupId = client.JoinGame(client, name, ID);
 	    	  System.out.println(joinGroupId[0]);
 	    	  ///////////////////////////////////////////
+	    	 
+	    	  client.HostStart(client, newGroupId);  
 	    	  
-	    	//host waiting check connect
+	    	  
+	    	//check connect
 			   Thread thread1 = new Thread(new Runnable() {
 				   public void run() {
 					   int i = 0; 
-					   while (i <= 10) {
+					   String tmp;
+					   while (i <= 25) {
 					        // stop 1 sec to run
 					        try {
-					        	client.Host_waiting(client, newGroupId);
+					        	if(i > 10 && i <21)
+					        		tmp = client.PlayerInGame(client, newGroupId,"120","140",false);
+					        	/*
+					        	if(i == 12){
+					        		System.out.println("withdraw!!!!:");
+					        		tmp = client.PlayerInGame(client, newGroupId,"120.0","140.0",true);
+					        	}
+					        	else if(i == 11)
+					        		tmp = client.PlayerInGame(client, newGroupId,"120","140",false);
+					        	else if(i == 14){
+					        		tmp = client.Player_Quit(client, newGroupId);
+					        		System.out.println("Quit Game!!!!:");
+					        	}
+					        	*/
+					        	else if(i == 22){
+					        		tmp = client.Player_Quit(client, newGroupId);
+					        		System.out.println("Quit Game!!!!:");
+					        	}
+					        	else
+					        		tmp = client.Host_waiting(client, newGroupId);
 								i++;
 								Thread.sleep(1000);
 							} 
@@ -59,13 +85,12 @@ public class ClientTest {
 			
 			
 			//Host start Button -- go to count down
-	    	  client.HostStart(client, newGroupId);
+	    	 // client.HostStart(client, newGroupId);
 	    	  
+	    	//Player in Game   
+			 //client.PlayerInGame(client, newGroupId); 
 	    	  
-	    	  
-	    	  
-	    	  
-	    	  
+
 	    	  
 	         
 	      }
