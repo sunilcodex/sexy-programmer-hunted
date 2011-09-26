@@ -12,8 +12,8 @@
     android:clickable="true"
     android:apiKey="0YMouYXNvYpQiDcsw8oenEQbZ3rvCPO8ckWmG4g"
   android:layout_below="@+id/myTextView1"/>
-  <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TextView" android:id="@+id/textView1" android:layout_alignParentTop="true" android:layout_alignParentRight="true" android:layout_marginRight="82dp"></TextView>
-  <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TextView" android:id="@+id/textView2" android:layout_alignParentTop="true" android:layout_alignParentRight="true"></TextView>
-  <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TextView" android:id="@+id/textView4" android:layout_alignParentBottom="true" android:layout_alignLeft="@+id/textView3" android:layout_marginBottom="30dp"></TextView>
-  <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TextView" android:id="@+id/textView3" android:layout_above="@+id/textView4" android:layout_toLeftOf="@+id/textView1" android:layout_marginRight="18dp" android:layout_marginBottom="15dp"></TextView>
+  <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TextView" android:id="@+id/textView1" android:layout_alignParentTop="true" android:layout_alignParentRight="true" android:layout_marginRight="82dp" android:textColor="@drawable/white" android:textSize="15sp"></TextView>
+  <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TextView" android:id="@+id/textView2" android:layout_alignParentTop="true" android:layout_alignParentRight="true" android:textColor="@drawable/white" android:textSize="15sp"></TextView>
+  <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TextView" android:id="@+id/textView4" android:layout_alignParentBottom="true" android:layout_alignLeft="@+id/textView3" android:layout_marginBottom="30dp" android:textSize="20sp" android:textColor="#FFC600"></TextView>
+  <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TextView" android:id="@+id/textView3" android:layout_above="@+id/textView4" android:layout_toLeftOf="@+id/textView1" android:layout_marginRight="18dp" android:layout_marginBottom="15dp" android:textColor="@drawable/white" android:textSize="20sp"></TextView>
 </RelativeLayout>
