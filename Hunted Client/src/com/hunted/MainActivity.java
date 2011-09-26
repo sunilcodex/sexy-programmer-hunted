@@ -41,8 +41,9 @@ public class MainActivity extends Activity implements View.OnTouchListener{
 		setRequestedOrientation(1);
 
 		// create button
-		_loading = this.getButton(R.drawable.touch);
-
+		_loading = this.getImageView(R.drawable.touch);
+		_loading.setOnTouchListener(this);
+		
 		// set UI to proper location and size
 		_uiHelper.SetImageView(_loading, 720, 1280, 210, 1100);
 
@@ -54,8 +55,9 @@ public class MainActivity extends Activity implements View.OnTouchListener{
 
 		// Touch to screen
 		bgimg = (ImageView) findViewById(R.id.imageView1);
+		
 		bgimg.setOnTouchListener(this);
-		_loading.setOnTouchListener(this);
+		
 	}
     
     @Override

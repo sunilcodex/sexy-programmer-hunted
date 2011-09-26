@@ -54,16 +54,14 @@ public class GameActivity extends MapActivity
 	private TextView _txtPlayerNum;
 	private TextView _txtMoney;
 	private TextView _txtTime;
+	
+	private Player _player;
+	private PlayerMapOverlay _playerMapOverlay;
 
 	@Override
 	protected void onCreate(Bundle icicle)
 	{
-		// TODO Auto-generated method stub
 		super.onCreate(icicle);
-
-		// setContentView(R.layout.main);
-
-		
 
 		// basic display setting
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -72,7 +70,6 @@ public class GameActivity extends MapActivity
 
 		this.initComponents();
 		
-
 		// create text argument
 		Argument a = new Argument();
 		a.hunter_n = "3";
@@ -80,15 +77,6 @@ public class GameActivity extends MapActivity
 		a.time = "300";
 		a.money = "10000";
 		// set text argument to textView
-
-		// mTextView01 = (TextView)_mainLayout.findViewById(R.id.myTextView1);
-		// mTextView01.setText(a.hunter_n);
-		// _mainLayout.addView(mTextView01);
-
-		/* 建立MapView物件 */
-		mMapView01 = (MapView) _mainLayout.findViewById(R.id.myMapView1);
-
-		// setContentView(R.layout.main);
 
 		/* 建立LocationManager物件取得系統LOCATION服務 */
 		mLocationManager01 = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -119,15 +107,20 @@ public class GameActivity extends MapActivity
 		}
 		/* 建立LocationManager物件，監聽Location變更時事件，更新MapView */
 		mLocationManager01.requestLocationUpdates(strLocationPrivider, 2000, 10, mLocationListener01);
-
-		
-		// setContentView(R.layout.main);
-		
-
 	}
 
 	private void initComponents()
 	{
+		LayoutInflater inflater = LayoutInflater.from(this);
+		_mainLayout = (RelativeLayout) inflater.inflate(R.layout.game, null);
+		
+		// Get instance of all views
+		mMapView01 = (MapView) _mainLayout.findViewById(R.id.myMapView1);
+		_txtHunterNum = (TextView)_mainLayout.findViewById(R.id.textView1);
+		_txtPlayerNum = (TextView) _mainLayout.findViewById(R.id.textView2);
+		_txtTime = (TextView)_mainLayout.findViewById(R.id.textView3);
+		_txtMoney = (TextView) _mainLayout.findViewById(R.id.textView4);
+		
 		// create UI helper for ui scaling
 		Display display = ((WindowManager) this.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 		UIHelper uiHelper = new UIHelper(display.getWidth(), display.getHeight());
@@ -145,18 +138,12 @@ public class GameActivity extends MapActivity
 		uiHelper.SetImageView(button_status, 540, 960, 415, 825);
 		uiHelper.SetImageView(top, 540, 960, 0, 0);
 
-		LayoutInflater inflater = LayoutInflater.from(this);
-		_mainLayout = (RelativeLayout) inflater.inflate(R.layout.game, null);
+		
 		_mainLayout.addView(bottom);
 		_mainLayout.addView(button_message);
 		_mainLayout.addView(button_status);
 		_mainLayout.addView(top);
-	
-		_txtHunterNum = (TextView)_mainLayout.findViewById(R.id.textView1);
-		_txtPlayerNum = (TextView) _mainLayout.findViewById(R.id.textView2);
-		_txtTime = (TextView)_mainLayout.findViewById(R.id.textView3);
-		_txtMoney = (TextView) _mainLayout.findViewById(R.id.textView4);
-		
+
 		_txtHunterNum.bringToFront();
 		_txtPlayerNum.bringToFront();
 		_txtTime.bringToFront();
@@ -195,6 +182,14 @@ public class GameActivity extends MapActivity
 		_txtMoney.setText("0");
 		_txtMoney.setLayoutParams(params);
 		_txtMoney.setTextSize(TypedValue.COMPLEX_UNIT_PX, uiHelper.scaleHeight(1280, 65));
+		
+		// For map view
+		List<com.google.android.maps.Overlay> mapOverlays = mMapView01.getOverlays();
+		
+		// Create player map overlay
+		_player = new Player(PlayerType.Player, "Test Man");
+		_playerMapOverlay = new PlayerMapOverlay(this, uiHelper, _player);
+		mapOverlays.add(_playerMapOverlay);
 		
 		setContentView(_mainLayout);
 	}
@@ -320,17 +315,14 @@ public class GameActivity extends MapActivity
 	{
 		try
 		{
+			_player.setLocation(gp);
+			
 			mv.displayZoomControls(true);
 			/* 取得MapView的MapController */
 			MapController mc = mv.getController();
 			/* 移至該地理座標位址 */
 			mc.animateTo(gp);
-			// 顯示出自己目前的位置
-			List<com.google.android.maps.Overlay> ol = mv.getOverlays();
-			mylayer = new MyLocationOverlay(this, mv);
-			mylayer.enableCompass();// 羅盤
-			mylayer.enableMyLocation();
-			ol.add(mylayer);
+			
 
 			/* 放大地圖層級 */
 			mc.setZoom(zoomLevel);
