@@ -100,17 +100,17 @@ public class GameActivity extends MapActivity
    // mTextView01.setText(a.hunter_n);
    // _mainLayout.addView(mTextView01);
    
-    /* «Ø¥ßMapViewª«¥ó */
+    /* å»ºç«‹MapViewç‰©ä»¶ */
     mMapView01 = (MapView)_mainLayout.findViewById(R.id.myMapView1);
     
     //setContentView(R.layout.main);
     
     
     
-    /* «Ø¥ßLocationManagerª«¥ó¨ú±o¨t²ÎLOCATIONªA°È */
+    /* å»ºç«‹LocationManagerç‰©ä»¶å–å¾—ç³»çµ±LOCATIONæœå‹™ */
     mLocationManager01 = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
     
-    /* ²Ä¤@¦¸°õ¦æ¦VLocation Provider¨ú±oLocation */
+    /* ç¬¬ä¸€æ¬¡åŸ·è¡Œå‘Location Providerå–å¾—Location */
     mLocation01 = getLocationPrivider(mLocationManager01);
     
     if(mLocation01!=null)
@@ -125,7 +125,7 @@ public class GameActivity extends MapActivity
 //        getResources().getText(R.string.str_err_location).toString()
 //      );
     }
-    /* «Ø¥ßLocationManagerª«¥ó¡AºÊÅ¥LocationÅÜ§ó®É¨Æ¥ó¡A§ó·sMapView */
+    /* å»ºç«‹LocationManagerç‰©ä»¶ï¼Œç›£è½Locationè®Šæ›´æ™‚äº‹ä»¶ï¼Œæ›´æ–°MapView */
     mLocationManager01.requestLocationUpdates(strLocationPrivider, 2000, 10, mLocationListener01);
 
     //setContentView(R.layout.main);
@@ -140,7 +140,7 @@ public class GameActivity extends MapActivity
     {
       // TODO Auto-generated method stub
       
-      /* ·í¤â¾÷¦¬¨ì¦ì¸mÅÜ§ó®É¡A±Nlocation¶Ç¤J¨ú±o¦a²z®y¼Ğ */
+      /* ç•¶æ‰‹æ©Ÿæ”¶åˆ°ä½ç½®è®Šæ›´æ™‚ï¼Œå°‡locationå‚³å…¥å–å¾—åœ°ç†åº§æ¨™ */
       processLocationUpdated(location);
     }
     
@@ -148,7 +148,7 @@ public class GameActivity extends MapActivity
     public void onProviderDisabled(String provider)
     {
       // TODO Auto-generated method stub
-      /* ·íProvider¤wÂ÷¶}ªA°È½d³ò®É */
+      /* ç•¶Providerå·²é›¢é–‹æœå‹™ç¯„åœæ™‚ */
     }
     
     @Override
@@ -170,21 +170,21 @@ public class GameActivity extends MapActivity
     String strReturn = "";
     try
     {
-      /* ·íGeoPoint¤£µ¥©ónull */
+      /* ç•¶GeoPointä¸ç­‰æ–¼null */
       if (gp != null)
       {
-        /* «Ø¥ßGeocoderª«¥ó */
+        /* å»ºç«‹Geocoderç‰©ä»¶ */
         Geocoder gc = new Geocoder(GameActivity.this, Locale.getDefault());
         
-        /* ¨ú¥X¦a²z®y¼Ğ¸g½n«× */
+        /* å–å‡ºåœ°ç†åº§æ¨™ç¶“ç·¯åº¦ */
         double geoLatitude = (int)gp.getLatitudeE6()/1E6;
         double geoLongitude = (int)gp.getLongitudeE6()/1E6;
         
-        /* ¦Û¸g½n«×¨ú±o¦a§}¡]¥i¯à¦³¦h¦æ¦a§}¡^ */
+        /* è‡ªç¶“ç·¯åº¦å–å¾—åœ°å€ï¼ˆå¯èƒ½æœ‰å¤šè¡Œåœ°å€ï¼‰ */
         List<Address> lstAddress = gc.getFromLocation(geoLatitude, geoLongitude, 1);
         StringBuilder sb = new StringBuilder();
         
-        /* §PÂ_¦a§}¬O§_¬°¦h¦æ */
+        /* åˆ¤æ–·åœ°å€æ˜¯å¦ç‚ºå¤šè¡Œ */
         if (lstAddress.size() > 0)
         {
           Address adsLocation = lstAddress.get(0);
@@ -198,7 +198,7 @@ public class GameActivity extends MapActivity
           sb.append(adsLocation.getCountryName());
         }
         
-        /* ±NÂ^¨ú¨ìªº¦a§}¡A²Õ¦X«á©ñ¦bStringBuilderª«¥ó¤¤¿é¥X¥Î */
+        /* å°‡æ“·å–åˆ°çš„åœ°å€ï¼Œçµ„åˆå¾Œæ”¾åœ¨StringBuilderç‰©ä»¶ä¸­è¼¸å‡ºç”¨ */
         strReturn = sb.toString();
       }
     }
@@ -236,7 +236,7 @@ public class GameActivity extends MapActivity
     GeoPoint gp = null;
     try
     {
-      /* ·íLocation¦s¦b */
+      /* ç•¶Locationå­˜åœ¨ */
       if (location != null)
       {
         double geoLatitude = location.getLatitude()*1E6;
@@ -256,14 +256,14 @@ public class GameActivity extends MapActivity
     try
     {
       mv.displayZoomControls(true);
-      /* ¨ú±oMapViewªºMapController */
+      /* å–å¾—MapViewçš„MapController */
       MapController mc = mv.getController();
-      /* ²¾¦Ü¸Ó¦a²z®y¼Ğ¦ì§} */
+      /* ç§»è‡³è©²åœ°ç†åº§æ¨™ä½å€ */
       mc.animateTo(gp);
-      //Åã¥Ü¥X¦Û¤v¥Ø«eªº¦ì¸m
+      //é¡¯ç¤ºå‡ºè‡ªå·±ç›®å‰çš„ä½ç½®
       List<com.google.android.maps.Overlay> ol = mv.getOverlays();
       mylayer= new MyLocationOverlay(this, mv);
-      mylayer.enableCompass();//Ã¹½L
+      mylayer.enableCompass();//ç¾…ç›¤
       mylayer.enableMyLocation();
       ol.add(mylayer);
       
@@ -287,14 +287,14 @@ public class GameActivity extends MapActivity
       money_got.setTextSize(25);
       money_got.setTextColor(Color.YELLOW);
       _mainLayout.addView(money_got);
-      /* ©ñ¤j¦a¹Ï¼h¯Å */
+      /* æ”¾å¤§åœ°åœ–å±¤ç´š */
       mc.setZoom(zoomLevel);
       
-      /* ©µ¦ù¾Ç²ß¡G¨ú±oMapViewªº³Ì¤j©ñ¤j¼h¯Å */
+      /* å»¶ä¼¸å­¸ç¿’ï¼šå–å¾—MapViewçš„æœ€å¤§æ”¾å¤§å±¤ç´š */
       //mv.getMaxZoomLevel()
       
       
-      /* ³]©wMapViewªºÅã¥Ü¿ï¶µ¡]½Ã¬P¡Bµó¹D¡^*/
+      /* è¨­å®šMapViewçš„é¡¯ç¤ºé¸é …ï¼ˆè¡›æ˜Ÿã€è¡—é“ï¼‰*/
       if(bIfSatellite)
       {
         mv.setSatellite(true);
@@ -311,19 +311,19 @@ public class GameActivity extends MapActivity
     }
   }
   
-  /* ·í¤â¾÷¦¬¨ì¦ì¸mÅÜ§ó®É¡A±Nlocation¶Ç¤J§ó·s·í¤UGeoPoint¤ÎMapView */
+  /* ç•¶æ‰‹æ©Ÿæ”¶åˆ°ä½ç½®è®Šæ›´æ™‚ï¼Œå°‡locationå‚³å…¥æ›´æ–°ç•¶ä¸‹GeoPointåŠMapView */
   private void processLocationUpdated(Location location)
   {
-    /* ¶Ç¤JLocationª«¥ó¡A¨ú±oGeoPoint¦a²z®y¼Ğ */
+    /* å‚³å…¥Locationç‰©ä»¶ï¼Œå–å¾—GeoPointåœ°ç†åº§æ¨™ */
     currentGeoPoint = getGeoByLocation(location);
     
-    /* §ó·sMapViewÅã¥ÜGoogle Map */
+    /* æ›´æ–°MapViewé¡¯ç¤ºGoogle Map */
     refreshMapViewByGeoPoint(currentGeoPoint, mMapView01, intZoomLevel, true);
     
     /*mTextView01.setText
     (
       getResources().getText(R.string.str_my_location).toString()+"\n"+
-      // ©µ¦ù¾Ç²ß¡G¨ú¥XGPS¦a²z®y¼Ğ¡G 
+      // å»¶ä¼¸å­¸ç¿’ï¼šå–å‡ºGPSåœ°ç†åº§æ¨™ï¼š 
       
       getResources().getText(R.string.str_longitude).toString()+
       String.valueOf((int)currentGeoPoint.getLongitudeE6()/1E6)+"\n"+

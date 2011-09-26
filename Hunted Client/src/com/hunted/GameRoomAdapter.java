@@ -1,6 +1,6 @@
 package com.hunted;
 
-/* import¬ÛÃöclass */
+/* importç›¸é—œclass */
 import java.io.File;
 import java.util.List;
 import android.content.Context;
@@ -13,14 +13,14 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-/* ¦Û©w¸qªºAdapter¡AÄ~©Óandroid.widget.BaseAdapter */
+/* è‡ªå®šç¾©çš„Adapterï¼Œç¹¼æ‰¿android.widget.BaseAdapter */
 public class GameRoomAdapter extends BaseAdapter
 {
-  /* ÅÜ¼Æ«Å§i 
-     mIcon1¡G¦^¨ì®Ú¥Ø¿ıªº¹ÏÀÉ
-     mIcon2¡G¦^¨ì¤W¤@¼hªº¹ÏÀÉ
-     mIcon3¡G¸ê®Æ§¨ªº¹ÏÀÉ
-     mIcon4¡GÀÉ®×ªº¹ÏÀÉ
+  /* è®Šæ•¸å®£å‘Š 
+     mIcon1ï¼šå›åˆ°æ ¹ç›®éŒ„çš„åœ–æª”
+     mIcon2ï¼šå›åˆ°ä¸Šä¸€å±¤çš„åœ–æª”
+     mIcon3ï¼šè³‡æ–™å¤¾çš„åœ–æª”
+     mIcon4ï¼šæª”æ¡ˆçš„åœ–æª”
   */
   private LayoutInflater mInflater;
   private Bitmap mHunter;
@@ -28,10 +28,10 @@ public class GameRoomAdapter extends BaseAdapter
   private Bitmap mready;
   private List<String> items;
   private List<String> paths;
-  /* MyAdapterªº«Øºc¤l¡A¶Ç¤J¤T­Ó°Ñ¼Æ  */  
+  /* MyAdapterçš„å»ºæ§‹å­ï¼Œå‚³å…¥ä¸‰å€‹åƒæ•¸  */  
   public GameRoomAdapter(Context context,List<String> it,List<String> pa)
   {
-    /* °Ñ¼Æªì©l¤Æ */
+    /* åƒæ•¸åˆå§‹åŒ– */
     mInflater = LayoutInflater.from(context);
     items = it;
     paths = pa;
@@ -40,7 +40,7 @@ public class GameRoomAdapter extends BaseAdapter
     mready = BitmapFactory.decodeResource(context.getResources(), R.drawable.player);
   }
   
-  /* ¦]Ä~©ÓBaseAdapter¡A»İÂĞ¼g¥H¤Umethod */
+  /* å› ç¹¼æ‰¿BaseAdapterï¼Œéœ€è¦†å¯«ä»¥ä¸‹method */
   @Override
   public int getCount()
   {
@@ -66,9 +66,9 @@ public class GameRoomAdapter extends BaseAdapter
     
     if(convertView == null)
     {
-      /* ¨Ï¥Î¦Û©w¸qªºfile_row§@¬°Layout */
+      /* ä½¿ç”¨è‡ªå®šç¾©çš„file_rowä½œç‚ºLayout */
       convertView = mInflater.inflate(R.layout.row, null);
-      /* ªì©l¤Æholderªºtext»Picon */
+      /* åˆå§‹åŒ–holderçš„textèˆ‡icon */
       holder = new ViewHolder();
       holder.text = (TextView) convertView.findViewById(R.id.text);
       
@@ -80,14 +80,14 @@ public class GameRoomAdapter extends BaseAdapter
     }
 
     
-    /* ³]©w[¦^¨ì®Ú¥Ø¿ı]ªº¤å¦r»Picon */
+    /* è¨­å®š[å›åˆ°æ ¹ç›®éŒ„]çš„æ–‡å­—èˆ‡icon */
     if(items.get(position).toString().equals("b1"))
     {
       holder.text.setText(" Hunter");
       holder.icon = (ImageView) convertView.findViewById(R.id.icon);
       holder.icon.setImageBitmap(mHunter);
     }
-    /* ³]©w[¦^¨ì¤W¤@¼h]ªº¤å¦r»Picon */
+    /* è¨­å®š[å›åˆ°ä¸Šä¸€å±¤]çš„æ–‡å­—èˆ‡icon */
     else if(items.get(position).toString().equals("b2"))
     {
       holder.text.setText(" PlayerX");
@@ -96,7 +96,7 @@ public class GameRoomAdapter extends BaseAdapter
       holder.icon = (ImageView) convertView.findViewById(R.id.icon2);
       holder.icon.setImageBitmap(mready);
     }
-    /* ³]©w[ÀÉ®×©Î¸ê®Æ§¨]ªº¤å¦r»Picon */
+    /* è¨­å®š[æª”æ¡ˆæˆ–è³‡æ–™å¤¾]çš„æ–‡å­—èˆ‡icon */
 
     return convertView;
   }

@@ -54,10 +54,10 @@ public class MainActivity extends Activity {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-  	            // new¤@­ÓIntentª«¥ó¡A¨Ã«ü©w­n±Ò°Êªºclass 
+  	            // newä¸€å€‹Intentç‰©ä»¶ï¼Œä¸¦æŒ‡å®šè¦å•Ÿå‹•çš„class 
   	            Intent intent = new Intent();
   	        	intent.setClass(MainActivity.this, MainMenu.class);        	        	  
-  	        	//©I¥s¤@­Ó·sªºActivity 
+  	        	//å‘¼å«ä¸€å€‹æ–°çš„Activity 
   	        	startActivity(intent); 
   	        	MainActivity.this.finish();
 				return false;

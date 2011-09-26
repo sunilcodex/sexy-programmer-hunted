@@ -45,7 +45,7 @@ public class MainMenu extends Activity {
 		final ImageButton btnNewGame = this.getButton(R.drawable.button_new_game);
 		final ImageButton btnJoinGame = this.getButton(R.drawable.button_join_game);
 				
-		//Single player button  call ¥Dµe­± project
+		//Single player button  call ä¸»ç•«é¢ project
 		btnSinglePlayer.setOnTouchListener(new ImageButton.OnTouchListener(){
 			@Override  
 			 public boolean onTouch(View v, MotionEvent event) {
@@ -57,11 +57,11 @@ public class MainMenu extends Activity {
 			        try
 			        {
 			          Intent intent = new Intent();
-			          // ¶Ç¤Jpackage¦WºÙ¤Îpackage¦WºÙ¥[class¦WºÙ
+			          // å‚³å…¥packageåç¨±åŠpackageåç¨±åŠ classåç¨±
 			          intent.setClass(MainMenu.this, GameActivity.class);
-			          // ±N­È¶Çµ¹EX09_05
+			          // å°‡å€¼å‚³çµ¦EX09_05
 			          Bundle bundle = new Bundle();
-			          //bundle.putString("STR_INPUT", "HI, §Ú¨Ó¦ÛEX03_25...");
+			          //bundle.putString("STR_INPUT", "HI, æˆ‘ä¾†è‡ªEX03_25...");
 			          intent.putExtras(bundle);
 
 			          startActivityForResult(intent, requestCode01);
@@ -69,7 +69,7 @@ public class MainMenu extends Activity {
 			        {
 			          // Log.e(TAG, e.toString());
 			         // e.printStackTrace();
-			          //TextView01.setText("½Ğ¥ı¦w¸ËEX03_25_B³o¤äµ{¦¡!");
+			          //TextView01.setText("è«‹å…ˆå®‰è£EX03_25_Bé€™æ”¯ç¨‹å¼!");
 			        }
 					
 					
@@ -102,10 +102,10 @@ public class MainMenu extends Activity {
 		              {
 		        		  public void onClick(View v)
 		                  {
-		      	            // new¤@­ÓIntentª«¥ó¡A¨Ã«ü©w­n±Ò°Êªºclass 
+		      	            // newä¸€å€‹Intentç‰©ä»¶ï¼Œä¸¦æŒ‡å®šè¦å•Ÿå‹•çš„class 
 		      	            Intent intent = new Intent();
 		      	        	intent.setClass(MainMenu.this, JoinGameActivity.class);        	        	  
-		      	        	//©I¥s¤@­Ó·sªºActivity 
+		      	        	//å‘¼å«ä¸€å€‹æ–°çš„Activity 
 		      	        	startActivity(intent);  
 		                  }
 		              });
@@ -148,10 +148,10 @@ public class MainMenu extends Activity {
 		              {
 		        		  public void onClick(View v)
 		                  {
-		      	            // new¤@­ÓIntentª«¥ó¡A¨Ã«ü©w­n±Ò°Êªºclass 
+		      	            // newä¸€å€‹Intentç‰©ä»¶ï¼Œä¸¦æŒ‡å®šè¦å•Ÿå‹•çš„class 
 		      	            Intent intent = new Intent();
 		      	        	intent.setClass(MainMenu.this, JoinGameActivity.class);        	        	  
-		      	        	//©I¥s¤@­Ó·sªºActivity 
+		      	        	//å‘¼å«ä¸€å€‹æ–°çš„Activity 
 		      	        	startActivity(intent);  
 		                  }
 		              });
