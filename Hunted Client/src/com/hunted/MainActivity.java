@@ -43,7 +43,6 @@ public class MainActivity extends Activity {
 		uiHelper.SetImageView(btnLoading, 720, 1280, 210, 1100);
 
 		LayoutInflater inflater = LayoutInflater.from(this);
-		View view = inflater.inflate(R.layout.main, null);
 		_mainLayout = (RelativeLayout)inflater.inflate(R.layout.main, null);
 		_mainLayout.addView(btnLoading);
 

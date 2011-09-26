@@ -58,7 +58,7 @@ public class MainMenu extends Activity {
 			        {
 			          Intent intent = new Intent();
 			          // 傳入package名稱及package名稱加class名稱
-			          intent.setClassName("irdc.ex09_05", "irdc.ex09_05.EX09_05");
+			          intent.setClass(MainMenu.this, GameActivity.class);
 			          // 將值傳給EX09_05
 			          Bundle bundle = new Bundle();
 			          //bundle.putString("STR_INPUT", "HI, 我來自EX03_25...");
