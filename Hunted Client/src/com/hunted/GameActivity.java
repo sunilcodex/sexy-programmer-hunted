@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -12,6 +13,7 @@ import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Projection;
 
+import android.R.integer;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Canvas.VertexMode;
@@ -81,6 +83,10 @@ public class GameActivity extends MapActivity
 	private Thread _syncThread;
 	private Handler _uiUpdateHandler;
 	
+	private MessageListView _messageListView;
+
+	private UIHelper _uiHelper;
+	
 	@Override
 	protected void onCreate(Bundle icicle)
 	{
@@ -121,7 +127,7 @@ public class GameActivity extends MapActivity
 	{
 		// create UI helper for ui scaling
 		Display display = ((WindowManager) this.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-		UIHelper uiHelper = new UIHelper(display.getWidth(), display.getHeight());
+		_uiHelper = new UIHelper(display.getWidth(), display.getHeight());
 		
 		// create game components
 		_gameState = new GameState();
@@ -140,11 +146,23 @@ public class GameActivity extends MapActivity
 		_txtTime = (TextView)_mainLayout.findViewById(R.id.textView3);
 		_txtMoney = (TextView) _mainLayout.findViewById(R.id.textView4);
 		mMapView01 = (MapView) _mainLayout.findViewById(R.id.myMapView1);
-		
-		
+		_messageListView = new MessageListView(this);
+
 		// Create players and map
-		GameMapView gameMapView = new GameMapView(this, mMapView01, _player.PlayerType, uiHelper, _players);
+		GameMapView gameMapView = new GameMapView(this, mMapView01, _player.PlayerType, _uiHelper, _players);
 		_mainLayout.addView(gameMapView);
+		
+		// message list
+		_messageListView.setVerticalScrollBarEnabled(false);
+		_messageListView.setHorizontalScrollBarEnabled(false);
+		MessageListAdapter msgListAdapter = (MessageListAdapter)_messageListView.getAdapter();
+		
+		msgListAdapter.setTextSize(_uiHelper.scaleHeight(1280, 35));
+		msgListAdapter.ItemHeight = _uiHelper.scaleHeight(1280, 80);
+		msgListAdapter.ItemPadding = _uiHelper.scaleHeight(1280, 10);
+		
+		_mainLayout.addView(_messageListView);
+		
 		
 		
 		// create button
@@ -155,10 +173,10 @@ public class GameActivity extends MapActivity
 				
 		// set UI to proper location and size
 		
-		uiHelper.SetImageView(bottom, 540, 960, 10, 810);
-		uiHelper.SetImageView(button_message, 540, 960, 5, 825);
-		uiHelper.SetImageView(button_status, 540, 960, 415, 825);
-		uiHelper.SetImageView(top, 540, 960, 0, 0);
+		_uiHelper.SetImageView(bottom, 540, 960, 10, 810);
+		_uiHelper.SetImageView(button_message, 540, 960, 5, 825);
+		_uiHelper.SetImageView(button_status, 540, 960, 415, 825);
+		_uiHelper.SetImageView(top, 540, 960, 0, 0);
 
 		
 		_mainLayout.addView(bottom);
@@ -174,38 +192,52 @@ public class GameActivity extends MapActivity
 		RelativeLayout.LayoutParams params;
 		
 		// Hunter number
-		int[] newPos = uiHelper.scalePoint(540, 960, 475, 5);
+		int[] newPos = _uiHelper.scalePoint(540, 960, 475, 5);
 		params = new RelativeLayout.LayoutParams(_txtHunterNum.getLayoutParams());
 		params.setMargins(newPos[0], newPos[1], 0, 0);
 		_txtHunterNum.setText("0");
 		_txtHunterNum.setLayoutParams(params);
-		_txtHunterNum.setTextSize(TypedValue.COMPLEX_UNIT_PX, uiHelper.scaleHeight(1280, 35));
+		_txtHunterNum.setTextSize(TypedValue.COMPLEX_UNIT_PX, _uiHelper.scaleHeight(1280, 35));
 		
 		// Player number
-		newPos = uiHelper.scalePoint(540, 960, 380, 5);
+		newPos = _uiHelper.scalePoint(540, 960, 380, 5);
 		params = new RelativeLayout.LayoutParams(_txtPlayerNum.getLayoutParams());
 		params.setMargins(newPos[0], newPos[1], 0, 0);
 		_txtPlayerNum.setText("0");
 		_txtPlayerNum.setLayoutParams(params);
-		_txtPlayerNum.setTextSize(TypedValue.COMPLEX_UNIT_PX, uiHelper.scaleHeight(1280, 35));
+		_txtPlayerNum.setTextSize(TypedValue.COMPLEX_UNIT_PX, _uiHelper.scaleHeight(1280, 35));
 		
 		// Time
-		newPos = uiHelper.scalePoint(720, 1280, 265, 1080);
+		newPos = _uiHelper.scalePoint(720, 1280, 265, 1080);
 		params = new RelativeLayout.LayoutParams(_txtTime.getLayoutParams());
 		params.setMargins(newPos[0], newPos[1], 0, 0);
 		_txtTime.setText("00:00:00");
 		_txtTime.setLayoutParams(params);
-		_txtTime.setTextSize(TypedValue.COMPLEX_UNIT_PX, uiHelper.scaleHeight(1280, 65));
+		_txtTime.setTextSize(TypedValue.COMPLEX_UNIT_PX, _uiHelper.scaleHeight(1280, 65));
 		
 		// Money
-		newPos = uiHelper.scalePoint(720, 1280, 265, 1180);
+		newPos = _uiHelper.scalePoint(720, 1280, 265, 1180);
 		params = new RelativeLayout.LayoutParams(_txtMoney.getLayoutParams());
 		params.setMargins(newPos[0], newPos[1], 0, 0);
 		_txtMoney.setText("0");
 		_txtMoney.setLayoutParams(params);
-		_txtMoney.setTextSize(TypedValue.COMPLEX_UNIT_PX, uiHelper.scaleHeight(1280, 65));
+		_txtMoney.setTextSize(TypedValue.COMPLEX_UNIT_PX, _uiHelper.scaleHeight(1280, 65));
 		
 		setContentView(_mainLayout);
+	}
+	
+	private void AddMessage(Message msg)
+	{
+		MessageListAdapter msgListAdapter = (MessageListAdapter)_messageListView.getAdapter();
+		msgListAdapter.AddMessage(msg);
+		int height = msgListAdapter.getCount() * msgListAdapter.ItemHeight + 5;
+
+		int[] newPos = _uiHelper.scalePoint(720, 1280, 20, 1050);
+		int[] newSize = _uiHelper.scaleSize(720, 1280, 680, 0);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(newSize[0], height);
+		params.setMargins(newPos[0], newPos[1] - height, 0, 0);
+		
+		_messageListView.setLayoutParams(params);
 	}
 	
 	private void initMap()
@@ -432,6 +464,9 @@ public class GameActivity extends MapActivity
 	
 	private Runnable _uiUpdateProcess = new Runnable()
 	{
+		Random _rand = new Random();
+		int _testMessageCount = 0;
+		
 		public void run()
 		{
 			_txtPlayerNum.setText(Integer.toString(_gameState.Alive) + "/" + Integer.toString(_gameState.PlayerNumber));
@@ -440,6 +475,14 @@ public class GameActivity extends MapActivity
 			_txtMoney.setText(Integer.toString(_player.Money));
 			
 			refreshMapViewByGeoPoint(_player.getLocation());
+			
+			// FIXME: test message
+			Message msg = new Message();
+			msg.Message = "Test message " + Integer.toString(_testMessageCount++);
+			msg.Time = _rand.nextInt(10000);
+			msg.Icon = BitmapFactory.decodeResource(getResources(), R.drawable.boy_small);
+			GameActivity.this.AddMessage(msg);
+
 			
 			_uiUpdateHandler.postDelayed(_uiUpdateProcess, 500);
 		}
