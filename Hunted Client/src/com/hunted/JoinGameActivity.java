@@ -65,10 +65,10 @@ public class JoinGameActivity extends ListActivity {
     	name=new ArrayList<String>();
     	status=new ArrayList<String>();
 
-          /* ²Ä¤@µ§³]©w¬°[¦^¨ì®Ú¥Ø¿ý] */
+          /* ç¬¬ä¸€ç­†è¨­å®šç‚º[å›žåˆ°æ ¹ç›®éŒ„] */
     	name.add("b1");
     	status.add("h");
-          /* ²Ä¤Gµ§³]©w¬°[¦^¨ì¤W¤@¼h] */
+          /* ç¬¬äºŒç­†è¨­å®šç‚º[å›žåˆ°ä¸Šä¸€å±¤] */
           name.add("b2");
           status.add("p");
 
@@ -77,9 +77,9 @@ public class JoinGameActivity extends ListActivity {
           
           name.add("b2");
           status.add("p");
-        /* ±N©Ò¦³ÀÉ®×¥[¤JArrayList¤¤ */
+        /* å°‡æ‰€æœ‰æª”æ¡ˆåŠ å…¥ArrayListä¸­ */
         
-        /* ¨Ï¥Î¦Û©w¸qªºMyAdapter¨Ó±N¸ê®Æ¶Ç¤JListActivity */
+        /* ä½¿ç”¨è‡ªå®šç¾©çš„MyAdapterä¾†å°‡è³‡æ–™å‚³å…¥ListActivity */
         setListAdapter(new GameRoomAdapter(this,name,status));   
     	
     }

@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout 
+<RelativeLayout android:id="@+id/mainLayout" 
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:background="@drawable/white"
   android:orientation="vertical"
   android:layout_width="fill_parent"
   android:layout_height="fill_parent">
-  <TextView
-    android:id="@+id/myTextView1"
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content"
-    android:textColor="@drawable/blue"
-    android:text="@string/hello"/>
-  <com.google.android.maps.MapView
-    android:id="@+id/myMapView1"
+  <com.google.android.maps.MapView android:layout_alignParentLeft="true" android:id="@+id/myMapView1"
     android:layout_width="fill_parent" 
     android:layout_height="fill_parent"
     android:enabled="true"
     android:clickable="true"
-    android:apiKey="0jFxs4Y9LpFrvHjqBROVpCimsQHEE7VSjKmjeUQ"
-  />
-</LinearLayout>
+    android:apiKey="0YMouYXNvYpQiDcsw8oenEQbZ3rvCPO8ckWmG4g"
+  android:layout_below="@+id/myTextView1"/>
+  <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TextView" android:id="@+id/textView1" android:layout_alignParentTop="true" android:layout_alignParentRight="true" android:layout_marginRight="82dp" android:textColor="@drawable/white" android:textSize="15sp"></TextView>
+  <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TextView" android:id="@+id/textView2" android:layout_alignParentTop="true" android:layout_alignParentRight="true" android:textColor="@drawable/white" android:textSize="15sp"></TextView>
+  <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TextView" android:id="@+id/textView4" android:layout_alignParentBottom="true" android:layout_alignLeft="@+id/textView3" android:layout_marginBottom="30dp" android:textSize="20sp" android:textColor="#FFC600"></TextView>
+  <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TextView" android:id="@+id/textView3" android:layout_above="@+id/textView4" android:layout_toLeftOf="@+id/textView1" android:layout_marginRight="18dp" android:layout_marginBottom="15dp" android:textColor="@drawable/white" android:textSize="20sp"></TextView>
+</RelativeLayout>

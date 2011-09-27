@@ -1,245 +1,414 @@
-/*
- * 2.3 SDK¼ÒÀÀ¾¹°õ¦æ®É¡A¤wª¾µLªk¨ú¥ÎGPSªA°È
- * http://code.google.com/p/android/issues/detail?id=13015#makechanges
- * */
 package com.hunted;
 
 import java.util.List;
 import java.util.Locale;
 
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapActivity;
+import com.google.android.maps.MapController;
+import com.google.android.maps.MapView;
+import com.google.android.maps.Projection;
+
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Canvas.VertexMode;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
+import android.graphics.Point;
+import android.graphics.Shader.TileMode;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.FaceDetector.Face;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.provider.Settings.System;
+import android.util.TypedValue;
+import android.view.Display;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Gallery;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapActivity;
-import com.google.android.maps.MapController;
-import com.google.android.maps.MapView;
+import android.widget.ImageView.ScaleType;
+import com.google.android.maps.MyLocationOverlay;
+import com.google.android.maps.Overlay;
 
 public class GameActivity extends MapActivity
 {
-  private LocationManager mLocationManager01;
-  private String strLocationPrivider = "";
-  private Location mLocation01=null;
-  private TextView mTextView01;
-  private MapView mMapView01;
-  private GeoPoint currentGeoPoint;
-  private int intZoomLevel = 20;
-  @Override
-  protected void onCreate(Bundle icicle)
-  {
-    // TODO Auto-generated method stub
-    super.onCreate(icicle);
-    setContentView(R.layout.main);
-    
-    mTextView01 = (TextView)findViewById(R.id.myTextView1);
-    /* «Ø¥ßMapViewª«¥ó */
-    mMapView01 = (MapView)findViewById(R.id.myMapView1);
-    
-    /* «Ø¥ßLocationManagerª«¥ó¨ú±o¨t²ÎLOCATIONªA°È */
-    mLocationManager01 = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-    
-    /* ²Ä¤@¦¸°õ¦æ¦VLocation Provider¨ú±oLocation */
-    mLocation01 = getLocationPrivider(mLocationManager01);
-    
-    if(mLocation01!=null)
-    {		
-      processLocationUpdated(mLocation01);
-    }
-    else
-    {
-      mTextView01.setText
-      (
-        getResources().getText(R.string.str_err_location).toString()
-      );
-    }
-    /* «Ø¥ßLocationManagerª«¥ó¡AºÊÅ¥LocationÅÜ§ó®É¨Æ¥ó¡A§ó·sMapView */
-    mLocationManager01.requestLocationUpdates(strLocationPrivider, 2000, 10, mLocationListener01);
-  }
-  
-  public final LocationListener mLocationListener01 = new LocationListener()
-  {
-    @Override
-    public void onLocationChanged(Location location)
-    {
-      // TODO Auto-generated method stub
-      
-      /* ·í¤â¾÷¦¬¨ì¦ì¸mÅÜ§ó®É¡A±Nlocation¶Ç¤J¨ú±o¦a²z®y¼Ð */
-      processLocationUpdated(location);
-    }
-    
-    @Override
-    public void onProviderDisabled(String provider)
-    {
-      // TODO Auto-generated method stub
-      /* ·íProvider¤wÂ÷¶}ªA°È½d³ò®É */
-    }
-    
-    @Override
-    public void onProviderEnabled(String provider)
-    {
-      // TODO Auto-generated method stub
-    }
-    
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras)
-    {
-      // TODO Auto-generated method stub
-      
-    }
-  };
-  
-  public String getAddressbyGeoPoint(GeoPoint gp)
-  {
-    String strReturn = "";
-    try
-    {
-      /* ·íGeoPoint¤£µ¥©ónull */
-      if (gp != null)
-      {
-        /* «Ø¥ßGeocoderª«¥ó */
-        Geocoder gc = new Geocoder(GameActivity.this, Locale.getDefault());
-        
-        /* ¨ú¥X¦a²z®y¼Ð¸g½n«× */
-        double geoLatitude = (int)gp.getLatitudeE6()/1E6;
-        double geoLongitude = (int)gp.getLongitudeE6()/1E6;
-        
-        /* ¦Û¸g½n«×¨ú±o¦a§}¡]¥i¯à¦³¦h¦æ¦a§}¡^ */
-        List<Address> lstAddress = gc.getFromLocation(geoLatitude, geoLongitude, 1);
-        StringBuilder sb = new StringBuilder();
-        
-        /* §PÂ_¦a§}¬O§_¬°¦h¦æ */
-        if (lstAddress.size() > 0)
-        {
-          Address adsLocation = lstAddress.get(0);
 
-          for (int i = 0; i < adsLocation.getMaxAddressLineIndex(); i++)
-          {
-            sb.append(adsLocation.getAddressLine(i)).append("\n");
-          }
-          sb.append(adsLocation.getLocality()).append("\n");
-          sb.append(adsLocation.getPostalCode()).append("\n");
-          sb.append(adsLocation.getCountryName());
-        }
-        
-        /* ±NÂ^¨ú¨ìªº¦a§}¡A²Õ¦X«á©ñ¦bStringBuilderª«¥ó¤¤¿é¥X¥Î */
-        strReturn = sb.toString();
-      }
-    }
-    catch(Exception e)
-    {
-      e.printStackTrace();
-    }
-    return strReturn;
-  }
-  
-  public Location getLocationPrivider(LocationManager lm)
-  {
-    Location retLocation = null;
-    try
-    {
-      Criteria mCriteria01 = new Criteria();
-      mCriteria01.setAccuracy(Criteria.ACCURACY_FINE);
-      mCriteria01.setAltitudeRequired(false);
-      mCriteria01.setBearingRequired(false);
-      mCriteria01.setCostAllowed(true);
-      mCriteria01.setPowerRequirement(Criteria.POWER_LOW);
-      strLocationPrivider = lm.getBestProvider(mCriteria01, true);
-      retLocation = lm.getLastKnownLocation(strLocationPrivider);
-    }
-    catch(Exception e)
-    {
-      mTextView01.setText(e.toString());
-      e.printStackTrace();
-    }
-    return retLocation;
-  }
-  
-  private GeoPoint getGeoByLocation(Location location)
-  {
-    GeoPoint gp = null;
-    try
-    {
-      /* ·íLocation¦s¦b */
-      if (location != null)
-      {
-        double geoLatitude = location.getLatitude()*1E6;
-        double geoLongitude = location.getLongitude()*1E6;
-        gp = new GeoPoint((int) geoLatitude, (int) geoLongitude);
-      }
-    }
-    catch(Exception e)
-    {
-      e.printStackTrace();
-    }
-    return gp;
-  }
-  
-  public static void refreshMapViewByGeoPoint(GeoPoint gp, MapView mv, int zoomLevel, boolean bIfSatellite)
-  {
-    try
-    {
-      mv.displayZoomControls(true);
-      /* ¨ú±oMapViewªºMapController */
-      MapController mc = mv.getController();
-      /* ²¾¦Ü¸Ó¦a²z®y¼Ð¦ì§} */
-      mc.animateTo(gp);
-      
-      /* ©ñ¤j¦a¹Ï¼h¯Å */
-      mc.setZoom(zoomLevel);
-      
-      /* ©µ¦ù¾Ç²ß¡G¨ú±oMapViewªº³Ì¤j©ñ¤j¼h¯Å */
-      //mv.getMaxZoomLevel()
-      
-      /* ³]©wMapViewªºÅã¥Ü¿ï¶µ¡]½Ã¬P¡Bµó¹D¡^*/
-      if(bIfSatellite)
-      {
-        mv.setSatellite(true);
-      }
-      else
-      {
-        mv.setSatellite(false);
-      }
-    }
-    catch(Exception e)
-    {
-      e.printStackTrace();
-    }
-  }
-  
-  /* ·í¤â¾÷¦¬¨ì¦ì¸mÅÜ§ó®É¡A±Nlocation¶Ç¤J§ó·s·í¤UGeoPoint¤ÎMapView */
-  private void processLocationUpdated(Location location)
-  {
-    /* ¶Ç¤JLocationª«¥ó¡A¨ú±oGeoPoint¦a²z®y¼Ð */
-    currentGeoPoint = getGeoByLocation(location);
-    
-    /* §ó·sMapViewÅã¥ÜGoogle Map */
-    refreshMapViewByGeoPoint(currentGeoPoint, mMapView01, intZoomLevel, true);
-    
-    mTextView01.setText
-    (
-      getResources().getText(R.string.str_my_location).toString()+"\n"+
-      /* ©µ¦ù¾Ç²ß¡G¨ú¥XGPS¦a²z®y¼Ð¡G */
-      
-      getResources().getText(R.string.str_longitude).toString()+
-      String.valueOf((int)currentGeoPoint.getLongitudeE6()/1E6)+"\n"+
-      getResources().getText(R.string.str_latitude).toString()+
-      String.valueOf((int)currentGeoPoint.getLatitudeE6()/1E6)+"\n"+
-      
-      getAddressbyGeoPoint(currentGeoPoint)
-    );
-  }
-  
-  @Override
-  protected boolean isRouteDisplayed()
-  {
-    // TODO Auto-generated method stub
-    return false;
-  }
+	RelativeLayout _mainLayout;
+
+	private LocationManager mLocationManager01;
+	private String strLocationPrivider = "";
+	private Location mLocation01 = null;
+	private TextView mTextView01;
+	private TextView money_got;
+	private TextView during_time;
+	private TextView hunter_n;
+	private TextView player_n;
+	private MapView mMapView01;
+	private GeoPoint currentGeoPoint;
+	private int intZoomLevel = 20;
+	private MyLocationOverlay mylayer;
+	private MapController mapController;
+	
+	private TextView _txtHunterNum;
+	private TextView _txtPlayerNum;
+	private TextView _txtMoney;
+	private TextView _txtTime;
+	
+	private Player _player;
+	private Player[] _players;
+
+	@Override
+	protected void onCreate(Bundle icicle)
+	{
+		super.onCreate(icicle);
+
+		// basic display setting
+		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		setRequestedOrientation(1);
+
+		this.initComponents();
+		
+		// create text argument
+		Argument a = new Argument();
+		a.hunter_n = "3";
+		a.player_n = "4";
+		a.time = "300";
+		a.money = "10000";
+		// set text argument to textView
+
+		/* å»ºç«‹LocationManagerç‰©ä»¶å–å¾—ç³»çµ±LOCATIONæœå‹™ */
+		mLocationManager01 = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+		/* ç¬¬ä¸€æ¬¡åŸ·è¡Œå‘Location Providerå–å¾—Location */
+		mLocation01 = getLocationPrivider(mLocationManager01);
+
+		if (mLocation01 != null)
+		{
+			processLocationUpdated(mLocation01);
+		}
+		else
+		{
+
+			if (this.getResources().getBoolean(R.bool.Debug))
+			{
+				// FIXME: Give default location (for debug used)
+				refreshMapViewByGeoPoint(new GeoPoint(24789423, 121003075), mMapView01, intZoomLevel, true);
+			}
+			else
+			{
+				// FIXME
+				// mTextView01.setText
+				// (
+				// getResources().getText(R.string.str_err_location).toString()
+				// );
+			}
+		}
+		/* å»ºç«‹LocationManagerç‰©ä»¶ï¼Œç›£è½Locationè®Šæ›´æ™‚äº‹ä»¶ï¼Œæ›´æ–°MapView */
+		mLocationManager01.requestLocationUpdates(strLocationPrivider, 2000, 10, mLocationListener01);
+	}
+
+	private void initComponents()
+	{
+		// create UI helper for ui scaling
+		Display display = ((WindowManager) this.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+		UIHelper uiHelper = new UIHelper(display.getWidth(), display.getHeight());
+				
+		LayoutInflater inflater = LayoutInflater.from(this);
+		_mainLayout = (RelativeLayout) inflater.inflate(R.layout.game, null);
+		
+		// Get instance of all views
+		mMapView01 = (MapView) _mainLayout.findViewById(R.id.myMapView1);
+		_txtHunterNum = (TextView)_mainLayout.findViewById(R.id.textView1);
+		_txtPlayerNum = (TextView) _mainLayout.findViewById(R.id.textView2);
+		_txtTime = (TextView)_mainLayout.findViewById(R.id.textView3);
+		_txtMoney = (TextView) _mainLayout.findViewById(R.id.textView4);
+		
+		mMapView01.setClickable(false);
+		
+		// Create players and map
+		_player = new Player(PlayerType.Player, "Test Man");
+				
+		// For test
+		_players = new Player[2];
+		_players[0] = _player;
+		_players[1] = new Player(PlayerType.Hunter, "Test Hunter");
+		_players[1].setLocation(new GeoPoint(24789810, 121003450));
+		
+		GameMapView gameMapView = new GameMapView(this, mMapView01, uiHelper, _players);
+		_mainLayout.addView(gameMapView);
+		
+		
+		// create button
+		ImageView bottom = this.getImageView(R.drawable.bottom);
+		ImageView top = this.getImageView(R.drawable.top);
+		ImageButton button_message = this.getButton(R.drawable.button_message);
+		ImageButton button_status = this.getButton(R.drawable.button_status);
+				
+		// set UI to proper location and size
+		
+		uiHelper.SetImageView(bottom, 540, 960, 10, 810);
+		uiHelper.SetImageView(button_message, 540, 960, 5, 825);
+		uiHelper.SetImageView(button_status, 540, 960, 415, 825);
+		uiHelper.SetImageView(top, 540, 960, 0, 0);
+
+		
+		_mainLayout.addView(bottom);
+		_mainLayout.addView(button_message);
+		_mainLayout.addView(button_status);
+		_mainLayout.addView(top);
+
+		_txtHunterNum.bringToFront();
+		_txtPlayerNum.bringToFront();
+		_txtTime.bringToFront();
+		_txtMoney.bringToFront();
+		
+		RelativeLayout.LayoutParams params;
+		
+		// Hunter number
+		int[] newPos = uiHelper.scalePoint(540, 960, 475, 5);
+		params = new RelativeLayout.LayoutParams(_txtHunterNum.getLayoutParams());
+		params.setMargins(newPos[0], newPos[1], 0, 0);
+		_txtHunterNum.setText("0");
+		_txtHunterNum.setLayoutParams(params);
+		_txtHunterNum.setTextSize(TypedValue.COMPLEX_UNIT_PX, uiHelper.scaleHeight(1280, 40));
+		
+		// Player number
+		newPos = uiHelper.scalePoint(540, 960, 380, 5);
+		params = new RelativeLayout.LayoutParams(_txtPlayerNum.getLayoutParams());
+		params.setMargins(newPos[0], newPos[1], 0, 0);
+		_txtPlayerNum.setText("0");
+		_txtPlayerNum.setLayoutParams(params);
+		_txtPlayerNum.setTextSize(TypedValue.COMPLEX_UNIT_PX, uiHelper.scaleHeight(1280, 40));
+		
+		// Time
+		newPos = uiHelper.scalePoint(720, 1280, 265, 1080);
+		params = new RelativeLayout.LayoutParams(_txtTime.getLayoutParams());
+		params.setMargins(newPos[0], newPos[1], 0, 0);
+		_txtTime.setText("00:00:00");
+		_txtTime.setLayoutParams(params);
+		_txtTime.setTextSize(TypedValue.COMPLEX_UNIT_PX, uiHelper.scaleHeight(1280, 65));
+		
+		// Money
+		newPos = uiHelper.scalePoint(720, 1280, 265, 1180);
+		params = new RelativeLayout.LayoutParams(_txtMoney.getLayoutParams());
+		params.setMargins(newPos[0], newPos[1], 0, 0);
+		_txtMoney.setText("0");
+		_txtMoney.setLayoutParams(params);
+		_txtMoney.setTextSize(TypedValue.COMPLEX_UNIT_PX, uiHelper.scaleHeight(1280, 65));
+		
+		setContentView(_mainLayout);
+	}
+	
+	public final LocationListener mLocationListener01 = new LocationListener() {
+		@Override
+		public void onLocationChanged(Location location)
+		{
+			// TODO Auto-generated method stub
+
+			/* ç•¶æ‰‹æ©Ÿæ”¶åˆ°ä½ç½®è®Šæ›´æ™‚ï¼Œå°‡locationå‚³å…¥å–å¾—åœ°ç†åº§æ¨™ */
+			processLocationUpdated(location);
+		}
+
+		@Override
+		public void onProviderDisabled(String provider)
+		{
+			// TODO Auto-generated method stub
+			/* ç•¶Providerå·²é›¢é–‹æœå‹™ç¯„åœæ™‚ */
+		}
+
+		@Override
+		public void onProviderEnabled(String provider)
+		{
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void onStatusChanged(String provider, int status, Bundle extras)
+		{
+			// TODO Auto-generated method stub
+
+		}
+	};
+
+	public String getAddressbyGeoPoint(GeoPoint gp)
+	{
+		String strReturn = "";
+		try
+		{
+			/* ç•¶GeoPointä¸ç­‰æ–¼null */
+			if (gp != null)
+			{
+				/* å»ºç«‹Geocoderç‰©ä»¶ */
+				Geocoder gc = new Geocoder(GameActivity.this, Locale.getDefault());
+
+				/* å–å‡ºåœ°ç†åº§æ¨™ç¶“ç·¯åº¦ */
+				double geoLatitude = (int) gp.getLatitudeE6() / 1E6;
+				double geoLongitude = (int) gp.getLongitudeE6() / 1E6;
+
+				/* è‡ªç¶“ç·¯åº¦å–å¾—åœ°å€ï¼ˆå¯èƒ½æœ‰å¤šè¡Œåœ°å€ï¼‰ */
+				List<Address> lstAddress = gc.getFromLocation(geoLatitude, geoLongitude, 1);
+				StringBuilder sb = new StringBuilder();
+
+				/* åˆ¤æ–·åœ°å€æ˜¯å¦ç‚ºå¤šè¡Œ */
+				if (lstAddress.size() > 0)
+				{
+					Address adsLocation = lstAddress.get(0);
+
+					for (int i = 0; i < adsLocation.getMaxAddressLineIndex(); i++)
+					{
+						sb.append(adsLocation.getAddressLine(i)).append("\n");
+					}
+					sb.append(adsLocation.getLocality()).append("\n");
+					sb.append(adsLocation.getPostalCode()).append("\n");
+					sb.append(adsLocation.getCountryName());
+				}
+
+				/* å°‡æ“·å–åˆ°çš„åœ°å€ï¼Œçµ„åˆå¾Œæ”¾åœ¨StringBuilderç‰©ä»¶ä¸­è¼¸å‡ºç”¨ */
+				strReturn = sb.toString();
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return strReturn;
+	}
+
+	public Location getLocationPrivider(LocationManager lm)
+	{
+		Location retLocation = null;
+		try
+		{
+			Criteria mCriteria01 = new Criteria();
+			mCriteria01.setAccuracy(Criteria.ACCURACY_FINE);
+			mCriteria01.setAltitudeRequired(false);
+			mCriteria01.setBearingRequired(false);
+			mCriteria01.setCostAllowed(true);
+			mCriteria01.setPowerRequirement(Criteria.POWER_LOW);
+			strLocationPrivider = lm.getBestProvider(mCriteria01, true);
+			retLocation = lm.getLastKnownLocation(strLocationPrivider);
+		}
+		catch (Exception e)
+		{
+			mTextView01.setText(e.toString());
+			e.printStackTrace();
+		}
+		return retLocation;
+	}
+
+	private GeoPoint getGeoByLocation(Location location)
+	{
+		GeoPoint gp = null;
+		try
+		{
+			/* ç•¶Locationå­˜åœ¨ */
+			if (location != null)
+			{
+				double geoLatitude = location.getLatitude() * 1E6;
+				double geoLongitude = location.getLongitude() * 1E6;
+				gp = new GeoPoint((int) geoLatitude, (int) geoLongitude);
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return gp;
+	}
+
+	public void refreshMapViewByGeoPoint(GeoPoint gp, MapView mv, int zoomLevel, boolean bIfSatellite)
+	{
+		try
+		{
+			_player.setLocation(gp);
+
+			//mv.displayZoomControls(true);
+			/* å–å¾—MapViewçš„MapController */
+			MapController mc = mv.getController();
+			/* ç§»è‡³è©²åœ°ç†åº§æ¨™ä½å€ */
+			mc.animateTo(gp);
+			
+
+			/* æ”¾å¤§åœ°åœ–å±¤ç´š */
+			mc.setZoom(zoomLevel);
+
+			/* å»¶ä¼¸å­¸ç¿’ï¼šå–å¾—MapViewçš„æœ€å¤§æ”¾å¤§å±¤ç´š */
+			// mv.getMaxZoomLevel()
+
+			/* è¨­å®šMapViewçš„é¡¯ç¤ºé¸é …ï¼ˆè¡›æ˜Ÿã€è¡—é“ï¼‰ */
+			mv.setSatellite(bIfSatellite);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	/* ç•¶æ‰‹æ©Ÿæ”¶åˆ°ä½ç½®è®Šæ›´æ™‚ï¼Œå°‡locationå‚³å…¥æ›´æ–°ç•¶ä¸‹GeoPointåŠMapView */
+	private void processLocationUpdated(Location location)
+	{
+		/* å‚³å…¥Locationç‰©ä»¶ï¼Œå–å¾—GeoPointåœ°ç†åº§æ¨™ */
+		currentGeoPoint = getGeoByLocation(location);
+
+		/* æ›´æ–°MapViewé¡¯ç¤ºGoogle Map */
+		refreshMapViewByGeoPoint(currentGeoPoint, mMapView01, intZoomLevel, true);
+
+		/*
+		 * mTextView01.setText (
+		 * getResources().getText(R.string.str_my_location).toString()+"\n"+ //
+		 * å»¶ä¼¸å­¸ç¿’ï¼šå–å‡ºGPSåœ°ç†åº§æ¨™ï¼š
+		 * 
+		 * getResources().getText(R.string.str_longitude).toString()+
+		 * String.valueOf((int)currentGeoPoint.getLongitudeE6()/1E6)+"\n"+
+		 * getResources().getText(R.string.str_latitude).toString()+
+		 * String.valueOf((int)currentGeoPoint.getLatitudeE6()/1E6)+"\n"+
+		 * 
+		 * getAddressbyGeoPoint(currentGeoPoint) );
+		 */
+	}
+
+	@Override
+	protected boolean isRouteDisplayed()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	ImageButton getButton(int id)
+	{
+		ImageButton button = new ImageButton(this);
+		button.setImageResource(id);
+		button.setBackgroundColor(Color.TRANSPARENT);
+		button.setPadding(0, 0, 0, 0);
+		button.setScaleType(ScaleType.FIT_XY);
+		return button;
+	}
+	
+	ImageView getImageView(int id)
+	{
+		ImageView image = new ImageView(this);
+		image.setImageResource(id);
+		image.setBackgroundColor(Color.TRANSPARENT);
+		image.setPadding(0, 0, 0, 0);
+		image.setScaleType(ScaleType.FIT_XY);
+		return image;
+	}
+	
+	
 }
