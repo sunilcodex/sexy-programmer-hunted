@@ -91,12 +91,6 @@ public class GameActivity extends MapActivity
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setRequestedOrientation(1);
 		
-		_gameState = new GameState();
-		_players = new HashMap<String, Player>();
-		// FIXME: the following lines is test
-		_player = new Player(SocketConnect.SessionID[1], PlayerType.Player, "Test Man", true);
-		_players.put(_player.ID, _player);
-		
 		// Initialise sync thread
 		_syncThread = new Thread(_syncProcess);
 		_uiUpdateHandler = new Handler();
@@ -128,6 +122,14 @@ public class GameActivity extends MapActivity
 		// create UI helper for ui scaling
 		Display display = ((WindowManager) this.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 		UIHelper uiHelper = new UIHelper(display.getWidth(), display.getHeight());
+		
+		// create game components
+		_gameState = new GameState();
+		_players = new HashMap<String, Player>();
+		// FIXME: the following lines is test
+		SocketConnect.SessionID = new String[] { "100", "100" };
+		_player = new Player(SocketConnect.SessionID[1], PlayerType.Player, "Test Man", true);
+		_players.put(_player.ID, _player);
 				
 		LayoutInflater inflater = LayoutInflater.from(this);
 		_mainLayout = (RelativeLayout) inflater.inflate(R.layout.game, null);
@@ -141,7 +143,7 @@ public class GameActivity extends MapActivity
 		
 		
 		// Create players and map
-		GameMapView gameMapView = new GameMapView(this, mMapView01, uiHelper, _players);
+		GameMapView gameMapView = new GameMapView(this, mMapView01, _player.PlayerType, uiHelper, _players);
 		_mainLayout.addView(gameMapView);
 		
 		
@@ -447,69 +449,82 @@ public class GameActivity extends MapActivity
 		@Override
 		public void run() 
 		{
-			try 
+
+			while (true) 
 			{
-				while(true)
+				try 
 				{
-					String response = SocketConnect.Instance.PlayerInGame(SocketConnect.Instance, SocketConnect.SessionID,  
-							Integer.toString(_player.getLocation().getLatitudeE6()), Integer.toString(_player.getLocation().getLongitudeE6()), false);
-					
-					HashMap<String, Object> values = SocketConnect.parse(response);
-					_gameState.Set(values);
-					
-					// Set player state
-					_player.Money = Integer.parseInt((String)values.get("MONEY"));
-					
-					// Set all players state
-					if(values.containsKey("USER"))
+					String response;
+
+					if (_player.PlayerType == PlayerType.Player) 
 					{
-						for(String[] userData : ((HashMap<String, String[]>)values.get("USER")).values())
-						{
+						response = SocketConnect.Instance.PlayerInGame(SocketConnect.Instance, SocketConnect.SessionID, 
+								Integer.toString(_player.getLocation().getLatitudeE6()), Integer.toString(_player.getLocation().getLongitudeE6()), false);
+					} 
+					else 
+					{
+						response = SocketConnect.Instance.HunterInGame(SocketConnect.Instance, SocketConnect.SessionID, 
+								Integer.toString(_player.getLocation().getLatitudeE6()), Integer.toString(_player.getLocation().getLongitudeE6()));
+					}
+
+					HashMap<String, Object> values = SocketConnect
+							.parse(response);
+					_gameState.Set(values);
+
+					// Set player state
+					_player.Money = Integer.parseInt((String) values
+							.get("MONEY"));
+
+					// Set all players state
+					if (values.containsKey("USER")) {
+						for (String[] userData : ((HashMap<String, String[]>) values.get("USER")).values()) {
 							String id = userData[0];
 							Player player;
-							if(!_players.containsKey(id))
-								_players.put(id, new Player(id, 0, userData[1], id == _player.ID));
-							
+							if (!_players.containsKey(id))
+								_players.put(id, new Player(id, _player.PlayerType, userData[1],
+										id == _player.ID));
+
 							player = _players.get(id);
-							
-							if(getResources().getBoolean(R.bool.Debug))
-							{
-								if(player.Self)
+
+							if (getResources().getBoolean(R.bool.Debug)) {
+								if (player.Self) 
 								{
 									player.setLocation(_player.getLocation());
-								}
-								else
+								} 
+								else 
 								{
 									player.set(userData);
 
-									player.setLocation(
-											new GeoPoint(
-													(int)(_player.getLocation().getLatitudeE6() + player.getLocation().getLatitudeE6() * 0.5f),
-													(int)(_player.getLocation().getLongitudeE6() + player.getLocation().getLongitudeE6() * 0.5f))
-											);
+									player.setLocation(new GeoPoint(
+											(int) (_player.getLocation().getLatitudeE6() + player.getLocation().getLatitudeE6() * 0.5f),
+											(int) (_player.getLocation().getLongitudeE6() + player.getLocation().getLongitudeE6() * 0.5f)));
 								}
-							}
-							else
+							} 
+							else 
 							{
 								player.set(userData);
 							}
 						}
 					}
-					
-					Thread.sleep(500);
+				} 
+				catch (IOException e) 
+				{
+					e.printStackTrace();
 				}
-			} 
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-			}
-			catch (InterruptedException e) 
-			{
-				e.printStackTrace();
-			}
-			catch (Exception e) 
-			{
-				e.printStackTrace();
+
+				catch (Exception e) 
+				{
+					e.printStackTrace();
+				}
+
+				try 
+				{
+					Thread.sleep(500);
+				} 
+				catch (InterruptedException e) 
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 	};

@@ -25,14 +25,16 @@ public class GameMapView extends View
 	float _angle = 0;
 	long _lastDrawTime;
 	HashMap<String,Player> _players;
+	int _viewType;
 	
-	public GameMapView(Context context, MapView mapview, UIHelper uiHelper, HashMap<String,Player> players)
+	public GameMapView(Context context, MapView mapview, int viewType, UIHelper uiHelper, HashMap<String,Player> players)
 	{
 		super(context);
 		_mapview = mapview;
 		_players = players;
 		_uiHelper = uiHelper;
-		_textureBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.radar);
+		_viewType = viewType;
+		_textureBitmap = BitmapFactory.decodeResource(this.getResources(), viewType == PlayerType.Player ? R.drawable.radar : R.drawable.radar_red);
 		_lastDrawTime = SystemClock.currentThreadTimeMillis();
 	}
 
@@ -42,7 +44,11 @@ public class GameMapView extends View
 	{
 		// Draw radar view
 		Paint paint = new Paint();
-		paint.setARGB(100, 77, 153, 89);
+		if(_viewType == PlayerType.Player)
+			paint.setARGB(100, 77, 153, 89);
+		else
+			paint.setARGB(100, 178, 54, 54);
+		
 		paint.setStyle(Style.FILL);
 		canvas.drawRect(this.getLeft(), this.getTop(),this.getRight(),this.getBottom(), paint);
 		
