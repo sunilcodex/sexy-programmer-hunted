@@ -1,5 +1,7 @@
 package com.hunted;
 
+import java.util.HashMap;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,9 +24,9 @@ public class GameMapView extends View
 	UIHelper _uiHelper;
 	float _angle = 0;
 	long _lastDrawTime;
-	Player[] _players;
+	HashMap<String,Player> _players;
 	
-	public GameMapView(Context context, MapView mapview, UIHelper uiHelper, Player[] players)
+	public GameMapView(Context context, MapView mapview, UIHelper uiHelper, HashMap<String,Player> players)
 	{
 		super(context);
 		_mapview = mapview;
@@ -81,7 +83,7 @@ public class GameMapView extends View
         strokPaint.setStyle(Paint.Style.STROKE);
         strokPaint.setStrokeWidth(_uiHelper.scaleHeight(1280, 7));
         
-		for (Player player : _players)
+		for (Player player : _players.values())
 		{
 			Projection projection = _mapview.getProjection();
 	        Point screenPts = new Point();

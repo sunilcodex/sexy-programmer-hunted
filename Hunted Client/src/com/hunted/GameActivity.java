@@ -1,5 +1,8 @@
 package com.hunted;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 
@@ -28,8 +31,10 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.FaceDetector.Face;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings.System;
+import android.text.format.DateUtils;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -70,8 +75,12 @@ public class GameActivity extends MapActivity
 	private TextView _txtTime;
 	
 	private Player _player;
-	private Player[] _players;
-
+	private HashMap<String, Player> _players;
+	
+	private GameState _gameState;
+	private Thread _syncThread;
+	private Handler _uiUpdateHandler;
+	
 	@Override
 	protected void onCreate(Bundle icicle)
 	{
@@ -81,48 +90,39 @@ public class GameActivity extends MapActivity
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setRequestedOrientation(1);
-
-		this.initComponents();
 		
-		// create text argument
-		Argument a = new Argument();
-		a.hunter_n = "3";
-		a.player_n = "4";
-		a.time = "300";
-		a.money = "10000";
-		// set text argument to textView
-
-		/* 建立LocationManager物件取得系統LOCATION服務 */
-		mLocationManager01 = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-		/* 第一次執行向Location Provider取得Location */
-		mLocation01 = getLocationPrivider(mLocationManager01);
-
-		if (mLocation01 != null)
-		{
-			processLocationUpdated(mLocation01);
-		}
-		else
-		{
-
-			if (this.getResources().getBoolean(R.bool.Debug))
-			{
-				// FIXME: Give default location (for debug used)
-				refreshMapViewByGeoPoint(new GeoPoint(24789423, 121003075), mMapView01, intZoomLevel, true);
-			}
-			else
-			{
-				// FIXME
-				// mTextView01.setText
-				// (
-				// getResources().getText(R.string.str_err_location).toString()
-				// );
-			}
-		}
-		/* 建立LocationManager物件，監聽Location變更時事件，更新MapView */
-		mLocationManager01.requestLocationUpdates(strLocationPrivider, 2000, 10, mLocationListener01);
+		_gameState = new GameState();
+		_players = new HashMap<String, Player>();
+		// FIXME: the following lines is test
+		_player = new Player(SocketConnect.SessionID[1], PlayerType.Player, "Test Man", true);
+		_players.put(_player.ID, _player);
+		
+		// Initialise sync thread
+		_syncThread = new Thread(_syncProcess);
+		_uiUpdateHandler = new Handler();
+		
+		this.initComponents();
+		this.initMap();
 	}
 
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		
+		_syncThread.start();
+		_uiUpdateHandler.postDelayed(_uiUpdateProcess, 500);
+		
+	}
+	
+	@Override
+	protected void onPause()
+	{
+		super.onPause();
+		_uiUpdateHandler.removeCallbacks(_uiUpdateProcess);
+		_syncThread.stop();
+	}
+	
 	private void initComponents()
 	{
 		// create UI helper for ui scaling
@@ -133,23 +133,14 @@ public class GameActivity extends MapActivity
 		_mainLayout = (RelativeLayout) inflater.inflate(R.layout.game, null);
 		
 		// Get instance of all views
-		mMapView01 = (MapView) _mainLayout.findViewById(R.id.myMapView1);
 		_txtHunterNum = (TextView)_mainLayout.findViewById(R.id.textView1);
 		_txtPlayerNum = (TextView) _mainLayout.findViewById(R.id.textView2);
 		_txtTime = (TextView)_mainLayout.findViewById(R.id.textView3);
 		_txtMoney = (TextView) _mainLayout.findViewById(R.id.textView4);
+		mMapView01 = (MapView) _mainLayout.findViewById(R.id.myMapView1);
 		
-		mMapView01.setClickable(false);
 		
 		// Create players and map
-		_player = new Player(PlayerType.Player, "Test Man");
-				
-		// For test
-		_players = new Player[2];
-		_players[0] = _player;
-		_players[1] = new Player(PlayerType.Hunter, "Test Hunter");
-		_players[1].setLocation(new GeoPoint(24789810, 121003450));
-		
 		GameMapView gameMapView = new GameMapView(this, mMapView01, uiHelper, _players);
 		_mainLayout.addView(gameMapView);
 		
@@ -186,7 +177,7 @@ public class GameActivity extends MapActivity
 		params.setMargins(newPos[0], newPos[1], 0, 0);
 		_txtHunterNum.setText("0");
 		_txtHunterNum.setLayoutParams(params);
-		_txtHunterNum.setTextSize(TypedValue.COMPLEX_UNIT_PX, uiHelper.scaleHeight(1280, 40));
+		_txtHunterNum.setTextSize(TypedValue.COMPLEX_UNIT_PX, uiHelper.scaleHeight(1280, 35));
 		
 		// Player number
 		newPos = uiHelper.scalePoint(540, 960, 380, 5);
@@ -194,7 +185,7 @@ public class GameActivity extends MapActivity
 		params.setMargins(newPos[0], newPos[1], 0, 0);
 		_txtPlayerNum.setText("0");
 		_txtPlayerNum.setLayoutParams(params);
-		_txtPlayerNum.setTextSize(TypedValue.COMPLEX_UNIT_PX, uiHelper.scaleHeight(1280, 40));
+		_txtPlayerNum.setTextSize(TypedValue.COMPLEX_UNIT_PX, uiHelper.scaleHeight(1280, 35));
 		
 		// Time
 		newPos = uiHelper.scalePoint(720, 1280, 265, 1080);
@@ -213,6 +204,47 @@ public class GameActivity extends MapActivity
 		_txtMoney.setTextSize(TypedValue.COMPLEX_UNIT_PX, uiHelper.scaleHeight(1280, 65));
 		
 		setContentView(_mainLayout);
+	}
+	
+	private void initMap()
+	{
+		mMapView01.setClickable(false);
+		mMapView01.setSatellite(true);
+		
+		MapController mc = mMapView01.getController();
+		mc.setZoom(intZoomLevel);
+		
+		
+		/* 建立LocationManager物件取得系統LOCATION服務 */
+		mLocationManager01 = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+		/* 第一次執行向Location Provider取得Location */
+		mLocation01 = getLocationPrivider(mLocationManager01);
+
+		if (mLocation01 != null)
+		{
+			processLocationUpdated(mLocation01);
+		}
+		else
+		{
+
+			if (this.getResources().getBoolean(R.bool.Debug))
+			{
+				// FIXME: Give default location (for debug used)
+				_player.setLocation(new GeoPoint(24789423, 121003075));
+				refreshMapViewByGeoPoint(_player.getLocation());
+			}
+			else
+			{
+				// FIXME
+				// mTextView01.setText
+				// (
+				// getResources().getText(R.string.str_err_location).toString()
+				// );
+			}
+		}
+		/* 建立LocationManager物件，監聽Location變更時事件，更新MapView */
+		mLocationManager01.requestLocationUpdates(strLocationPrivider, 2000, 10, mLocationListener01);
 	}
 	
 	public final LocationListener mLocationListener01 = new LocationListener() {
@@ -332,27 +364,13 @@ public class GameActivity extends MapActivity
 		return gp;
 	}
 
-	public void refreshMapViewByGeoPoint(GeoPoint gp, MapView mv, int zoomLevel, boolean bIfSatellite)
+	public void refreshMapViewByGeoPoint(GeoPoint gp)
 	{
 		try
 		{
-			_player.setLocation(gp);
-
-			//mv.displayZoomControls(true);
-			/* 取得MapView的MapController */
-			MapController mc = mv.getController();
-			/* 移至該地理座標位址 */
-			mc.animateTo(gp);
+			MapController mc = mMapView01.getController();
+			mc.setCenter(gp);
 			
-
-			/* 放大地圖層級 */
-			mc.setZoom(zoomLevel);
-
-			/* 延伸學習：取得MapView的最大放大層級 */
-			// mv.getMaxZoomLevel()
-
-			/* 設定MapView的顯示選項（衛星、街道） */
-			mv.setSatellite(bIfSatellite);
 		}
 		catch (Exception e)
 		{
@@ -367,7 +385,7 @@ public class GameActivity extends MapActivity
 		currentGeoPoint = getGeoByLocation(location);
 
 		/* 更新MapView顯示Google Map */
-		refreshMapViewByGeoPoint(currentGeoPoint, mMapView01, intZoomLevel, true);
+		refreshMapViewByGeoPoint(currentGeoPoint);
 
 		/*
 		 * mTextView01.setText (
@@ -410,5 +428,89 @@ public class GameActivity extends MapActivity
 		return image;
 	}
 	
+	private Runnable _uiUpdateProcess = new Runnable()
+	{
+		public void run()
+		{
+			_txtPlayerNum.setText(Integer.toString(_gameState.Alive) + "/" + Integer.toString(_gameState.PlayerNumber));
+			_txtHunterNum.setText(Integer.toString(_gameState.HunterNumber));
+			_txtTime.setText(DateUtils.formatElapsedTime(_gameState.Time));
+			_txtMoney.setText(Integer.toString(_player.Money));
+			
+			refreshMapViewByGeoPoint(_player.getLocation());
+			
+			_uiUpdateHandler.postDelayed(_uiUpdateProcess, 500);
+		}
+	};
 	
+	private Runnable _syncProcess = new Runnable(){
+		@Override
+		public void run() 
+		{
+			try 
+			{
+				while(true)
+				{
+					String response = SocketConnect.Instance.PlayerInGame(SocketConnect.Instance, SocketConnect.SessionID,  
+							Integer.toString(_player.getLocation().getLatitudeE6()), Integer.toString(_player.getLocation().getLongitudeE6()), false);
+					
+					HashMap<String, Object> values = SocketConnect.parse(response);
+					_gameState.Set(values);
+					
+					// Set player state
+					_player.Money = Integer.parseInt((String)values.get("MONEY"));
+					
+					// Set all players state
+					if(values.containsKey("USER"))
+					{
+						for(String[] userData : ((HashMap<String, String[]>)values.get("USER")).values())
+						{
+							String id = userData[0];
+							Player player;
+							if(!_players.containsKey(id))
+								_players.put(id, new Player(id, 0, userData[1], id == _player.ID));
+							
+							player = _players.get(id);
+							
+							if(getResources().getBoolean(R.bool.Debug))
+							{
+								if(player.Self)
+								{
+									player.setLocation(_player.getLocation());
+								}
+								else
+								{
+									player.set(userData);
+
+									player.setLocation(
+											new GeoPoint(
+													(int)(_player.getLocation().getLatitudeE6() + player.getLocation().getLatitudeE6() * 0.5f),
+													(int)(_player.getLocation().getLongitudeE6() + player.getLocation().getLongitudeE6() * 0.5f))
+											);
+								}
+							}
+							else
+							{
+								player.set(userData);
+							}
+						}
+					}
+					
+					Thread.sleep(500);
+				}
+			} 
+			catch (IOException e) 
+			{
+				e.printStackTrace();
+			}
+			catch (InterruptedException e) 
+			{
+				e.printStackTrace();
+			}
+			catch (Exception e) 
+			{
+				e.printStackTrace();
+			}
+		}
+	};
 }
