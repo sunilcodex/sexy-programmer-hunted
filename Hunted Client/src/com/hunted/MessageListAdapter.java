@@ -96,9 +96,9 @@ public class MessageListAdapter extends BaseAdapter
 
 	public void AddMessage(Message msg)
 	{
-		_messages.add(msg);
+		_messages.addFirst(msg);
 		if(_messages.size() > this.MaxMessages)
-			_messages.poll();
+			_messages.removeLast();
 		
 		notifyDataSetChanged();
 	}
