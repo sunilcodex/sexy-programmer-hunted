@@ -74,6 +74,9 @@ public class GameActivity extends MapActivity
 
 	private UIHelper _uiHelper;
 	
+	private GameAI _gameAI;
+	private boolean _singlePlayerMode = false;
+	
 	@Override
 	protected void onCreate(Bundle icicle)
 	{
@@ -128,11 +131,20 @@ public class GameActivity extends MapActivity
 		
 		// create game components
 		_gameState = new GameState();
-		_players = new HashMap<String, Player>();
 		// FIXME: the following lines is test
 		SocketConnect.SessionID = new String[] { "100", "100" };
 		_player = new Player(SocketConnect.SessionID[1], PlayerType.Player,  getResources().getString(R.string.test_man), true);
+		
+		if(_singlePlayerMode)
+		{
+			_gameAI = new GameAI(_gameState, _player);
+			_gameAI.init();
+		}
+		
+		_players = _singlePlayerMode ? _gameAI.Players : new HashMap<String, Player>();
 		_players.put(_player.ID, _player);
+		
+		
 				
 		LayoutInflater inflater = LayoutInflater.from(this);
 		_mainLayout = (RelativeLayout) inflater.inflate(R.layout.game, null);
@@ -474,9 +486,6 @@ public class GameActivity extends MapActivity
 	
 	private Runnable _uiUpdateProcess = new Runnable()
 	{
-		Random _rand = new Random();
-		int _testMessageCount = 0;
-		
 		public void run()
 		{
 			_txtPlayerNum.setText(Integer.toString(_gameState.Alive) + "/" + Integer.toString(_gameState.PlayerNumber));
@@ -487,7 +496,8 @@ public class GameActivity extends MapActivity
 			refreshMapViewByGeoPoint(_player.getLocation());
 			
 			// Check player status
-			for(Player player: _players.values())
+			HashMap<String, Player> players = _players;
+			for(Player player: players.values())
 			{
 				boolean statusChanged = player.acceptStatusChange();
 				if(statusChanged)
@@ -525,57 +535,66 @@ public class GameActivity extends MapActivity
 			{
 				try 
 				{
-					String response;
-
-					if (_player.PlayerType == PlayerType.Player) 
+					if(!_singlePlayerMode)
 					{
-						response = SocketConnect.Instance.PlayerInGame(SocketConnect.Instance, SocketConnect.SessionID, 
-								Integer.toString(_player.getLocation().getLatitudeE6()), Integer.toString(_player.getLocation().getLongitudeE6()), false);
-					} 
-					else 
-					{
-						response = SocketConnect.Instance.HunterInGame(SocketConnect.Instance, SocketConnect.SessionID, 
-								Integer.toString(_player.getLocation().getLatitudeE6()), Integer.toString(_player.getLocation().getLongitudeE6()));
-					}
-
-					HashMap<String, Object> values = SocketConnect
-							.parse(response);
-					_gameState.Set(values);
-
-					// Set player state
-					_player.Money = Integer.parseInt((String) values
-							.get("MONEY"));
-
-					// Set all players state
-					if (values.containsKey("USER")) {
-						for (String[] userData : ((HashMap<String, String[]>) values.get("USER")).values()) {
-							String id = userData[0];
-							Player player;
-							if (!_players.containsKey(id))
-								_players.put(id, new Player(id, _player.PlayerType, userData[1],
-										id == _player.ID));
-
-							player = _players.get(id);
-
-							if (getResources().getBoolean(R.bool.Debug)) {
-								if (player.Self) 
+						String response;
+	
+						if (_player.PlayerType == PlayerType.Player) 
+						{
+							response = SocketConnect.Instance.PlayerInGame(SocketConnect.Instance, SocketConnect.SessionID, 
+									Integer.toString(_player.getLocation().getLatitudeE6()), Integer.toString(_player.getLocation().getLongitudeE6()), false);
+						} 
+						else 
+						{
+							response = SocketConnect.Instance.HunterInGame(SocketConnect.Instance, SocketConnect.SessionID, 
+									Integer.toString(_player.getLocation().getLatitudeE6()), Integer.toString(_player.getLocation().getLongitudeE6()));
+						}
+	
+						HashMap<String, Object> values = SocketConnect.parse(response);
+						_gameState.Set(values);
+	
+						// Set player state
+						_player.Money = Integer.parseInt((String) values.get("MONEY"));
+	
+						// Set all players state
+						if (values.containsKey("USER")) 
+						{
+							for (String[] userData : ((HashMap<String, String[]>) values.get("USER")).values()) 
+							{
+								String id = userData[0];
+								Player player;
+								if (!_players.containsKey(id))
+									_players.put(id, new Player(id, _player.PlayerType, userData[1],
+											id == _player.ID));
+	
+								player = _players.get(id);
+	
+								if (getResources().getBoolean(R.bool.Debug)) 
 								{
-									player.setLocation(_player.getLocation());
+									if (player.Self) 
+									{
+										player.setLocation(_player.getLocation());
+									} 
+									else 
+									{
+										player.set(userData);
+	
+										player.setLocation(new GeoPoint(
+												(int) (_player.getLocation().getLatitudeE6() + player.getLocation().getLatitudeE6() * 0.5f),
+												(int) (_player.getLocation().getLongitudeE6() + player.getLocation().getLongitudeE6() * 0.5f)));
+									}
 								} 
 								else 
 								{
 									player.set(userData);
-
-									player.setLocation(new GeoPoint(
-											(int) (_player.getLocation().getLatitudeE6() + player.getLocation().getLatitudeE6() * 0.5f),
-											(int) (_player.getLocation().getLongitudeE6() + player.getLocation().getLongitudeE6() * 0.5f)));
 								}
-							} 
-							else 
-							{
-								player.set(userData);
 							}
 						}
+						
+					}
+					else
+					{
+						_gameAI.update();
 					}
 				} 
 				catch (IOException e) 
@@ -590,7 +609,7 @@ public class GameActivity extends MapActivity
 
 				try 
 				{
-					Thread.sleep(500);
+					Thread.sleep(1000);
 				} 
 				catch (InterruptedException e) 
 				{

@@ -33,12 +33,16 @@ public class Player
 		this.Name = values[1];
 		
 		PlayerStatus newStatus = PlayerStatus.values()[Integer.parseInt(values[4])];
-		if(!_statusChanged)
-			_statusChanged = newStatus != this.Status;
-		this.Status = newStatus;
-		
+		this.setStatus(newStatus);
 		
 		this.setLocation(new GeoPoint((int)Float.parseFloat(values[2]), (int)Float.parseFloat(values[3])));
+	}
+	
+	public void setStatus(PlayerStatus status)
+	{
+		if(!_statusChanged)
+			_statusChanged = status != this.Status;
+		this.Status = status;
 	}
 	
 	public void setLocation(GeoPoint loc)
