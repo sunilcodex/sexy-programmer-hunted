@@ -96,6 +96,7 @@ public class GameActivity extends MapActivity
 		_syncThread.start();
 		_uiUpdateHandler.postDelayed(_uiUpdateProcess, 500);
 		
+		mLocationManager01.requestLocationUpdates(strLocationPrivider, 2000, 10, mLocationListener01);
 	}
 	
 	@Override
@@ -104,6 +105,8 @@ public class GameActivity extends MapActivity
 		super.onPause();
 		_uiUpdateHandler.removeCallbacks(_uiUpdateProcess);
 		_syncThread.stop();
+		
+		mLocationManager01.removeUpdates(mLocationListener01);
 	}
 	
 	private void initComponents()
@@ -260,8 +263,7 @@ public class GameActivity extends MapActivity
 				// );
 			}
 		}
-		/* 建立LocationManager物件，監聽Location變更時事件，更新MapView */
-		mLocationManager01.requestLocationUpdates(strLocationPrivider, 2000, 10, mLocationListener01);
+		
 	}
 	
 	public final LocationListener mLocationListener01 = new LocationListener() {
