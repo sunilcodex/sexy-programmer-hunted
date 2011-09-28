@@ -24,8 +24,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.format.DateUtils;
 import android.util.TypedValue;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -109,6 +113,13 @@ public class GameActivity extends MapActivity
 		mLocationManager01.removeUpdates(mLocationListener01);
 	}
 	
+	@Override
+	public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenuInfo menuInfo) 
+	{
+		super.onCreateContextMenu(contextMenu, view, menuInfo);
+		contextMenu.add(0, 0, 0, getResources().getString(R.string.surrender));
+	}
+	
 	private void initComponents()
 	{
 		// create UI helper for ui scaling
@@ -120,7 +131,7 @@ public class GameActivity extends MapActivity
 		_players = new HashMap<String, Player>();
 		// FIXME: the following lines is test
 		SocketConnect.SessionID = new String[] { "100", "100" };
-		_player = new Player(SocketConnect.SessionID[1], PlayerType.Player, "Test Man", true);
+		_player = new Player(SocketConnect.SessionID[1], PlayerType.Player,  getResources().getString(R.string.test_man), true);
 		_players.put(_player.ID, _player);
 				
 		LayoutInflater inflater = LayoutInflater.from(this);
@@ -156,7 +167,7 @@ public class GameActivity extends MapActivity
 		ImageView top = this.getImageView(R.drawable.top);
 		ImageButton button_message = this.getButton(R.drawable.button_message);
 		ImageButton button_status = this.getButton(R.drawable.button_status);
-				
+		button_status.setOnClickListener(_onMenuButtonClick);	
 		// set UI to proper location and size
 		
 		_uiHelper.SetImageView(bottom, 540, 960, 10, 810);
@@ -265,6 +276,8 @@ public class GameActivity extends MapActivity
 		}
 		
 	}
+	
+	
 	
 	public final LocationListener mLocationListener01 = new LocationListener() {
 		@Override
@@ -422,6 +435,7 @@ public class GameActivity extends MapActivity
 		 */
 	}
 
+	
 	@Override
 	protected boolean isRouteDisplayed()
 	{
@@ -449,6 +463,15 @@ public class GameActivity extends MapActivity
 		return image;
 	}
 	
+	private OnClickListener _onMenuButtonClick = new OnClickListener(){
+
+		@Override
+		public void onClick(View arg0) {
+			GameActivity.this.registerForContextMenu(_mainLayout);
+			GameActivity.this.openContextMenu(_mainLayout);
+		}
+	};
+	
 	private Runnable _uiUpdateProcess = new Runnable()
 	{
 		Random _rand = new Random();
@@ -473,10 +496,10 @@ public class GameActivity extends MapActivity
 					switch(player.Status)
 					{
 					case Caught:
-						msg.Message = player.Name + " has been caught.";
+						msg.Message = player.Name + getResources().getString(R.string.been_caught);
 						break;
 					case Surrendered:
-						msg.Message = player.Name + " surrendered.";
+						msg.Message = player.Name + getResources().getString(R.string.surrendered);
 						break;
 					default:
 						continue;
