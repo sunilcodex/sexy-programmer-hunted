@@ -56,6 +56,9 @@ public class GameAI
 						this.Player.getLocation().getLatitudeE6() + _random.nextInt(2000) - 1000, 
 						this.Player.getLocation().getLongitudeE6() + _random.nextInt(2000) - 1000));
 				
+				if(player.PlayerType == PlayerType.Hunter && player.distanceTo(this.Player) < 20)
+					this.Player.setStatus(PlayerStatus.Caught);
+				
 				// set player status
 				//player.setStatus(PlayerStatus.Caught);
 				//player.setStatus(PlayerStatus.Surrendered);

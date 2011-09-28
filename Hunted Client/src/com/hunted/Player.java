@@ -3,6 +3,8 @@ package com.hunted;
 
 import java.io.IOException;
 
+import android.location.Location;
+
 import com.google.android.maps.GeoPoint;
 
 public class Player
@@ -53,6 +55,23 @@ public class Player
 	public GeoPoint getLocation()
 	{
 		return _location;
+	}
+	
+	public double distanceTo(Player player)
+	{
+		GeoPoint p1 = this._location;
+		GeoPoint p2 = player.getLocation();
+		
+		final double DEG_RATE = 1E6;
+
+	    double startLatitude = p1.getLatitudeE6() / DEG_RATE;
+	    double startLongitude= p1.getLongitudeE6() / DEG_RATE;
+	    double endLatitude = p2.getLatitudeE6() / DEG_RATE;
+	    double endLongitude= p2.getLongitudeE6() / DEG_RATE;
+	    float[] result = new float[1];
+	    Location.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude, result);
+
+	    return result[0];
 	}
 	
 	public boolean acceptStatusChange()
