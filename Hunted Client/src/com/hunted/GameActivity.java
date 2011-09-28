@@ -90,7 +90,7 @@ public class GameActivity extends MapActivity
 	private boolean _stopSync;
 	
 	private GameAI _gameAI;
-	private boolean _singlePlayerMode = true;
+	private boolean _singlePlayerMode = false;
 	
 	@Override
 	protected void onCreate(Bundle icicle)
