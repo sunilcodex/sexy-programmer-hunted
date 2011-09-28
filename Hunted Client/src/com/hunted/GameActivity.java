@@ -2,7 +2,6 @@ package com.hunted;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -11,46 +10,30 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
-import com.google.android.maps.Projection;
 
-import android.R.integer;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Canvas.VertexMode;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.LinearGradient;
-import android.graphics.Paint;
-import android.graphics.Paint.Style;
-import android.graphics.Point;
-import android.graphics.Shader.TileMode;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.FaceDetector.Face;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
-import android.provider.Settings.System;
 import android.text.format.DateUtils;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Gallery;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ImageView.ScaleType;
 import com.google.android.maps.MyLocationOverlay;
-import com.google.android.maps.Overlay;
 
 public class GameActivity extends MapActivity
 {
@@ -417,6 +400,8 @@ public class GameActivity extends MapActivity
 	{
 		/* 傳入Location物件，取得GeoPoint地理座標 */
 		currentGeoPoint = getGeoByLocation(location);
+		
+		_player.setLocation(currentGeoPoint);
 
 		/* 更新MapView顯示Google Map */
 		refreshMapViewByGeoPoint(currentGeoPoint);
