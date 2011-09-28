@@ -101,6 +101,7 @@ public class MainActivity extends Activity implements View.OnTouchListener{
 			          
 			          SocketConnect.Instance = new SocketConnect(SocketConnect.DefaultIP, SocketConnect.DefaultPort);
 			          intent.setClass(MainActivity.this, GameActivity.class);
+			          intent.putExtra("single_player", true);
 			          startActivity(intent);
 			        } catch (Exception e)
 			        {

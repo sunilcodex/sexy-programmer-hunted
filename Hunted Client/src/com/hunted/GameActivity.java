@@ -96,6 +96,8 @@ public class GameActivity extends MapActivity
 	protected void onCreate(Bundle icicle)
 	{
 		super.onCreate(icicle);
+		
+		_singlePlayerMode = this.getIntent().getBooleanExtra("single_player", true);
 
 		// basic display setting
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
