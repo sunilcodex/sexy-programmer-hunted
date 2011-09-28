@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -61,6 +62,20 @@ public class MainActivity extends Activity implements View.OnTouchListener{
 		bgimg.setOnTouchListener(this);
 		
 	}
+    
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) 
+    { 
+    	if (keyCode == KeyEvent.KEYCODE_BACK)
+    	{
+    		this.finish();
+    		return true;
+    	}
+    	else
+    	{
+    		return super.onKeyDown(keyCode, event);
+    	}
+    }
     
     @Override
 	public boolean onTouch(View v, MotionEvent event)

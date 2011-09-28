@@ -33,7 +33,7 @@ public class GameAI
 		this.Players.put("005", new Player("005", PlayerType.Player, "Test Player 2", false));
 		this.Players.put("006", new Player("006", PlayerType.Player, "Test Player 3", false));
 		
-		GameState.Time = 10000;
+		GameState.Time = 5;
 		GameState.PlayerNumber = 3;
 		GameState.HunterNumber = 3;
 		GameState.Alive = 3;

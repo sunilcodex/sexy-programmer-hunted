@@ -12,6 +12,8 @@ import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.TrackballGestureDetector;
 
+import android.R.id;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -41,8 +43,10 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ImageView.ScaleType;
@@ -118,8 +122,6 @@ public class GameActivity extends MapActivity
 		
 		mLocationManager01.requestLocationUpdates(strLocationPrivider, 2000, 10, mLocationListener01);
 	}
-	
-	
 	
 	@Override
 	protected void onPause()
@@ -503,6 +505,52 @@ public class GameActivity extends MapActivity
 		}
 	}
 	
+	private final int TIMEOUT_DIALOG = 0;
+	
+	
+	protected Dialog onCreateDialog(int id) 
+	{  
+		if(id == TIMEOUT_DIALOG)
+		{
+			Dialog dialog = new Dialog(this, R.style.TimeoutDialog); 
+			
+			LayoutInflater inflater = LayoutInflater.from(this);
+			LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.timeout_dlg, null);
+			dialog.setContentView(layout);
+
+
+			TextView txtView = (TextView)layout.findViewById(R.id.txtTimeout);
+			txtView.setTextSize(TypedValue.COMPLEX_UNIT_PX, _uiHelper.scaleHeight(1280, 64));
+
+			Button btn = (Button)layout.findViewById(R.id.btnTimeoutOK);
+			btn.setTextSize(TypedValue.COMPLEX_UNIT_PX, _uiHelper.scaleHeight(1280, 30));
+			btn.setHeight(_uiHelper.scaleHeight(1280, 40));
+			btn.setMinimumHeight(_uiHelper.scaleHeight(1280, 40));
+			btn.setTag(dialog);
+			btn.setOnClickListener(_onTimeoutOKClick);
+			
+			int paddingH = _uiHelper.scaleHeight(1280, 40);
+			int paddingW = _uiHelper.scaleHeight(1280, 60);
+			layout.setPadding(paddingW, paddingH, paddingW, paddingH);
+			
+			return dialog;
+		}
+		return null;
+	}
+	
+	private  OnClickListener _onTimeoutOKClick = new OnClickListener(){
+		@Override
+		public void onClick(View v)
+		{
+			((Dialog)v.getTag()).dismiss();
+			
+			// Back to end screen
+			Intent intent = new Intent();
+			intent.setClass(GameActivity.this, GameoverActivity.class);
+			startActivity(intent);
+		}
+	};
+	
 	private OnClickListener _onMenuButtonClick = new OnClickListener(){
 
 		@Override
@@ -550,8 +598,14 @@ public class GameActivity extends MapActivity
 				}
 			}
 
-			
-			_uiUpdateHandler.postDelayed(_uiUpdateProcess, 500);
+			if(_gameState.Time == 0)
+			{
+				GameActivity.this.showDialog(GameActivity.this.TIMEOUT_DIALOG);
+			}
+			else
+			{
+				_uiUpdateHandler.postDelayed(_uiUpdateProcess, 500);
+			}
 		}
 	};
 

@@ -33,6 +33,13 @@ public class UIHelper
 		return height;
 	}
 	
+	public int scaleWidth(int srcResolutionWidth, int srcWidth)
+	{
+		int width = (int)(srcWidth * ((float)_dstResolutionWidth / srcResolutionWidth));
+		
+		return width;
+	}
+	
 	public int[] scalePoint(int srcResolutionWidth, int srcResolutionHeight, int x, int y)
 	{
 		return scaleSize(srcResolutionWidth, srcResolutionHeight, x, y);
