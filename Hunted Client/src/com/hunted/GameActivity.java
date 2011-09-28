@@ -461,12 +461,30 @@ public class GameActivity extends MapActivity
 			
 			refreshMapViewByGeoPoint(_player.getLocation());
 			
-			// FIXME: test message
-			Message msg = new Message();
-			msg.Message = "Test message " + Integer.toString(_testMessageCount++);
-			msg.Time = _rand.nextInt(10000);
-			msg.Icon = BitmapFactory.decodeResource(getResources(), R.drawable.boy_small);
-			GameActivity.this.AddMessage(msg);
+			// Check player status
+			for(Player player: _players.values())
+			{
+				boolean statusChanged = player.acceptStatusChange();
+				if(statusChanged)
+				{
+					Message msg = new Message();
+					switch(player.Status)
+					{
+					case Caught:
+						msg.Message = player.Name + " has been caught.";
+						break;
+					case Surrendered:
+						msg.Message = player.Name + " surrendered.";
+						break;
+					default:
+						continue;
+					}
+					
+					msg.Time = _gameState.Time;
+					msg.Icon = BitmapFactory.decodeResource(getResources(), R.drawable.boy_small);
+					GameActivity.this.AddMessage(msg);
+				}
+			}
 
 			
 			_uiUpdateHandler.postDelayed(_uiUpdateProcess, 500);

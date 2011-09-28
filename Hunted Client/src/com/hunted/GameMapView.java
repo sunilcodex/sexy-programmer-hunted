@@ -95,9 +95,26 @@ public class GameMapView extends View
 	        Point screenPts = new Point();
 	        projection.toPixels(player.getLocation(), screenPts);
 	        
-	        Bitmap bmp = BitmapFactory.decodeResource(this.getResources(), 
-	        		player.PlayerType == PlayerType.Player ? R.drawable.boy_small : R.drawable.ninjaboy2_small
-	        );           
+	        int imgId;
+	        if(player.PlayerType == PlayerType.Player)
+	        {
+	        	switch(player.Status)
+	        	{
+	        	case Caught:
+	        		imgId = R.drawable.boy_small_x;
+	        		break;
+	        	case Surrendered:
+	        		imgId = R.drawable.boy_small_f;
+	        		break;
+	        	default:
+	        		imgId = R.drawable.boy_small;
+	        		break;
+	        	}
+	        }
+	        else
+	        	imgId = R.drawable.ninjaboy2_small;
+	        	
+	        Bitmap bmp = BitmapFactory.decodeResource(this.getResources(), imgId);           
 	        canvas.drawBitmap(bmp, screenPts.x - bmp.getWidth() / 2, screenPts.y - bmp.getHeight(), null);
 	        canvas.drawText(player.Name, screenPts.x - paint.measureText(player.Name) / 2, screenPts.y + paint.getTextSize(), strokPaint);
 	        canvas.drawText(player.Name, screenPts.x - paint.measureText(player.Name) / 2, screenPts.y + paint.getTextSize(), paint);

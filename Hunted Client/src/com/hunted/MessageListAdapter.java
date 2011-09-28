@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
-
+import android.os.Handler;
 import android.content.Context;
 import android.text.format.DateUtils;
 import android.util.TypedValue;
@@ -19,15 +19,18 @@ import android.widget.TextView;
 public class MessageListAdapter extends BaseAdapter
 {
 	public int MaxMessages = 4;
+	public int MessageAlive = 30;
 	private LinkedList<Message> _messages = new LinkedList<Message>();
 	private Context _context;
 	private int _textSize;
 	public int ItemHeight;
 	public int ItemPadding;
+	private Handler _removeMsgHandler;
 	
 	public MessageListAdapter(Context context)
 	{
 		_context = context;
+		_removeMsgHandler = new Handler();
 	}
 	
 	public void setTextSize(int pxSize)
@@ -96,12 +99,24 @@ public class MessageListAdapter extends BaseAdapter
 
 	public void AddMessage(Message msg)
 	{
+		_removeMsgHandler.postDelayed(_removeMsgProcess, MessageAlive * 1000);
 		_messages.addFirst(msg);
 		if(_messages.size() > this.MaxMessages)
 			_messages.removeLast();
 		
 		notifyDataSetChanged();
 	}
+	
+	private Runnable _removeMsgProcess = new Runnable()
+	{
+		@Override
+		public void run() 
+		{
+			_messages.removeLast();
+			notifyDataSetChanged();
+		}
+		
+	};
 
 
 	class ItemViewHolder
