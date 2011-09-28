@@ -12,8 +12,10 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class MessageListAdapter extends BaseAdapter
@@ -80,9 +82,20 @@ public class MessageListAdapter extends BaseAdapter
 			item.Time.setTextSize(TypedValue.COMPLEX_UNIT_PX, _textSize);
 			
 			itemView.setTag(item);
+			
+			itemView.setPadding(this.ItemPadding, this.ItemPadding, this.ItemPadding, this.ItemPadding);
 			itemView.setMinimumHeight(ItemHeight);
 			item.Icon.setAdjustViewBounds(true);
 			item.Icon.setMaxHeight(ItemHeight - itemView.getPaddingTop() - itemView.getPaddingBottom());
+			
+			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)item.Message.getLayoutParams();
+			params.height =	ItemHeight - itemView.getPaddingTop() - itemView.getPaddingBottom();
+			item.Message.setLayoutParams(params);
+			
+			params = (RelativeLayout.LayoutParams)item.Time.getLayoutParams();
+			params.height =	ItemHeight - itemView.getPaddingTop() - itemView.getPaddingBottom();
+			item.Time.setLayoutParams(params);
+			
 		}
 		else
 		{

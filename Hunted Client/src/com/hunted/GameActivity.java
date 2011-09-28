@@ -10,10 +10,14 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
+import com.google.android.maps.TrackballGestureDetector;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -22,16 +26,21 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract.Contacts.Data;
 import android.text.format.DateUtils;
 import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -73,9 +82,11 @@ public class GameActivity extends MapActivity
 	private MessageListView _messageListView;
 
 	private UIHelper _uiHelper;
+	private final int MENU_REQUEST = 0;
+	private boolean _stopSync;
 	
 	private GameAI _gameAI;
-	private boolean _singlePlayerMode = false;
+	private boolean _singlePlayerMode = true;
 	
 	@Override
 	protected void onCreate(Bundle icicle)
@@ -86,9 +97,7 @@ public class GameActivity extends MapActivity
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setRequestedOrientation(1);
-		
-		// Initialise sync thread
-		_syncThread = new Thread(_syncProcess);
+
 		_uiUpdateHandler = new Handler();
 		
 		this.initComponents();
@@ -100,11 +109,17 @@ public class GameActivity extends MapActivity
 	{
 		super.onResume();
 		
+		// Initialise sync thread
+		_stopSync = false;
+		_syncThread = new Thread(_syncProcess);
 		_syncThread.start();
+		
 		_uiUpdateHandler.postDelayed(_uiUpdateProcess, 500);
 		
 		mLocationManager01.requestLocationUpdates(strLocationPrivider, 2000, 10, mLocationListener01);
 	}
+	
+	
 	
 	@Override
 	protected void onPause()
@@ -112,15 +127,9 @@ public class GameActivity extends MapActivity
 		super.onPause();
 		_uiUpdateHandler.removeCallbacks(_uiUpdateProcess);
 		_syncThread.stop();
+		_stopSync = true;
 		
 		mLocationManager01.removeUpdates(mLocationListener01);
-	}
-	
-	@Override
-	public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenuInfo menuInfo) 
-	{
-		super.onCreateContextMenu(contextMenu, view, menuInfo);
-		contextMenu.add(0, 0, 0, getResources().getString(R.string.surrender));
 	}
 	
 	private void initComponents()
@@ -144,7 +153,6 @@ public class GameActivity extends MapActivity
 		_players = _singlePlayerMode ? _gameAI.Players : new HashMap<String, Player>();
 		_players.put(_player.ID, _player);
 		
-		
 				
 		LayoutInflater inflater = LayoutInflater.from(this);
 		_mainLayout = (RelativeLayout) inflater.inflate(R.layout.game, null);
@@ -156,7 +164,8 @@ public class GameActivity extends MapActivity
 		_txtMoney = (TextView) _mainLayout.findViewById(R.id.textView4);
 		mMapView01 = (MapView) _mainLayout.findViewById(R.id.myMapView1);
 		_messageListView = new MessageListView(this);
-
+		
+		
 		// Create players and map
 		GameMapView gameMapView = new GameMapView(this, mMapView01, _player.PlayerType, _uiHelper, _players);
 		_mainLayout.addView(gameMapView);
@@ -167,10 +176,11 @@ public class GameActivity extends MapActivity
 		MessageListAdapter msgListAdapter = (MessageListAdapter)_messageListView.getAdapter();
 		
 		msgListAdapter.setTextSize(_uiHelper.scaleHeight(1280, 35));
-		msgListAdapter.ItemHeight = _uiHelper.scaleHeight(1280, 80);
+		msgListAdapter.ItemHeight = _uiHelper.scaleHeight(1280, 90);
 		msgListAdapter.ItemPadding = _uiHelper.scaleHeight(1280, 10);
 		
 		_mainLayout.addView(_messageListView);
+		
 		
 		
 		
@@ -288,7 +298,6 @@ public class GameActivity extends MapActivity
 		}
 		
 	}
-	
 	
 	
 	public final LocationListener mLocationListener01 = new LocationListener() {
@@ -447,7 +456,6 @@ public class GameActivity extends MapActivity
 		 */
 	}
 
-	
 	@Override
 	protected boolean isRouteDisplayed()
 	{
@@ -475,12 +483,33 @@ public class GameActivity extends MapActivity
 		return image;
 	}
 	
+	@Override 
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) 
+	{ 
+		super.onActivityResult(requestCode, resultCode, data);
+		if(requestCode == MENU_REQUEST && resultCode==RESULT_OK)
+		{  
+			// check selected menu
+			int selectedItem = data.getExtras().getInt("selected_menu_id");
+			
+			switch (selectedItem) 
+			{  
+			case GameMenuAdapter.MENU_SURRENDER:
+				_player.Surrender();
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	
 	private OnClickListener _onMenuButtonClick = new OnClickListener(){
 
 		@Override
 		public void onClick(View arg0) {
-			GameActivity.this.registerForContextMenu(_mainLayout);
-			GameActivity.this.openContextMenu(_mainLayout);
+			Intent intent = new Intent();
+			intent.setClass(GameActivity.this, GameMenuActivity.class);
+			startActivityForResult(intent, MENU_REQUEST);
 		}
 	};
 	
@@ -506,10 +535,10 @@ public class GameActivity extends MapActivity
 					switch(player.Status)
 					{
 					case Caught:
-						msg.Message = player.Name + getResources().getString(R.string.been_caught);
+						msg.Message = player.Name + " " + getResources().getString(R.string.been_caught);
 						break;
 					case Surrendered:
-						msg.Message = player.Name + getResources().getString(R.string.surrendered);
+						msg.Message = player.Name + " " + getResources().getString(R.string.surrendered);
 						break;
 					default:
 						continue;
@@ -525,16 +554,18 @@ public class GameActivity extends MapActivity
 			_uiUpdateHandler.postDelayed(_uiUpdateProcess, 500);
 		}
 	};
-	
+
 	private Runnable _syncProcess = new Runnable(){
 		@Override
 		public void run() 
 		{
-
 			while (true) 
 			{
 				try 
 				{
+					if(_stopSync)
+						return;
+					
 					if(!_singlePlayerMode)
 					{
 						String response;
@@ -542,7 +573,7 @@ public class GameActivity extends MapActivity
 						if (_player.PlayerType == PlayerType.Player) 
 						{
 							response = SocketConnect.Instance.PlayerInGame(SocketConnect.Instance, SocketConnect.SessionID, 
-									Integer.toString(_player.getLocation().getLatitudeE6()), Integer.toString(_player.getLocation().getLongitudeE6()), false);
+									Integer.toString(_player.getLocation().getLatitudeE6()), Integer.toString(_player.getLocation().getLongitudeE6()), _player.Status == PlayerStatus.Surrendered);
 						} 
 						else 
 						{

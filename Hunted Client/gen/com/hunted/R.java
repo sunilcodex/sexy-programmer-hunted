@@ -14,7 +14,7 @@ public final class R {
         public static final int Debug=0x7f040000;
     }
     public static final class drawable {
-        public static final int blue=0x7f020022;
+        public static final int blue=0x7f020023;
         public static final int bottom=0x7f020000;
         public static final int botton=0x7f020001;
         public static final int botton2=0x7f020002;
@@ -30,47 +30,50 @@ public final class R {
         public static final int button_single_player=0x7f02000c;
         public static final int button_single_player2=0x7f02000d;
         public static final int button_status=0x7f02000e;
-        public static final int darkgray=0x7f020020;
+        public static final int darkgray=0x7f020021;
         public static final int dialog_bg=0x7f02000f;
-        public static final int hubter=0x7f020010;
-        public static final int hunter_top=0x7f020011;
-        public static final int icon=0x7f020012;
-        public static final int loading=0x7f020013;
-        public static final int ninjaboy2=0x7f020014;
-        public static final int ninjaboy2_small=0x7f020015;
-        public static final int old_title_background=0x7f020016;
-        public static final int player=0x7f020017;
-        public static final int radar=0x7f020018;
-        public static final int radar2=0x7f020019;
-        public static final int radar_red=0x7f02001a;
-        public static final int ready=0x7f02001b;
-        public static final int start=0x7f02001c;
-        public static final int title_background=0x7f02001d;
-        public static final int top=0x7f02001e;
-        public static final int touch=0x7f02001f;
-        public static final int white=0x7f020021;
+        public static final int flag=0x7f020010;
+        public static final int hubter=0x7f020011;
+        public static final int hunter_top=0x7f020012;
+        public static final int icon=0x7f020013;
+        public static final int loading=0x7f020014;
+        public static final int ninjaboy2=0x7f020015;
+        public static final int ninjaboy2_small=0x7f020016;
+        public static final int old_title_background=0x7f020017;
+        public static final int player=0x7f020018;
+        public static final int radar=0x7f020019;
+        public static final int radar2=0x7f02001a;
+        public static final int radar_red=0x7f02001b;
+        public static final int ready=0x7f02001c;
+        public static final int start=0x7f02001d;
+        public static final int title_background=0x7f02001e;
+        public static final int top=0x7f02001f;
+        public static final int touch=0x7f020020;
+        public static final int white=0x7f020022;
     }
     public static final class id {
-        public static final int TableRow1=0x7f080010;
-        public static final int button_start=0x7f08000c;
-        public static final int cancel=0x7f08000f;
-        public static final int cancel2=0x7f080009;
-        public static final int editText1=0x7f080007;
-        public static final int editText2=0x7f08000e;
-        public static final int icon=0x7f080014;
-        public static final int icon2=0x7f080016;
-        public static final int imageView1=0x7f08000a;
-        public static final int itemSurrender=0x7f080017;
+        public static final int TableRow1=0x7f080008;
+        public static final int button_start=0x7f08000f;
+        public static final int cancel=0x7f080012;
+        public static final int cancel2=0x7f08000d;
+        public static final int editText1=0x7f08000b;
+        public static final int editText2=0x7f080011;
+        public static final int game_menu_title=0x7f08000a;
+        public static final int icon=0x7f080016;
+        public static final int icon2=0x7f080018;
+        public static final int imageView1=0x7f08000e;
+        public static final int itemSurrender=0x7f080019;
+        public static final int listMenu=0x7f080007;
         public static final int mainLayout=0x7f080000;
-        public static final int message=0x7f080012;
-        public static final int message_icon=0x7f080011;
-        public static final int message_time=0x7f080013;
+        public static final int message=0x7f080014;
+        public static final int message_icon=0x7f080013;
+        public static final int message_time=0x7f080015;
         public static final int myMapView1=0x7f080001;
         public static final int myTextView1=0x7f080002;
-        public static final int ok=0x7f08000d;
-        public static final int ok2=0x7f080008;
-        public static final int relativeLayout1=0x7f08000b;
-        public static final int text=0x7f080015;
+        public static final int ok=0x7f080010;
+        public static final int ok2=0x7f08000c;
+        public static final int relativeLayout1=0x7f080009;
+        public static final int text=0x7f080017;
         public static final int textView1=0x7f080003;
         public static final int textView2=0x7f080004;
         public static final int textView3=0x7f080006;
@@ -78,12 +81,14 @@ public final class R {
     }
     public static final class layout {
         public static final int game=0x7f030000;
-        public static final int host_dialog=0x7f030001;
-        public static final int join_game=0x7f030002;
-        public static final int joindialog=0x7f030003;
-        public static final int main=0x7f030004;
-        public static final int message_item=0x7f030005;
-        public static final int row=0x7f030006;
+        public static final int game_menu=0x7f030001;
+        public static final int game_menu_item=0x7f030002;
+        public static final int host_dialog=0x7f030003;
+        public static final int join_game=0x7f030004;
+        public static final int joindialog=0x7f030005;
+        public static final int main=0x7f030006;
+        public static final int message_item=0x7f030007;
+        public static final int row=0x7f030008;
     }
     public static final class menu {
         public static final int game_menu=0x7f070000;

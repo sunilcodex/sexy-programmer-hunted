@@ -42,9 +42,17 @@ public class Player
 	
 	public void setStatus(PlayerStatus status)
 	{
-		if(!_statusChanged)
-			_statusChanged = status != this.Status;
-		this.Status = status;
+		if(this.Status == PlayerStatus.Alive)
+		{
+			if(!_statusChanged)
+				_statusChanged = status != this.Status;
+			this.Status = status;
+		}
+	}
+	
+	public void Surrender()
+	{
+		this.setStatus(PlayerStatus.Surrendered);	
 	}
 	
 	public void setLocation(GeoPoint loc)

@@ -16,5 +16,6 @@
         <activity android:name=".JoinGameActivity" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"/>
         <activity android:name=".MainMenu" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"/>
         <activity android:name=".GameActivity" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"/>
+         <activity android:name=".GameMenuActivity" android:theme="@android:style/Theme.Panel"/>
     </application>
 </manifest>
