@@ -13,9 +13,12 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.TrackballGestureDetector;
 
 import android.R.id;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -91,7 +94,7 @@ public class GameActivity extends MapActivity
 	
 	private GameAI _gameAI;
 	private boolean _singlePlayerMode = false;
-	
+	private boolean _initMapSuccessed;
 	@Override
 	protected void onCreate(Bundle icicle)
 	{
@@ -107,7 +110,7 @@ public class GameActivity extends MapActivity
 		_uiUpdateHandler = new Handler();
 		
 		this.initComponents();
-		this.initMap();
+		_initMapSuccessed = this.initMap();
 	}
 
 	@Override
@@ -115,25 +118,32 @@ public class GameActivity extends MapActivity
 	{
 		super.onResume();
 		
-		// Initialise sync thread
-		_stopSync = false;
-		_syncThread = new Thread(_syncProcess);
-		_syncThread.start();
-		
-		_uiUpdateHandler.postDelayed(_uiUpdateProcess, 500);
-		
-		mLocationManager01.requestLocationUpdates(strLocationPrivider, 2000, 10, mLocationListener01);
+		if(_initMapSuccessed)
+		{
+			// Initialise sync thread
+			_stopSync = false;
+			_syncThread = new Thread(_syncProcess);
+			_syncThread.start();
+			
+			_uiUpdateHandler.postDelayed(_uiUpdateProcess, 500);
+			
+			mLocationManager01.requestLocationUpdates(strLocationPrivider, 2000, 10, mLocationListener01);
+		}
 	}
 	
 	@Override
 	protected void onPause()
 	{
 		super.onPause();
-		_uiUpdateHandler.removeCallbacks(_uiUpdateProcess);
-		_syncThread.stop();
-		_stopSync = true;
 		
-		mLocationManager01.removeUpdates(mLocationListener01);
+		if(_initMapSuccessed)
+		{
+			_uiUpdateHandler.removeCallbacks(_uiUpdateProcess);
+			_syncThread.stop();
+			_stopSync = true;
+			
+			mLocationManager01.removeUpdates(mLocationListener01);
+		}
 	}
 	
 	private void initComponents()
@@ -144,9 +154,15 @@ public class GameActivity extends MapActivity
 		
 		// create game components
 		_gameState = new GameState();
-		// FIXME: the following lines is test
-		SocketConnect.SessionID = new String[] { "100", "100" };
-		_player = new Player(SocketConnect.SessionID[1], PlayerType.Player,  getResources().getString(R.string.test_man), true);
+		
+		// get player name
+		String playerName = this.getIntent().getStringExtra("player_name");
+		
+		if(_singlePlayerMode)
+			SocketConnect.SessionID = new String[] { "100", "100" };	// create fake session id
+				
+		// create player
+		_player = new Player(SocketConnect.SessionID[1], PlayerType.Player,  playerName, true);
 		
 		if(_singlePlayerMode)
 		{
@@ -154,6 +170,9 @@ public class GameActivity extends MapActivity
 			_gameAI.init();
 		}
 		
+		
+		
+		// create player collection
 		_players = _singlePlayerMode ? _gameAI.Players : new HashMap<String, Player>();
 		_players.put(_player.ID, _player);
 		
@@ -263,7 +282,7 @@ public class GameActivity extends MapActivity
 		_messageListView.setLayoutParams(params);
 	}
 	
-	private void initMap()
+	private boolean initMap()
 	{
 		mMapView01.setClickable(false);
 		mMapView01.setSatellite(true);
@@ -293,14 +312,23 @@ public class GameActivity extends MapActivity
 			}
 			else
 			{
-				// FIXME
-				// mTextView01.setText
-				// (
-				// getResources().getText(R.string.str_err_location).toString()
-				// );
+				// show alert dialog
+				Builder alertDlgBuilder = new AlertDialog.Builder(this);
+				alertDlgBuilder.setTitle(this.getResources().getString(R.string.error));
+				alertDlgBuilder.setMessage(this.getResources().getString(R.string.loc_provider_not_found));
+				alertDlgBuilder.setNeutralButton(this.getResources().getString(R.string.ok), new DialogInterface.OnClickListener(){
+					@Override
+					public void onClick(DialogInterface arg0, int arg1)
+					{
+						GameActivity.this.finish();
+					}
+				});
+				alertDlgBuilder.show();
+				return false;
 			}
 		}
 		
+		return true;
 	}
 	
 	
@@ -308,8 +336,6 @@ public class GameActivity extends MapActivity
 		@Override
 		public void onLocationChanged(Location location)
 		{
-			// TODO Auto-generated method stub
-
 			/* 當手機收到位置變更時，將location傳入取得地理座標 */
 			processLocationUpdated(location);
 		}
@@ -317,21 +343,17 @@ public class GameActivity extends MapActivity
 		@Override
 		public void onProviderDisabled(String provider)
 		{
-			// TODO Auto-generated method stub
 			/* 當Provider已離開服務範圍時 */
 		}
 
 		@Override
 		public void onProviderEnabled(String provider)
 		{
-			// TODO Auto-generated method stub
 		}
 
 		@Override
 		public void onStatusChanged(String provider, int status, Bundle extras)
 		{
-			// TODO Auto-generated method stub
-
 		}
 	};
 
@@ -463,7 +485,6 @@ public class GameActivity extends MapActivity
 	@Override
 	protected boolean isRouteDisplayed()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 

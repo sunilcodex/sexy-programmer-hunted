@@ -85,38 +85,29 @@ public class MainActivity extends Activity implements View.OnTouchListener{
 		final ImageButton btnNewGame = this.getButton(R.drawable.button_new_game);
 		final ImageButton btnJoinGame = this.getButton(R.drawable.button_join_game);
 		
-		btnSinglePlayer.setOnTouchListener(new ImageButton.OnTouchListener(){
-			@Override  
-			 public boolean onTouch(View v, MotionEvent event) {
-						
-				if(event.getAction() == MotionEvent.ACTION_DOWN){
+		btnSinglePlayer.setOnTouchListener(new ImageButton.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event)
+			{
+
+				if (event.getAction() == MotionEvent.ACTION_DOWN)
+				{
 					btnSinglePlayer.setImageResource(R.drawable.button_single_player2);
-					
-					// TODO Auto-generated method stub
-			        try
-			        {
-			          Intent intent = new Intent();
-			          
-			          //FIXME: Remove the following lines
-			          
-			          SocketConnect.Instance = new SocketConnect(SocketConnect.DefaultIP, SocketConnect.DefaultPort);
-			          intent.setClass(MainActivity.this, GameActivity.class);
-			          intent.putExtra("single_player", true);
-			          startActivity(intent);
-			        } catch (Exception e)
-			        {
-			          // Log.e(TAG, e.toString());
-			         // e.printStackTrace();
-			          //TextView01.setText("請先安裝EX03_25_B這支程式!");
-			        }
-					
-					
+
+					Intent intent = new Intent();
+					//SocketConnect.Instance = new SocketConnect(SocketConnect.DefaultIP, SocketConnect.DefaultPort);
+					intent.setClass(MainActivity.this, GameActivity.class);
+					intent.putExtra("single_player", true);
+					intent.putExtra("player_name", MainActivity.this.getResources().getString(R.string.test_man));
+					startActivity(intent);
+
 				}
-				else if(event.getAction() == MotionEvent.ACTION_UP){
+				else if (event.getAction() == MotionEvent.ACTION_UP)
+				{
 					btnSinglePlayer.setImageResource(R.drawable.button_single_player);
 				}
-				 return false;  
-		}
+				return false;
+			}
     });
 
 		//New game dialog

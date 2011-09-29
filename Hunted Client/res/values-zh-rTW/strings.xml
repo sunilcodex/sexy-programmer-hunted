@@ -6,4 +6,6 @@
     <string name="test_man">測試玩家</string>
     <string name="timeout">時間到!!</string>
     <string name="ok">確定</string>
+    <string name="error">錯誤</string>
+    <string name="loc_provider_not_found">找不到Location Provider，請移動到能夠接收GPS訊號的地方後再試一次</string>
 </resources>

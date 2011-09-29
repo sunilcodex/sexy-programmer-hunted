@@ -8,4 +8,6 @@
     <string name="test_man">Test Man</string>
     <string name="timeout">Timeout!!</string>
     <string name="ok">OK</string>
+    <string name="error">Error</string>
+    <string name="loc_provider_not_found">Location provider not found, Please moving to open sky where can get GPS signal and try again</string>
 </resources>
