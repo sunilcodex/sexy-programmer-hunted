@@ -10,4 +10,7 @@
     <string name="ok">OK</string>
     <string name="error">Error</string>
     <string name="loc_provider_not_found">Location provider not found, Please moving to open sky where can get GPS signal and try again</string>
+    <string name="alert">Alert</string>
+    <string name="ask_exit">Do you want to quit the game?</string>
+    <string name="cancel">Cancel</string>
 </resources>

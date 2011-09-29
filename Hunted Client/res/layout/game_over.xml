@@ -4,6 +4,6 @@
   android:orientation="vertical"
   android:layout_width="match_parent"
   android:layout_height="match_parent">
-    <ImageView android:src="@drawable/title_background" android:id="@+id/imageView1" android:layout_height="fill_parent" android:layout_width="fill_parent" android:scaleType="fitXY"></ImageView>
+    <ImageView android:src="@drawable/title_background" android:layout_height="fill_parent" android:layout_width="fill_parent" android:scaleType="fitXY" android:id="@+id/imgGameover"></ImageView>
     
 </LinearLayout>
