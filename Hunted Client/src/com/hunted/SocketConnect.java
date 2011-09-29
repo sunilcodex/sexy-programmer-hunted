@@ -222,9 +222,9 @@ public class SocketConnect {
 			return "ClientReady Failed";
 	}
 
-	public String HunterInGame(SocketConnect client, String[] ID)
+	public String HunterInGame(SocketConnect client, String[] ID, String gpsX, String gpsY)
 			throws IOException {
-		client.send("GET:" + ID[0] + "," + ID[1] + "\n" + "GPS:123.0,456.0"
+		client.send("GET:" + ID[0] + "," + ID[1] + "\n" + "GPS:" + gpsX + "," + gpsY
 				+ "\n");
 		String response = client.recv();
 		Pattern p = Pattern.compile("^STATE_HUNTER_IN_GAME\\n.*",

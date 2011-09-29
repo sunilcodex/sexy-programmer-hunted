@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/TableRow1"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent" android:weightSum="1" android:padding="10sp" android:background="#DDBBBBBB">
+    <ImageView android:layout_alignParentLeft="true" android:layout_height="fill_parent" android:id="@+id/message_icon" android:layout_width="wrap_content" android:src="@drawable/boy" android:layout_marginRight="10sp" android:scaleType="fitCenter"></ImageView>
+    <TextView android:layout_toRightOf="@+id/message_icon" android:layout_width="wrap_content" android:layout_height="fill_parent" android:id="@+id/message" android:text="message" android:gravity="center_vertical" android:layout_toLeftOf="@+id/message_time" android:textColor="#000000"></TextView>
+    <TextView android:id="@+id/message_time" android:text="00:00:00" android:layout_width="wrap_content" android:gravity="right|center_vertical" android:layout_height="fill_parent" android:layout_alignParentRight="true" android:textColor="#000000"></TextView>
+    
+</RelativeLayout>

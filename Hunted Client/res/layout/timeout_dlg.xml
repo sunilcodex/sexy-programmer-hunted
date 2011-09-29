@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent" android:background="#CCFFFFFF" android:orientation="vertical">
+    <LinearLayout android:id="@+id/linearLayout1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="10sp">
+        <ImageView android:src="@drawable/time" android:id="@+id/imgTime" android:layout_width="wrap_content" android:layout_height="fill_parent"></ImageView>
+        <TextView android:textColor="#000000" android:layout_marginLeft="10sp" android:text="@string/timeout" android:gravity="center_vertical|center_horizontal" android:layout_width="wrap_content" android:id="@+id/txtTimeout" android:layout_height="fill_parent"></TextView>
+    </LinearLayout>
+    <Button android:text="@string/ok" android:layout_width="fill_parent" android:id="@+id/btnTimeoutOK" android:layout_height="wrap_content"></Button>
+    
+</LinearLayout>

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -63,6 +64,20 @@ public class MainActivity extends Activity implements View.OnTouchListener{
 	}
     
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) 
+    { 
+    	if (keyCode == KeyEvent.KEYCODE_BACK)
+    	{
+    		this.finish();
+    		return true;
+    	}
+    	else
+    	{
+    		return super.onKeyDown(keyCode, event);
+    	}
+    }
+    
+    @Override
 	public boolean onTouch(View v, MotionEvent event)
 	{
 		// create main buttons
@@ -83,11 +98,10 @@ public class MainActivity extends Activity implements View.OnTouchListener{
 			          Intent intent = new Intent();
 			          
 			          //FIXME: Remove the following lines
-			          SocketConnect.SessionID = new String[] { "100", "100" };
+			          
 			          SocketConnect.Instance = new SocketConnect(SocketConnect.DefaultIP, SocketConnect.DefaultPort);
-			          //HashMap<String,String> map = SocketConnect.parse("STATE_PLAYER_IN_GAME\nPLAYER:10\nHUNTER:5\nCAUGHT:1\nTIME:30:00\nMONEY:100\nUSER:001,Player1:100.0,200.0\nUSER:002,Player2:300.0,400.0\n");
-			          String s = SocketConnect.Instance.PlayerInGame(SocketConnect.Instance, SocketConnect.SessionID, "1", "1", false);
 			          intent.setClass(MainActivity.this, GameActivity.class);
+			          intent.putExtra("single_player", true);
 			          startActivity(intent);
 			        } catch (Exception e)
 			        {

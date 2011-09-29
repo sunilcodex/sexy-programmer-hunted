@@ -25,14 +25,16 @@ public class GameMapView extends View
 	float _angle = 0;
 	long _lastDrawTime;
 	HashMap<String,Player> _players;
+	int _viewType;
 	
-	public GameMapView(Context context, MapView mapview, UIHelper uiHelper, HashMap<String,Player> players)
+	public GameMapView(Context context, MapView mapview, int viewType, UIHelper uiHelper, HashMap<String,Player> players)
 	{
 		super(context);
 		_mapview = mapview;
 		_players = players;
 		_uiHelper = uiHelper;
-		_textureBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.radar);
+		_viewType = viewType;
+		_textureBitmap = BitmapFactory.decodeResource(this.getResources(), viewType == PlayerType.Player ? R.drawable.radar : R.drawable.radar_red);
 		_lastDrawTime = SystemClock.currentThreadTimeMillis();
 	}
 
@@ -42,7 +44,11 @@ public class GameMapView extends View
 	{
 		// Draw radar view
 		Paint paint = new Paint();
-		paint.setARGB(100, 77, 153, 89);
+		if(_viewType == PlayerType.Player)
+			paint.setARGB(100, 77, 153, 89);
+		else
+			paint.setARGB(100, 178, 54, 54);
+		
 		paint.setStyle(Style.FILL);
 		canvas.drawRect(this.getLeft(), this.getTop(),this.getRight(),this.getBottom(), paint);
 		
@@ -89,9 +95,26 @@ public class GameMapView extends View
 	        Point screenPts = new Point();
 	        projection.toPixels(player.getLocation(), screenPts);
 	        
-	        Bitmap bmp = BitmapFactory.decodeResource(this.getResources(), 
-	        		player.PlayerType == PlayerType.Player ? R.drawable.boy_small : R.drawable.ninjaboy2_small
-	        );           
+	        int imgId;
+	        if(player.PlayerType == PlayerType.Player)
+	        {
+	        	switch(player.Status)
+	        	{
+	        	case Caught:
+	        		imgId = R.drawable.boy_small_x;
+	        		break;
+	        	case Surrendered:
+	        		imgId = R.drawable.boy_small_f;
+	        		break;
+	        	default:
+	        		imgId = R.drawable.boy_small;
+	        		break;
+	        	}
+	        }
+	        else
+	        	imgId = R.drawable.ninjaboy2_small;
+	        	
+	        Bitmap bmp = BitmapFactory.decodeResource(this.getResources(), imgId);           
 	        canvas.drawBitmap(bmp, screenPts.x - bmp.getWidth() / 2, screenPts.y - bmp.getHeight(), null);
 	        canvas.drawText(player.Name, screenPts.x - paint.measureText(player.Name) / 2, screenPts.y + paint.getTextSize(), strokPaint);
 	        canvas.drawText(player.Name, screenPts.x - paint.measureText(player.Name) / 2, screenPts.y + paint.getTextSize(), paint);
