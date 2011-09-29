@@ -621,7 +621,7 @@ public class GameActivity extends MapActivity
 				}
 			}
 
-			if(_gameState.Time == 0)
+			if(_gameState.Time == 0 || _gameState.Alive == 0)
 			{
 				GameActivity.this.showDialog(GameActivity.this.TIMEOUT_DIALOG);
 			}

@@ -1,6 +1,11 @@
 package com.hunted;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -89,7 +94,9 @@ public class GameMapView extends View
         strokPaint.setStyle(Paint.Style.STROKE);
         strokPaint.setStrokeWidth(_uiHelper.scaleHeight(1280, 7));
         
-		for (Player player : _players.values())
+        List<Player> players = sortPlayer(_players);
+
+		for (Player player : players)
 		{
 			Projection projection = _mapview.getProjection();
 	        Point screenPts = new Point();
@@ -123,4 +130,19 @@ public class GameMapView extends View
 		
 		invalidate();
 	}
+	
+	public static List<Player> sortPlayer(final HashMap<String, Player> map) 
+	{
+        List<Player> keys = new ArrayList<Player>();
+        keys.addAll(map.values());
+        
+        Collections.sort(keys, new Comparator<Player>() {
+			@Override
+			public int compare(Player p1, Player p2)
+			{
+				return ((Comparable)p2.getLocation().getLatitudeE6()).compareTo(((Comparable)p1.getLocation().getLatitudeE6()));
+			}
+        });
+        return keys;
+    }
 }
