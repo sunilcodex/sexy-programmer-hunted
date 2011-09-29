@@ -158,6 +158,9 @@ public class GameActivity extends MapActivity
 		// get player name
 		String playerName = this.getIntent().getStringExtra("player_name");
 		
+		// get player type
+		int playerType = this.getIntent().getIntExtra("player_type", PlayerType.Player);
+		
 		if(_singlePlayerMode)
 			SocketConnect.SessionID = new String[] { "100", "100" };	// create fake session id
 				
