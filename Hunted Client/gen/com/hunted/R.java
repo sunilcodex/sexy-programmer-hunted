@@ -105,7 +105,9 @@ public final class R {
     public static final class string {
         public static final int app_name=0x7f050001;
         public static final int been_caught=0x7f050002;
+        public static final int error=0x7f050008;
         public static final int hello=0x7f050000;
+        public static final int loc_provider_not_found=0x7f050009;
         public static final int ok=0x7f050007;
         public static final int surrender=0x7f050004;
         public static final int surrendered=0x7f050003;

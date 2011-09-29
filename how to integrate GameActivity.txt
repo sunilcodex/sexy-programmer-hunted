@@ -1,0 +1,10 @@
+1. 將SocketConnect instance指定到SocketConnect.Instance
+   範例: SocketConnect.Instance = new SocketConnect(SocketConnect.DefaultIP, SocketConnect.DefaultPort);
+
+2. 將session ID指定到SocketConnect.SessionID
+
+3. 將遊戲模式put到intent的single_player (型態為boolean, true為單人模式)
+   範例: intent.putExtra("single_player", true);
+
+4. 將玩家名稱put到intent的player_name (型態為String)
+   範例: intent.putExtra("player_name", "Test Player");
