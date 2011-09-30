@@ -195,7 +195,7 @@ public class GameActivity extends MapActivity
 			SocketConnect.SessionID = new String[] { "100", "100" };	// create fake session id
 				
 		// create player
-		_player = new Player(SocketConnect.SessionID[1], PlayerType.Player,  playerName, true);
+		_player = new Player(SocketConnect.SessionID[1], playerType,  playerName, true);
 		
 		if(_singlePlayerMode)
 		{
