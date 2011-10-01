@@ -8,3 +8,6 @@
 
 4. 將玩家名稱put到intent的player_name (型態為String)
    範例: intent.putExtra("player_name", "Test Player");
+
+
+送到GameActivity
