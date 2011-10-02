@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:orientation="vertical"
-  android:layout_width="fill_parent"
-  android:layout_height="fill_parent" android:background="@drawable/dialog_bg">
-    <Button android:id="@+id/ok" android:layout_width="wrap_content" android:layout_height="35dp" android:text="OK" android:layout_below="@+id/editText2" android:layout_alignLeft="@+id/editText2" android:layout_alignRight="@+id/textView1"></Button>
-    <Button android:id="@+id/cancel" android:layout_width="wrap_content" android:layout_height="35dp" android:text="Cancel" android:layout_alignTop="@+id/ok" android:layout_toRightOf="@+id/ok"></Button>
-    <EditText android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/editText1" android:layout_below="@+id/textView1" android:layout_alignParentLeft="true" android:layout_alignParentRight="true"></EditText>
-    <EditText android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/editText2" android:layout_below="@+id/textView2" android:layout_alignParentLeft="true" android:layout_alignParentRight="true"></EditText>
-    <TextView android:id="@+id/textView3" android:textColor="#000000" android:text="Log in" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_alignParentTop="true" android:layout_centerHorizontal="true" android:layout_marginTop="5dp"></TextView>
-    <TextView android:id="@+id/textView2" android:textColor="#000000" android:text="Host ID:" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_below="@+id/editText1" android:layout_alignParentLeft="true" android:layout_marginLeft="17dp"></TextView>
-    <TextView android:id="@+id/textView1" android:textColor="#000000" android:text="Name:" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_below="@+id/textView3" android:layout_alignLeft="@+id/textView2"></TextView>
+  android:background="@drawable/round_corner" android:weightSum="1" android:layout_height="wrap_content" android:paddingBottom="20sp" android:paddingTop="10sp" android:layout_marginRight="10sp" android:layout_marginLeft="10sp" android:layout_gravity="center_vertical|center_horizontal" android:layout_width="wrap_content" android:minWidth="300sp" android:paddingLeft="25sp" android:paddingRight="25sp">
+    <TextView android:id="@+id/JoinDlgLabelLogin" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_width="fill_parent" android:text="Join Game" android:textStyle="bold" android:textColor="#58410f" android:gravity="top|right" android:textSize="40sp"></TextView>
+    <TextView android:id="@+id/JoinDlgLabelHostID" android:layout_width="wrap_content" android:textColor="#000000" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_height="wrap_content" android:textSize="20sp" android:layout_marginTop="5sp" android:text="@string/hostid"></TextView>
+    <EditText android:id="@+id/JoinDlgTxtHostID" android:layout_width="fill_parent" android:textSize="20sp" android:layout_height="40sp" android:paddingLeft="5sp" android:paddingRight="5sp" android:background="@drawable/rounded_textview">
+        <requestFocus></requestFocus>
+    </EditText>
+    <TextView android:id="@+id/JoinDlgLabelName" android:textColor="#000000" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_height="wrap_content" android:layout_width="wrap_content" android:textSize="20sp" android:layout_marginTop="5sp" android:text="@string/name"></TextView>
+    <EditText android:id="@+id/JoinDlgTxtName" android:layout_width="fill_parent" android:layout_height="40sp" android:textSize="20sp" android:background="@drawable/rounded_textview">
+    </EditText>
+    <LinearLayout android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/linearLayout1" android:layout_marginTop="15sp">
+        <Button android:id="@+id/JoinDlgBtnOk" android:layout_weight="0.5" android:layout_marginRight="5sp" android:layout_width="fill_parent" android:textSize="20sp" android:layout_height="fill_parent" android:minHeight="30sp" android:background="@drawable/rounded_button" android:text="@string/ok" android:padding="5sp"></Button>
+        <Button android:id="@+id/JoinDlgBtnCancel" android:layout_weight="0.5" android:layout_marginLeft="5sp" android:layout_width="fill_parent" android:layout_height="fill_parent" android:textSize="20sp" android:minHeight="30sp" android:background="@drawable/rounded_button" android:padding="5sp" android:text="@string/cancel"></Button>
+    </LinearLayout>
     
-</RelativeLayout>
+</LinearLayout>

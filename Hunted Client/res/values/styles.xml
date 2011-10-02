@@ -10,9 +10,12 @@
     <color name="transparent">#FF0000FF</color>
     
     <style name="TimeoutDialog" parent="@android:style/Theme.Panel">
-        
         <item name="android:backgroundDimEnabled">false</item>
         <item name="android:windowFrame">@null</item>  
+        <item name="android:windowNoTitle">true</item>  
+    </style>
+    <style name="CustomDialog" parent="@android:style/Theme.Panel">
+        <item name="android:backgroundDimEnabled">true</item>
         <item name="android:windowNoTitle">true</item>  
     </style>
 </resources>
