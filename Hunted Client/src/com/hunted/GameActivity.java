@@ -94,7 +94,9 @@ public class GameActivity extends MapActivity
 	
 	private GameAI _gameAI;
 	private boolean _singlePlayerMode = false;
+	private boolean _gameOver = false;
 	private boolean _initMapSuccessed;
+	
 	@Override
 	protected void onCreate(Bundle icicle)
 	{
@@ -146,6 +148,34 @@ public class GameActivity extends MapActivity
 		}
 	}
 	
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK)
+        {
+    		// show alert dialog
+			Builder alertDlgBuilder = new AlertDialog.Builder(this);
+			alertDlgBuilder.setTitle(this.getResources().getString(R.string.alert));
+			alertDlgBuilder.setMessage(this.getResources().getString(R.string.ask_exit));
+			alertDlgBuilder.setPositiveButton(this.getResources().getString(R.string.ok), new DialogInterface.OnClickListener(){
+				@Override
+				public void onClick(DialogInterface arg0, int arg1)
+				{
+					GameActivity.this.finish();
+				}
+			});
+			alertDlgBuilder.setNegativeButton(this.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener(){
+				@Override
+				public void onClick(DialogInterface arg0, int arg1)
+				{
+				}
+			});
+			alertDlgBuilder.show();
+			
+			return true;
+        }
+
+        return false;
+    }
+	
 	private void initComponents()
 	{
 		// create UI helper for ui scaling
@@ -158,11 +188,14 @@ public class GameActivity extends MapActivity
 		// get player name
 		String playerName = this.getIntent().getStringExtra("player_name");
 		
+		// get player type
+		int playerType = this.getIntent().getIntExtra("player_type", PlayerType.Player);
+		
 		if(_singlePlayerMode)
 			SocketConnect.SessionID = new String[] { "100", "100" };	// create fake session id
 				
 		// create player
-		_player = new Player(SocketConnect.SessionID[1], PlayerType.Player,  playerName, true);
+		_player = new Player(SocketConnect.SessionID[1], playerType,  playerName, true);
 		
 		if(_singlePlayerMode)
 		{
@@ -537,6 +570,8 @@ public class GameActivity extends MapActivity
 		{
 			Dialog dialog = new Dialog(this, R.style.TimeoutDialog); 
 			
+			dialog.setCancelable(false);
+			
 			LayoutInflater inflater = LayoutInflater.from(this);
 			LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.timeout_dlg, null);
 			dialog.setContentView(layout);
@@ -570,6 +605,7 @@ public class GameActivity extends MapActivity
 			// Back to end screen
 			Intent intent = new Intent();
 			intent.setClass(GameActivity.this, GameoverActivity.class);
+			intent.putExtra("player_win", _gameState.Alive > 0);
 			startActivity(intent);
 		}
 	};
@@ -621,8 +657,9 @@ public class GameActivity extends MapActivity
 				}
 			}
 
-			if(_gameState.Time == 0)
+			if(_gameState.Time == 0 || _gameState.Alive == 0)
 			{
+				_gameOver = true;
 				GameActivity.this.showDialog(GameActivity.this.TIMEOUT_DIALOG);
 			}
 			else
