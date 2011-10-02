@@ -86,7 +86,7 @@ public class JoinGameActivity extends ListActivity{
 					btnStart.setBackgroundResource(R.drawable.botton3);
 				}
 				else if(event.getAction() == MotionEvent.ACTION_UP){
-					if(allOK == 1)
+					if(allOK == 1){
 					btnStart.setBackgroundResource(R.drawable.botton);
 					//go to count down
 					try {
@@ -118,6 +118,7 @@ public class JoinGameActivity extends ListActivity{
 		          	System.out.println("Type!!!!!!!:"+type);
 		          	intent.putExtra("player_name", realname);
 		          	startActivity(intent); 
+					}
 					
 				}
         	  return false; 
@@ -198,14 +199,12 @@ public class JoinGameActivity extends ListActivity{
          	name.add(list.get(i)[1]);
          	status.add(list.get(i)[2]);
             ready.add(list.get(i)[3]);
-            /*
+            
             if(list.get(i)[3].toString().equals("X")){
                allOK = 0;
                btnStart.setBackgroundResource(R.drawable.bottonnopress);
             }
-            else
-            
-            */
+            else 
             	btnStart.setBackgroundResource(R.drawable.botton);
             }
         

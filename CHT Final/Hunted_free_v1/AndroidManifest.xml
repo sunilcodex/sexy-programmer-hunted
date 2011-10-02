@@ -18,7 +18,7 @@
          <activity android:name="Count" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"></activity>
          
          <activity android:name=".CheckLicense"
-		android:label= " Hunted_Lite " android:launchMode="standard" >
+		android:label= " Hunted Lite " android:launchMode="standard" >
 		<intent-filter>
 		<action android:name="android.intent.action.MAIN" />
 		<category android:name="android.intent.category.LAUNCHER"/>
