@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -19,7 +20,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.ImageView.ScaleType;
 
 public class MainActivity extends Activity implements View.OnTouchListener{
@@ -121,7 +124,7 @@ public class MainActivity extends Activity implements View.OnTouchListener{
 				}
 				else if(event.getAction() == MotionEvent.ACTION_UP){
 					btnNewGame.setImageResource(R.drawable.button_new_game);
-					final Dialog dialog = new Dialog(MainActivity.this, R.style.MyDialog);
+					final Dialog dialog = new Dialog(MainActivity.this, R.style.CustomDialog);
 		        	//set ContentView
 		        	  dialog.setContentView(R.layout.host_dialog);
 		        	 
@@ -165,12 +168,12 @@ public class MainActivity extends Activity implements View.OnTouchListener{
 				}
 				else if(event.getAction() == MotionEvent.ACTION_UP){
 					btnJoinGame.setImageResource(R.drawable.button_join_game);
-					final Dialog dialog = new Dialog(MainActivity.this, R.style.MyDialog);
+					final Dialog dialog = new Dialog(MainActivity.this, R.style.CustomDialog);
 		        	//set ContentView
 		        	  dialog.setContentView(R.layout.joindialog);
 		        	 
 		        	  //OK button
-		        	  Button OK = (Button) dialog.findViewById(R.id.ok);
+		        	  Button OK = (Button) dialog.findViewById(R.id.JoinDlgBtnOk);
 		        	  OK.setOnClickListener(new Button.OnClickListener()
 		              {
 		        		  public void onClick(View v)
@@ -184,7 +187,7 @@ public class MainActivity extends Activity implements View.OnTouchListener{
 		              });
 		        	  
 		        	  //Cancel button
-		        	  Button cancel = (Button) dialog.findViewById(R.id.cancel);
+		        	  Button cancel = (Button) dialog.findViewById(R.id.JoinDlgBtnCancel);
 		        	  cancel.setOnClickListener(new Button.OnClickListener()
 		              {
 		        		  public void onClick(View v)

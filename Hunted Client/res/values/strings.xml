@@ -13,4 +13,6 @@
     <string name="alert">Alert</string>
     <string name="ask_exit">Do you want to quit the game?</string>
     <string name="cancel">Cancel</string>
+    <string name="hostid">Host ID</string>
+    <string name="name">Name</string>
 </resources>
