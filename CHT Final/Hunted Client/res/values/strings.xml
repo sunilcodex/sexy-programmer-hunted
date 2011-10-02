@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<resources>
+    <string name="hello">Hello World</string>
+    <string name="app_name">Hunted</string>
+    <string name="been_caught">has been caught</string>
+    <string name="surrendered">surrendred</string>
+    <string name="surrender">Surrender</string>
+    <string name="test_man">Test Man</string>
+    <string name="timeout">Game Over</string>
+    <string name="ok">OK</string>
+    <string name="error">Error</string>
+    <string name="loc_provider_not_found">Location provider not found, Please moving to open sky where can get GPS signal and try again</string>
+    <string name="alert">Alert</string>
+    <string name="ask_exit">Do you want to quit the game?</string>
+    <string name="cancel">Cancel</string>
+    <string name="hostid">Host ID</string>
+    <string name="name">Name</string>
+</resources>

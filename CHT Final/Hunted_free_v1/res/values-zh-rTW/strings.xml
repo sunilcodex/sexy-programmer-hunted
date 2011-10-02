@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="been_caught">被抓到了</string>
+    <string name="surrendered">投降了</string>
+    <string name="surrender">投降</string>
+    <string name="test_man">測試玩家</string>
+    <string name="timeout">遊戲結束</string>
+    <string name="ok">確定</string>
+    <string name="error">錯誤</string>
+    <string name="loc_provider_not_found">找不到Location Provider，請移動到能夠接收GPS訊號的地方後再試一次</string>
+    <string name="alert">警告</string>
+    <string name="ask_exit">你確定要離開遊戲嗎?</string>
+    <string name="cancel">取消</string>
+</resources>

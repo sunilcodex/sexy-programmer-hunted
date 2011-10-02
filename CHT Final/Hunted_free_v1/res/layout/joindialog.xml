@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent" android:background="@drawable/dialog_bg">
+    <Button android:id="@+id/ok" android:layout_width="wrap_content" android:layout_height="35dp" android:text="OK" android:layout_below="@+id/editText2" android:layout_alignLeft="@+id/editText2" android:layout_alignRight="@+id/textView1"></Button>
+    <Button android:id="@+id/cancel" android:layout_width="wrap_content" android:layout_height="35dp" android:text="Cancel" android:layout_alignTop="@+id/ok" android:layout_toRightOf="@+id/ok"></Button>
+    <EditText android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/editText1" android:layout_below="@+id/textView1" android:layout_alignParentLeft="true" android:layout_alignParentRight="true"></EditText>
+    <EditText android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/editText2" android:layout_below="@+id/textView2" android:layout_alignParentLeft="true" android:layout_alignParentRight="true"></EditText>
+    <TextView android:id="@+id/textView3" android:textColor="#000000" android:text="Log in" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_alignParentTop="true" android:layout_centerHorizontal="true" android:layout_marginTop="5dp"></TextView>
+    <TextView android:id="@+id/textView2" android:textColor="#000000" android:text="Host ID:" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_below="@+id/editText1" android:layout_alignParentLeft="true" android:layout_marginLeft="17dp"></TextView>
+    <TextView android:id="@+id/textView1" android:textColor="#000000" android:text="Name:" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_below="@+id/textView3" android:layout_alignLeft="@+id/textView2"></TextView>
+    
+</RelativeLayout>
