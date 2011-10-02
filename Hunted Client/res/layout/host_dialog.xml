@@ -2,15 +2,15 @@
 <LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:orientation="vertical"
-  android:background="@drawable/round_corner" android:paddingBottom="20sp" android:paddingTop="10sp" android:minWidth="300sp" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_gravity="center_vertical|center_horizontal" android:paddingLeft="25sp" android:paddingRight="25sp">
-    <TextView android:id="@+id/textView1" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_height="wrap_content" android:text="New Game" android:textColor="#58410f" android:textStyle="bold" android:gravity="top|right" android:layout_width="fill_parent" android:textSize="40sp"></TextView>
-    <TextView android:id="@+id/textView2" android:textColor="#000000" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/name" android:textSize="20sp" android:layout_marginTop="5sp"></TextView>
-    <EditText android:id="@+id/editText1" android:layout_width="fill_parent" android:textSize="20sp" android:layout_height="40sp" android:background="@drawable/rounded_textview">
-        <requestFocus></requestFocus>
-    </EditText>
-    <LinearLayout android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/linearLayout1" android:layout_marginTop="15sp">
-        <Button android:id="@+id/ok2" android:layout_width="fill_parent" android:layout_weight="0.5" android:layout_marginRight="5sp" android:background="@drawable/rounded_button" android:text="@string/ok" android:textSize="20sp" android:layout_height="fill_parent" android:padding="5sp" android:minHeight="30sp"></Button>
-        <Button android:id="@+id/cancel2" android:layout_weight="0.5" android:layout_width="fill_parent" android:layout_marginLeft="5sp" android:background="@drawable/rounded_button" android:text="@string/cancel" android:textSize="20sp" android:layout_height="fill_parent" android:minHeight="30sp"></Button>
+  android:background="@drawable/round_corner" android:minWidth="300sp" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_gravity="center_vertical|center_horizontal" android:layout_marginLeft="20sp" android:layout_marginRight="20sp">
+    <TextView android:id="@+id/textView1" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_height="wrap_content" android:text="New Game" android:textColor="#58410f" android:textStyle="bold" android:gravity="top|right" android:layout_width="fill_parent" android:paddingRight="5sp" android:layout_marginTop="-2sp" android:textSize="35sp"></TextView>
+    <LinearLayout android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/linearLayout2" android:orientation="vertical" android:layout_marginBottom="20sp" android:layout_marginLeft="25sp" android:layout_marginRight="25sp">
+        <TextView android:id="@+id/textView2" android:text="@string/name" android:textSize="20sp" android:textColor="#000000" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_height="wrap_content" android:layout_width="wrap_content"></TextView>
+        <EditText android:textSize="20sp" android:id="@+id/editText1" android:layout_height="40sp" android:background="@drawable/rounded_textview" android:layout_width="fill_parent"></EditText>
+        <LinearLayout android:layout_marginTop="15sp" android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/linearLayout1">
+            <Button android:layout_weight="0.5" android:minHeight="30sp" android:text="@string/ok" android:layout_height="fill_parent" android:padding="5sp" android:textSize="20sp" android:layout_marginRight="5sp" android:background="@drawable/rounded_button" android:layout_width="fill_parent" android:id="@+id/ok2"></Button>
+            <Button android:layout_weight="0.5" android:minHeight="30sp" android:text="@string/cancel" android:layout_height="fill_parent" android:textSize="20sp" android:background="@drawable/rounded_button" android:layout_width="fill_parent" android:layout_marginLeft="5sp" android:id="@+id/cancel2"></Button>
+        </LinearLayout>
     </LinearLayout>
     
 </LinearLayout>
