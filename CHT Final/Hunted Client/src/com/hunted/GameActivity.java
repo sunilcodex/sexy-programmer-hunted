@@ -112,13 +112,15 @@ public class GameActivity extends MapActivity
 		_uiUpdateHandler = new Handler();
 		
 		this.initComponents();
-		_initMapSuccessed = this.initMap();
+		_initMapSuccessed = initMap();
 	}
 
 	@Override
 	protected void onResume()
 	{
 		super.onResume();
+		
+		mLocationManager01.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, mLocationListener01);
 		
 		if(_initMapSuccessed)
 		{
@@ -128,8 +130,6 @@ public class GameActivity extends MapActivity
 			_syncThread.start();
 			
 			_uiUpdateHandler.postDelayed(_uiUpdateProcess, 500);
-			
-			mLocationManager01.requestLocationUpdates(strLocationPrivider, 2000, 10, mLocationListener01);
 		}
 	}
 	
@@ -138,13 +138,13 @@ public class GameActivity extends MapActivity
 	{
 		super.onPause();
 		
+		mLocationManager01.removeUpdates(mLocationListener01);
+		
 		if(_initMapSuccessed)
 		{
 			_uiUpdateHandler.removeCallbacks(_uiUpdateProcess);
-			_syncThread.stop();
+			//_syncThread.stop();
 			_stopSync = true;
-			
-			mLocationManager01.removeUpdates(mLocationListener01);
 		}
 	}
 	
@@ -326,39 +326,45 @@ public class GameActivity extends MapActivity
 		
 		/* 建立LocationManager物件取得系統LOCATION服務 */
 		mLocationManager01 = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-		/* 第一次執行向Location Provider取得Location */
-		mLocation01 = getLocationPrivider(mLocationManager01);
-
-		if (mLocation01 != null)
+		
+		if(mLocationManager01 == null)
 		{
-			processLocationUpdated(mLocation01);
+			// show alert dialog
+			Builder alertDlgBuilder = new AlertDialog.Builder(this);
+			alertDlgBuilder.setTitle(this.getResources().getString(R.string.error));
+			alertDlgBuilder.setMessage(this.getResources().getString(R.string.loc_provider_not_found));
+			alertDlgBuilder.setNeutralButton(this.getResources().getString(R.string.ok), new DialogInterface.OnClickListener(){
+				@Override
+				public void onClick(DialogInterface arg0, int arg1)
+				{
+					GameActivity.this.finish();
+				}
+			});
+			alertDlgBuilder.show();
+			return false;
 		}
-		else
+		
+		if (this.getResources().getBoolean(R.bool.Debug))
 		{
-
-			if (this.getResources().getBoolean(R.bool.Debug))
-			{
-				// FIXME: Give default location (for debug used)
-				_player.setLocation(new GeoPoint(24789423, 121003075));
-				refreshMapViewByGeoPoint(_player.getLocation());
-			}
-			else
-			{
-				// show alert dialog
-				Builder alertDlgBuilder = new AlertDialog.Builder(this);
-				alertDlgBuilder.setTitle(this.getResources().getString(R.string.error));
-				alertDlgBuilder.setMessage(this.getResources().getString(R.string.loc_provider_not_found));
-				alertDlgBuilder.setNeutralButton(this.getResources().getString(R.string.ok), new DialogInterface.OnClickListener(){
-					@Override
-					public void onClick(DialogInterface arg0, int arg1)
-					{
-						GameActivity.this.finish();
-					}
-				});
-				alertDlgBuilder.show();
-				return false;
-			}
+			// FIXME: Give default location (for debug used)
+			_player.setLocation(new GeoPoint(24789423, 121003075));
+			refreshMapViewByGeoPoint(_player.getLocation());
+		}
+		else if (!mLocationManager01.isProviderEnabled( LocationManager.GPS_PROVIDER ) )
+		{
+			// show alert dialog
+			Builder alertDlgBuilder = new AlertDialog.Builder(this);
+			alertDlgBuilder.setTitle(this.getResources().getString(R.string.error));
+			alertDlgBuilder.setMessage(this.getResources().getString(R.string.gps_disabled));
+			alertDlgBuilder.setNeutralButton(this.getResources().getString(R.string.ok), new DialogInterface.OnClickListener(){
+				@Override
+				public void onClick(DialogInterface arg0, int arg1)
+				{
+					GameActivity.this.finish();
+				}
+			});
+			alertDlgBuilder.show();
+			return false;
 		}
 		
 		return true;

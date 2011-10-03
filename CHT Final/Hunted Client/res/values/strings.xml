@@ -9,10 +9,11 @@
     <string name="timeout">Game Over</string>
     <string name="ok">OK</string>
     <string name="error">Error</string>
-    <string name="loc_provider_not_found">Location provider not found, Please moving to open sky where can get GPS signal and try again</string>
+    <string name="loc_provider_not_found">Location provider not found, the game cannot be executed.</string>
     <string name="alert">Alert</string>
     <string name="ask_exit">Do you want to quit the game?</string>
     <string name="cancel">Cancel</string>
     <string name="hostid">Host ID</string>
     <string name="name">Name</string>
+    <string name="gps_disabled">The GPS seems to be disabled, please enable it and try again.</string>
 </resources>

@@ -41,10 +41,11 @@ public class GameAI
 		GameState.HunterNumber = 3;
 		GameState.Alive = 4;
 	}
-	
+	boolean _playersLocSetted = false;
 	public void update()
 	{
 		//TODO: implement this
+		boolean playersLocSetted = false;
 		for (Player player : this.Players.values())
 		{
 			if(player.Self)
@@ -54,7 +55,11 @@ public class GameAI
 			}
 			else
 			{   
-				if(player.getLocation().getLatitudeE6() == 0 && player.getLocation().getLongitudeE6() == 0)
+				playersLocSetted = (!_playersLocSetted && 
+									this.Player.getLocation().getLatitudeE6() != 0 && 
+									this.Player.getLocation().getLongitudeE6() != 0);
+				
+				if( playersLocSetted || (player.getLocation().getLatitudeE6() == 0 && player.getLocation().getLongitudeE6() == 0))
 				{
 					// set location of other player
 					player.setLocation(new GeoPoint(
@@ -63,34 +68,42 @@ public class GameAI
 				}
 				else
 				{
-				// set location of other player
-				player.setLocation(new GeoPoint(
-						player.getLocation().getLatitudeE6() + move_step(generate_random()%10, generate_random()%3), 
-						player.getLocation().getLongitudeE6() + move_step(generate_random()%10, generate_random()%2)));
+					// set location of other player
+					player.setLocation(new GeoPoint(
+							player.getLocation().getLatitudeE6() + move_step(generate_random()%10, generate_random()%3), 
+							player.getLocation().getLongitudeE6() + move_step(generate_random()%10, generate_random()%2)));
 				}
-				if(player.PlayerType == PlayerType.Hunter && player.distanceTo(this.Player) ==0)
+				
+				if(_playersLocSetted)
 				{
-					this.Player.setStatus(PlayerStatus.Caught);
-					GameState.Alive--;
-				}
-						
-				//other virtual player have been caught
-				for (Player player1 : this.Players.values())
-				{
-					if(player.PlayerType == PlayerType.Hunter && player1.PlayerType == PlayerType.Player && !player1.Self)
+					if(player.PlayerType == PlayerType.Hunter && player.distanceTo(this.Player) ==0)
 					{
-						if(player.distanceTo(player1) <3 && player1.Status == PlayerStatus.Alive)
+						this.Player.setStatus(PlayerStatus.Caught);
+						GameState.Alive--;
+					}
+							
+					//other virtual player have been caught
+					for (Player player1 : this.Players.values())
+					{
+						if(player.PlayerType == PlayerType.Hunter && player1.PlayerType == PlayerType.Player && !player1.Self)
 						{
-							player1.setStatus(PlayerStatus.Caught);
-							GameState.Alive--;
-					    }				
-				     }
+							if(player.distanceTo(player1) <3 && player1.Status == PlayerStatus.Alive)
+							{
+								player1.setStatus(PlayerStatus.Caught);
+								GameState.Alive--;
+						    }				
+					     }
+					}
 				}
 				// set player status
 				//player.setStatus(PlayerStatus.Caught);
 				//player.setStatus(PlayerStatus.Surrendered);
+				
 			}
 		}
+		
+		if(playersLocSetted)
+			_playersLocSetted = true;
 		
 		// Change game time
 		if(GameState.Time > 0)
