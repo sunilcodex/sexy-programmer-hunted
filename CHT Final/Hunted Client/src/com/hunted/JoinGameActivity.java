@@ -9,9 +9,11 @@ import java.util.regex.Pattern;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,6 +26,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.os.Message; 
 
@@ -170,7 +173,7 @@ public class JoinGameActivity extends ListActivity{
                   JoinGameActivity.this.myHandler.sendMessage(message);
  
                   try { 
-                       Thread.sleep(1000);  
+                       Thread.sleep(500);  
                   } catch (InterruptedException e) { 
                        Thread.currentThread().interrupt(); 
                   } 
@@ -196,17 +199,30 @@ public class JoinGameActivity extends ListActivity{
             //第一筆設定為[回到根目錄] 
         	
         for(int i = 0;i < list.size();i++){	
+        	if(list.get(i)[1].equals(realname)){
+        		if(list.get(i)[2].equals("P"))
+        			type = 0;
+        		else
+        			type = 1;		
+        	}
          	name.add(list.get(i)[1]);
          	status.add(list.get(i)[2]);
             ready.add(list.get(i)[3]);
-            
-            if(list.get(i)[3].toString().equals("X")){
-               allOK = 0;
-               btnStart.setBackgroundResource(R.drawable.bottonnopress);
-            }
-            else 
-            	btnStart.setBackgroundResource(R.drawable.botton);
-            }
+        }  
+        
+        //check Ready and Host
+        for(int i = 0;i < list.size();i++){	
+            if(!list.get(i)[1].toString().equals(realname)){
+	            if(list.get(i)[3].toString().equals("X")){
+	               allOK = 0;
+	               btnStart.setBackgroundResource(R.drawable.bottonnopress);
+	               break;
+	            }
+	            else 
+	            	btnStart.setBackgroundResource(R.drawable.botton);
+	        }
+        }
+        	
         
 	        gameroom.notifyDataSetChanged();
               
@@ -240,6 +256,28 @@ public class JoinGameActivity extends ListActivity{
   
      myRefreshThread =  new Thread(new myThread());
      myRefreshThread.start();
+    }
+    
+    
+    @Override
+    protected void onListItemClick(ListView l,View v,
+                                   int position,long id){
+    	try {
+			list = SocketConnect.Instance.Host_waiting_get(SocketConnect.Instance, SocketConnect.SessionID);
+		
+    	
+    	String now_statue = list.get(position)[2];
+    	String user = list.get(position)[0];
+    	if(now_statue.equals("H"))
+    		list = SocketConnect.Instance.HostWaitChange(SocketConnect.Instance, SocketConnect.SessionID, user, "P");
+    	else
+    		list = SocketConnect.Instance.HostWaitChange(SocketConnect.Instance, SocketConnect.SessionID, user, "H");
+    	
+    	} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
     }
     
     public void clear_info(){

@@ -23,6 +23,7 @@ public class GameRoomAdapter extends BaseAdapter
   private Bitmap mPlayer;
   private Bitmap mready;
   private Bitmap mno;
+  private Bitmap mhost;
   private List<String> items;
   private List<String> paths;
   private List<String> ready;
@@ -39,6 +40,7 @@ public class GameRoomAdapter extends BaseAdapter
     mPlayer = BitmapFactory.decodeResource(context.getResources(), R.drawable.boy);
     mready = BitmapFactory.decodeResource(context.getResources(), R.drawable.check);
     mno = BitmapFactory.decodeResource(context.getResources(), R.drawable.nothing);
+    mhost = BitmapFactory.decodeResource(context.getResources(), R.drawable.host);
   }
 
   
@@ -100,6 +102,16 @@ public class GameRoomAdapter extends BaseAdapter
         holder.icon = (ImageView) convertView.findViewById(R.id.icon2);
         holder.icon.setImageBitmap(mready);
     }
+    else if(ready.get(position).toString().equals("X")){
+        holder.icon = (ImageView) convertView.findViewById(R.id.icon2);
+        holder.icon.setImageBitmap(mno);
+    	
+    }
+    else if(ready.get(position).toString().equals("S")){
+        holder.icon = (ImageView) convertView.findViewById(R.id.icon2);
+        holder.icon.setImageBitmap(mhost);
+    	
+    }    
     else{
         holder.icon = (ImageView) convertView.findViewById(R.id.icon2);
         holder.icon.setImageBitmap(mno);

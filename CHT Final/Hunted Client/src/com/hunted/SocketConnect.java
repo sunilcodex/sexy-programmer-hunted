@@ -274,13 +274,14 @@ public class SocketConnect {
 	}
 	
 	// Thread Running
-		public ArrayList<String[]> HostWaitChange(SocketConnect client, String[] ID)throws IOException {
+		public ArrayList<String[]> HostWaitChange(SocketConnect client, String[] ID, String user, String Type)throws IOException {
 			//List<String[]> list = new ArrayList<String[]>();
 			List<String[]> list = new ArrayList<String[]>();
 
-			client.send("GET:" + ID[0] + "," + ID[1] + "\n" + "USER:1,H\n");
+			client.send("GET:" + ID[0] + "," + ID[1] + "\n" + "USER:"+user+","+Type+"\n");
 
 			String response = client.recv();
+			System.out.println(response);
 
 			list = InfoParser(response, "STATE_HOST_WAITING\\n");
 		
@@ -315,7 +316,7 @@ public class SocketConnect {
 		public  ArrayList<String[]> HostCancel(SocketConnect client, String[] ID)throws IOException {
 			List<String[]> list = new ArrayList<String[]>();
 
-			client.send("GET:" + ID[0] + "," + ID[1] + "\n" + "CANCEL\n");
+			client.send("GET:" + ID[0] + "," + ID[1] + "\nCANCEL\n");
 			String response = client.recv();
 			list = InfoParser(response, "STATE_HOST_WAITING\\n");
 		
