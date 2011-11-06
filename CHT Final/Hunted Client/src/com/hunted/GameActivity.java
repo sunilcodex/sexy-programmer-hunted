@@ -255,7 +255,7 @@ public class GameActivity extends MapActivity
 
 		
 		_mainLayout.addView(bottom);
-		_mainLayout.addView(button_message);
+		//_mainLayout.addView(button_message);
 		_mainLayout.addView(button_status);
 		_mainLayout.addView(top);
 
@@ -692,13 +692,21 @@ public class GameActivity extends MapActivity
 	
 						if (_player.PlayerType == PlayerType.Player) 
 						{
+							if(_player.getLocation().getLatitudeE6() != 0  && _player.getLocation().getLongitudeE6() != 0){
 							response = SocketConnect.Instance.PlayerInGame(SocketConnect.Instance, SocketConnect.SessionID, 
 									Integer.toString(_player.getLocation().getLatitudeE6()), Integer.toString(_player.getLocation().getLongitudeE6()), _player.Status == PlayerStatus.Surrendered);
+							}
+							else
+								response = SocketConnect.Instance.PlayerInGame(SocketConnect.Instance, SocketConnect.SessionID, "0.0", "0.0", _player.Status == PlayerStatus.Surrendered);	
 						} 
 						else 
 						{
+							if(_player.getLocation().getLatitudeE6() != 0  && _player.getLocation().getLongitudeE6() != 0){
 							response = SocketConnect.Instance.HunterInGame(SocketConnect.Instance, SocketConnect.SessionID, 
 									Integer.toString(_player.getLocation().getLatitudeE6()), Integer.toString(_player.getLocation().getLongitudeE6()));
+							}
+							else
+								response = SocketConnect.Instance.HunterInGame(SocketConnect.Instance, SocketConnect.SessionID, "0.0", "0.0");
 						}
 	
 						HashMap<String, Object> values = SocketConnect.parse(response);

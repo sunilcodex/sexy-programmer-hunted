@@ -72,7 +72,7 @@ public class JoinGameActivity extends ListActivity{
         Bundle bundle = this.getIntent().getExtras();
         String groupID = bundle.getString("groupID");
         //set ID
-        mtext.setText("ID : "+groupID);
+        mtext.setText("Your Group ID : "+groupID);
         realname = bundle.getString("Name");
         
         
@@ -99,8 +99,11 @@ public class JoinGameActivity extends ListActivity{
 						e.printStackTrace();
 					}
 					myRefreshThread.interrupt();
+					int i = 0;
+					while(true){
+						i++;
 					try {
-						Thread.sleep(4000);
+						Thread.sleep(1000);
 						list = SocketConnect.Instance.Client_waiting_get(SocketConnect.Instance, SocketConnect.SessionID);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
@@ -109,18 +112,23 @@ public class JoinGameActivity extends ListActivity{
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+					
 					/*
 					Intent intent = new Intent();
       	        	intent.setClass(JoinGameActivity.this, Count.class);  
       	        	startActivity(intent); 
       	        	*/
+					if(i == 5){
 		    		Intent intent = new Intent();
 		          	intent.setClass(JoinGameActivity.this, GameActivity.class); 
 		          	intent.putExtra("single_player", false);
 		          	intent.putExtra("player_type", type);
 		          	System.out.println("Type!!!!!!!:"+type);
 		          	intent.putExtra("player_name", realname);
-		          	startActivity(intent); 
+		          	startActivity(intent);
+		          	break;
+					}
+					}
 					}
 					
 				}

@@ -170,6 +170,8 @@ public class SocketConnect {
 		client.send("GET:" + ID[0] + "," + ID[1] + "\n" + "GPS:" + gpsX + "," + gpsY
 				+ "\n");
 		String response = client.recv();
+		
+		System.out.println("HOST in game:\n" + response);
 		Pattern p = Pattern.compile("^STATE_HUNTER_IN_GAME\\n.*",
 				Pattern.DOTALL);
 		Matcher m = p.matcher(response);
@@ -234,6 +236,8 @@ public class SocketConnect {
 		String response;
 		if (withdraw) {
 			client.send("GET:" + ID[0] + "," + ID[1] + "\nGPS:" + gpsX + ","
+					+ gpsY + "\nWITHDREW\n");
+			System.out.println("GET:" + ID[0] + "," + ID[1] + "\nGPS:" + gpsX + ","
 					+ gpsY + "\nWITHDREW\n");
 			response = client.recv();
 			System.out.println("HOST in game:\n" + response);

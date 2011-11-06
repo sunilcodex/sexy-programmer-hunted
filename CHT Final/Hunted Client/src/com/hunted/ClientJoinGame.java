@@ -39,6 +39,8 @@ public class ClientJoinGame extends ListActivity{
 	 Thread myRefreshThread = null;
 	 
 	 boolean readyOK = false;
+	 
+	 public int type;
 	  
 	  private List<String[]> list = new ArrayList<String[]>();
 	  private List<String[]> list2 = new ArrayList<String[]>();
@@ -67,10 +69,12 @@ public class ClientJoinGame extends ListActivity{
         Bundle bundle = this.getIntent().getExtras();
         String groupID = bundle.getString("groupID");
         //set ID
-        mtext.setText("ID : "+groupID);
+        mtext.setText("Your Group ID : "+groupID);
         realname = bundle.getString("Name");
         
         
+        TextView r = (TextView) findViewById(R.id.textView2);
+        r.setText("請在Host確定身分後才按下Ready鍵");
         
         //Start or Ready Button
        btnStart = (Button) findViewById(R.id.button_start);
@@ -197,7 +201,7 @@ public class ClientJoinGame extends ListActivity{
     		Intent intent = new Intent();
           	intent.setClass(ClientJoinGame.this, GameActivity.class); 
           	intent.putExtra("single_player", false);
-          	intent.putExtra("player_type", PlayerType.Player);
+          	intent.putExtra("player_type", type);
           	intent.putExtra("player_name", realname);
           	startActivity(intent); 
         	}
@@ -220,6 +224,12 @@ public class ClientJoinGame extends ListActivity{
             //第一筆設定為[回到根目錄] 
         	
         for(int i = 0;i < list.size();i++){
+        	if(list.get(i)[1].equals(realname)){
+        		if(list.get(i)[2].equals("P"))
+        			type = 0;
+        		else
+        			type = 1;		
+        	}
         	System.out.println(list.get(i)[1]);
          	name.add(list.get(i)[1]);
          	status.add(list.get(i)[2]);
@@ -240,6 +250,12 @@ public class ClientJoinGame extends ListActivity{
 
     	
     for(int i = 0;i < list.size();i++){	
+    	if(list.get(i)[1].equals(realname)){
+    		if(list.get(i)[2].equals("P"))
+    			type = 0;
+    		else
+    			type = 1;		
+    	}
      	name.add(list.get(i)[1]);
      	status.add(list.get(i)[2]);
         ready.add(list.get(i)[3]);

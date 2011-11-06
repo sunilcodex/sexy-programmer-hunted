@@ -8,8 +8,9 @@
     <RelativeLayout android:id="@+id/relativeLayout1" 
     android:layout_width="fill_parent" android:layout_centerHorizontal="true" android:layout_alignParentTop="true" android:layout_marginLeft="50dp" android:layout_marginBottom="50dp" android:gravity="top" android:layout_height="fill_parent" android:paddingLeft="20dp" android:paddingRight="20dp" android:background="#cc000000">
         <TextView android:textAppearance="?android:attr/textAppearanceMedium" android:layout_width="wrap_content" android:id="@+id/textView1" android:layout_height="wrap_content" android:layout_alignParentRight="true" android:layout_alignParentLeft="true" android:text="ID:123456"></TextView>
-  	  <ListView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@android:id/list" android:layout_below="@+id/textView1" android:layout_alignParentLeft="true"></ListView>
   	  <Button android:text="Start" android:id="@+id/button_start" android:layout_height="40dp" android:layout_width="wrap_content" android:layout_alignParentBottom="true" android:layout_marginBottom="34dp" android:layout_alignParentLeft="false" android:layout_centerHorizontal="true" android:background="@drawable/botton"></Button>
+  	  <ListView android:id="@android:id/list" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@+id/textView1" android:layout_alignLeft="@+id/textView2" android:layout_marginTop="32dp"></ListView>
+  	  <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/textView2" android:layout_below="@+id/textView1" android:layout_alignLeft="@+id/textView1"></TextView>
     </RelativeLayout>
     
 </RelativeLayout>
