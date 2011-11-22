@@ -33,6 +33,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract.Contacts.Data;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -90,6 +91,7 @@ public class GameActivity extends MapActivity
 
 	private UIHelper _uiHelper;
 	private final int MENU_REQUEST = 0;
+	private final int ARREST_REQUEST = 1;
 	private boolean _stopSync;
 	
 	private GameAI _gameAI;
@@ -191,6 +193,9 @@ public class GameActivity extends MapActivity
 		// get player type
 		int playerType = this.getIntent().getIntExtra("player_type", PlayerType.Player);
 		
+		// the following line is for testing
+		//playerType = PlayerType.Hunter;
+		
 		if(_singlePlayerMode)
 			SocketConnect.SessionID = new String[] { "100", "100" };	// create fake session id
 				
@@ -243,20 +248,21 @@ public class GameActivity extends MapActivity
 		// create button
 		ImageView bottom = this.getImageView(R.drawable.bottom);
 		ImageView top = this.getImageView(R.drawable.top);
-		ImageButton button_message = this.getButton(R.drawable.button_message);
 		ImageButton button_status = this.getButton(R.drawable.button_status);
-		button_status.setOnClickListener(_onMenuButtonClick);	
+		ImageButton button_menu = this.getButton(R.drawable.button_menu);
+		button_menu.setOnClickListener(_onMenuButtonClick);
+		button_status.setOnClickListener(_onStatusButtonClick);
 		// set UI to proper location and size
 		
 		_uiHelper.SetImageView(bottom, 540, 960, 10, 810);
-		_uiHelper.SetImageView(button_message, 540, 960, 5, 825);
-		_uiHelper.SetImageView(button_status, 540, 960, 415, 825);
+		_uiHelper.SetImageView(button_status, 540, 960, 5, 825);
+		_uiHelper.SetImageView(button_menu, 540, 960, 415, 825);
 		_uiHelper.SetImageView(top, 540, 960, 0, 0);
 
 		
 		_mainLayout.addView(bottom);
-		_mainLayout.addView(button_message);
 		_mainLayout.addView(button_status);
+		_mainLayout.addView(button_menu);
 		_mainLayout.addView(top);
 
 		_txtHunterNum.bringToFront();
@@ -551,18 +557,52 @@ public class GameActivity extends MapActivity
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) 
 	{ 
 		super.onActivityResult(requestCode, resultCode, data);
-		if(requestCode == MENU_REQUEST && resultCode==RESULT_OK)
-		{  
-			// check selected menu
-			int selectedItem = data.getExtras().getInt("selected_menu_id");
-			
-			switch (selectedItem) 
+		
+		if(resultCode==RESULT_OK)
+		{
+			if(requestCode == MENU_REQUEST)
 			{  
-			case GameMenuAdapter.MENU_SURRENDER:
-				_player.Surrender();
-				break;
-			default:
-				break;
+				// check selected menu
+				int selectedItem = data.getExtras().getInt("selected_menu_id");
+				
+				if(_player.PlayerType == PlayerType.Player)
+				{
+					switch (selectedItem) 
+					{  
+					case GameMenuAdapter.MENU_SURRENDER:
+						_player.Surrender();
+						break;
+					default:
+						break;
+					}
+				}
+				else
+				{
+					switch (selectedItem) 
+					{  
+					case GameMenuAdapter.MENU_ARREST:
+//						Intent intent = new Intent();
+//						intent.setClass(GameActivity.this, ArrestActivity.class);
+//						startActivityForResult(intent, MENU_REQUEST);
+						Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+						intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+						startActivityForResult(intent, ARREST_REQUEST);
+
+						break;
+					default:
+						break;
+					}
+				}
+			}
+			else if(requestCode == ARREST_REQUEST)
+			{
+				String id = data.getStringExtra("playerid");
+				String contents = data.getStringExtra("SCAN_RESULT");
+				String format = data.getStringExtra("SCAN_RESULT_FORMAT");
+				
+				Log.i("mong", "Scan QRCode:" + contents);
+
+				//TODO: arrest player
 			}
 		}
 	}
@@ -621,8 +661,24 @@ public class GameActivity extends MapActivity
 		@Override
 		public void onClick(View arg0) {
 			Intent intent = new Intent();
+			intent.putExtra("playertype", _player.PlayerType);
 			intent.setClass(GameActivity.this, GameMenuActivity.class);
 			startActivityForResult(intent, MENU_REQUEST);
+		}
+	};
+	
+	private OnClickListener _onStatusButtonClick = new OnClickListener(){
+
+		@Override
+		public void onClick(View arg0) {
+			Intent intent = new Intent();
+			intent.putExtra("name", _player.Name);
+			intent.putExtra("id", _player.ID);
+			
+			intent.setClass(GameActivity.this, GameStatusActivity.class);
+			startActivity(intent);
+			
+			
 		}
 	};
 	

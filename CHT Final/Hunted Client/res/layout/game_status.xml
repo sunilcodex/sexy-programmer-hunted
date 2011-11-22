@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:background="@drawable/round_corner" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_marginLeft="20dp" android:layout_marginRight="20dp" android:gravity="center_vertical|center_horizontal" android:layout_gravity="center_vertical|center_horizontal" android:paddingLeft="20dp">
+<TextView android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_width="fill_parent" android:textStyle="bold" android:textColor="#58410f" android:gravity="top|right" android:textSize="35sp" android:paddingRight="5dp" android:id="@+id/lbGameStatus" android:text="Game Status"></TextView>
+<LinearLayout android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/linearLayout2" android:orientation="vertical" android:layout_marginBottom="20dp" android:layout_marginRight="25dp" android:layout_marginLeft="15dp">
+    <TextView android:layout_width="wrap_content" android:id="@+id/lbPlayerName" android:textSize="20sp" android:textColor="#000000" android:textAppearance="?android:attr/textAppearanceLarge" android:text="@string/name" android:layout_height="wrap_content"></TextView>
+    <TextView android:layout_width="wrap_content" android:textColor="#000000" android:textAppearance="?android:attr/textAppearanceLarge" android:text="@string/name" android:layout_height="wrap_content" android:id="@+id/txtPlayerName" android:textSize="25sp" android:layout_marginLeft="10dp"></TextView>
+    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/qrsample" android:layout_marginTop="10dp" android:id="@+id/imgQrCode" android:background="@drawable/qrcode_view"></ImageView>
+    </LinearLayout>
+</LinearLayout>

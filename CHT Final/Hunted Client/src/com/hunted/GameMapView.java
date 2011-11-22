@@ -30,6 +30,7 @@ public class GameMapView extends View
 	float _angle = 0;
 	long _lastDrawTime;
 	HashMap<String,Player> _players;
+	HashMap<Integer, Bitmap> _playerImages;
 	int _viewType;
 	
 	public GameMapView(Context context, MapView mapview, int viewType, UIHelper uiHelper, HashMap<String,Player> players)
@@ -41,6 +42,7 @@ public class GameMapView extends View
 		_viewType = viewType;
 		_textureBitmap = BitmapFactory.decodeResource(this.getResources(), viewType == PlayerType.Player ? R.drawable.radar : R.drawable.radar_red);
 		_lastDrawTime = SystemClock.currentThreadTimeMillis();
+		_playerImages = new HashMap<Integer, Bitmap>();
 	}
 
 	
@@ -120,8 +122,12 @@ public class GameMapView extends View
 	        }
 	        else
 	        	imgId = R.drawable.ninjaboy2_small;
-	        	
-	        Bitmap bmp = BitmapFactory.decodeResource(this.getResources(), imgId);           
+	        
+	        if(!_playerImages.containsKey(imgId))
+	        	_playerImages.put(imgId, BitmapFactory.decodeResource(this.getResources(), imgId));
+	        
+	        Bitmap bmp = _playerImages.get(imgId);
+	        
 	        canvas.drawBitmap(bmp, screenPts.x - bmp.getWidth() / 2, screenPts.y - bmp.getHeight(), null);
 	        canvas.drawText(player.Name, screenPts.x - paint.measureText(player.Name) / 2, screenPts.y + paint.getTextSize(), strokPaint);
 	        canvas.drawText(player.Name, screenPts.x - paint.measureText(player.Name) / 2, screenPts.y + paint.getTextSize(), paint);
