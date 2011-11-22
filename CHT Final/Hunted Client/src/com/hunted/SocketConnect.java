@@ -1,4 +1,4 @@
-
+package com.hunted;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -34,15 +34,16 @@ public class SocketConnect {
 		for (int i = 0; i < values.length; i++) {
 			String[] kv = lines[i].split(":");
 
-			if (kv[0].equals("USER"))
+			if (kv[0].equals("USER") || kv[0].equals("HUNTER"))
 			{
+				String label = kv[0];
 				// User data
 				
 				HashMap<String, String[]> userMap;
-				if(!map.containsKey("USER"))
-					map.put("USER", new HashMap<String, String[]>());
+				if(!map.containsKey(label))
+					map.put(label, new HashMap<String, String[]>());
 				
-				userMap = (HashMap<String, String[]>)map.get("USER");
+				userMap = (HashMap<String, String[]>)map.get(label);
 					
 				String[] tmp = kv[1].split(",");
 				userMap.put(tmp[0], tmp);

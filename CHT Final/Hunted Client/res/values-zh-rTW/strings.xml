@@ -15,4 +15,7 @@
     <string name="name">玩家名稱</string>
     <string name="gps_disabled">GPS目前為停用狀態，請啟用後再試一次</string>
     <string name="arrest">逮捕</string>
+    <string name="hunter">獵人</string>
+    <string name="challenger">挑戰者</string>
+    <string name="player_group">玩家陣營</string>
 </resources>

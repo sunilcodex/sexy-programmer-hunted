@@ -17,4 +17,7 @@
     <string name="name">Name</string>
     <string name="gps_disabled">The GPS seems to be disabled, please enable it and try again.</string>
     <string name="arrest">Arrest</string>
+    <string name="hunter">Hunter</string>
+    <string name="challenger">Challenger</string>
+    <string name="player_group">Player Group</string>
 </resources>

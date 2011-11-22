@@ -40,43 +40,54 @@ public class GameStatusActivity extends Activity
 	{
 		super.onResume();
 		
+		int playerType = this.getIntent().getIntExtra("playertype", PlayerType.Player);
 		String name = this.getIntent().getStringExtra("name");
 		String id = this.getIntent().getStringExtra("id");
 		
 		((TextView)this.findViewById(R.id.txtPlayerName)).setText(name);
-		if(id != _id)
-		{
-			_id = id;
-			
-			File file = new File(this.getCacheDir(), "qrcode_"+id+".png");
-			if(!file.exists())
-			{
-				_qrCode = QRCodeGenerator.encodeString2(_id);
-				if(_qrCode != null)
-				{
-					
-					try 
-					{
-						file.createNewFile();
-						FileOutputStream fs = new FileOutputStream(file);
-						_qrCode.compress(CompressFormat.PNG, 0, fs);
-						fs.close();
-					}
-					catch (IOException e) 
-					{
-					}
-					
-				}
-			}
-			else
-			{
-				_qrCode = BitmapFactory.decodeFile(file.getAbsolutePath());
-			}
-			
-			View viewe = this.findViewById(R.id.imgQrCode);
-			((ImageView)this.findViewById(R.id.imgQrCode)).setImageBitmap(_qrCode);
-		}
 		
+		
+		if(playerType == PlayerType.Player)
+		{
+			((TextView)this.findViewById(R.id.txtPlayerGroup)).setText(this.getResources().getString(R.string.challenger));
+			if(id != _id)
+			{
+				_id = id;
+				
+				File file = new File(this.getCacheDir(), "qrcode_"+id+".png");
+				if(!file.exists())
+				{
+					_qrCode = QRCodeGenerator.encodeString2(_id);
+					if(_qrCode != null)
+					{
+						
+						try 
+						{
+							file.createNewFile();
+							FileOutputStream fs = new FileOutputStream(file);
+							_qrCode.compress(CompressFormat.PNG, 0, fs);
+							fs.close();
+						}
+						catch (IOException e) 
+						{
+						}
+						
+					}
+				}
+				else
+				{
+					_qrCode = BitmapFactory.decodeFile(file.getAbsolutePath());
+				}
+				
+				View viewe = this.findViewById(R.id.imgQrCode);
+				((ImageView)this.findViewById(R.id.imgQrCode)).setImageBitmap(_qrCode);
+			}
+		}
+		else
+		{
+			((TextView)this.findViewById(R.id.txtPlayerGroup)).setText(this.getResources().getString(R.string.hunter));
+			((ImageView)this.findViewById(R.id.imgQrCode)).setVisibility(View.GONE);
+		}
 		
 		
 	}

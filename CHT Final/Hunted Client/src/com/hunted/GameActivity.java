@@ -1,6 +1,7 @@
 package com.hunted;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -12,7 +13,6 @@ import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.TrackballGestureDetector;
 
-import android.R.id;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
@@ -99,6 +99,8 @@ public class GameActivity extends MapActivity
 	private boolean _gameOver = false;
 	private boolean _initMapSuccessed;
 	
+	private String _locProvider;
+	
 	@Override
 	protected void onCreate(Bundle icicle)
 	{
@@ -122,7 +124,12 @@ public class GameActivity extends MapActivity
 	{
 		super.onResume();
 		
-		mLocationManager01.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, mLocationListener01);
+		//processLocationUpdated(mLocationManager01.getLastKnownLocation(_locProvider));
+		
+		if(!_locProvider.equals(LocationManager.NETWORK_PROVIDER))
+			mLocationManager01.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, mLocationListener01);
+		mLocationManager01.requestLocationUpdates(_locProvider, 1000, 1, mLocationListener01);
+		
 		
 		if(_initMapSuccessed)
 		{
@@ -194,7 +201,7 @@ public class GameActivity extends MapActivity
 		int playerType = this.getIntent().getIntExtra("player_type", PlayerType.Player);
 		
 		// the following line is for testing
-		//playerType = PlayerType.Hunter;
+		playerType = PlayerType.Hunter;
 		
 		if(_singlePlayerMode)
 			SocketConnect.SessionID = new String[] { "100", "100" };	// create fake session id
@@ -261,8 +268,7 @@ public class GameActivity extends MapActivity
 
 		
 		_mainLayout.addView(bottom);
-<<<<<<< .mine		//_mainLayout.addView(button_message);
-=======>>>>>>> .theirs		_mainLayout.addView(button_status);
+		_mainLayout.addView(button_status);
 		_mainLayout.addView(button_menu);
 		_mainLayout.addView(top);
 
@@ -333,7 +339,7 @@ public class GameActivity extends MapActivity
 		
 		/* 建立LocationManager物件取得系統LOCATION服務 */
 		mLocationManager01 = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		
+
 		if(mLocationManager01 == null)
 		{
 			// show alert dialog
@@ -373,6 +379,15 @@ public class GameActivity extends MapActivity
 			alertDlgBuilder.show();
 			return false;
 		}
+		
+		Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        criteria.setAltitudeRequired(false);
+        criteria.setBearingRequired(false);
+        criteria.setCostAllowed(true);
+        criteria.setPowerRequirement(Criteria.POWER_LOW);
+
+        _locProvider = mLocationManager01.getBestProvider(criteria, true);
 		
 		return true;
 	}
@@ -506,6 +521,11 @@ public class GameActivity extends MapActivity
 	/* 當手機收到位置變更時，將location傳入更新當下GeoPoint及MapView */
 	private void processLocationUpdated(Location location)
 	{
+		if(location == null)
+			return;
+		
+		Log.i("mong", "loc: " + location.getLongitude() + "," + location.getLatitude());
+		
 		/* 傳入Location物件，取得GeoPoint地理座標 */
 		currentGeoPoint = getGeoByLocation(location);
 		
@@ -582,9 +602,6 @@ public class GameActivity extends MapActivity
 					switch (selectedItem) 
 					{  
 					case GameMenuAdapter.MENU_ARREST:
-//						Intent intent = new Intent();
-//						intent.setClass(GameActivity.this, ArrestActivity.class);
-//						startActivityForResult(intent, MENU_REQUEST);
 						Intent intent = new Intent("com.google.zxing.client.android.SCAN");
 						intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
 						startActivityForResult(intent, ARREST_REQUEST);
@@ -597,13 +614,21 @@ public class GameActivity extends MapActivity
 			}
 			else if(requestCode == ARREST_REQUEST)
 			{
-				String id = data.getStringExtra("playerid");
 				String contents = data.getStringExtra("SCAN_RESULT");
 				String format = data.getStringExtra("SCAN_RESULT_FORMAT");
 				
 				Log.i("mong", "Scan QRCode:" + contents);
-
-				//TODO: arrest player
+				
+				try
+				{
+					SocketConnect.Instance.HunterInGame(SocketConnect.Instance, SocketConnect.SessionID, 
+							Integer.toString(_player.getLocation().getLatitudeE6()), 
+							Integer.toString(_player.getLocation().getLongitudeE6()), contents);
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -675,7 +700,7 @@ public class GameActivity extends MapActivity
 			Intent intent = new Intent();
 			intent.putExtra("name", _player.Name);
 			intent.putExtra("id", _player.ID);
-			
+			intent.putExtra("playertype", _player.PlayerType);
 			intent.setClass(GameActivity.this, GameStatusActivity.class);
 			startActivity(intent);
 			
@@ -758,12 +783,14 @@ public class GameActivity extends MapActivity
 						} 
 						else 
 						{
-							if(_player.getLocation().getLatitudeE6() != 0  && _player.getLocation().getLongitudeE6() != 0){
-							response = SocketConnect.Instance.HunterInGame(SocketConnect.Instance, SocketConnect.SessionID, 
-									Integer.toString(_player.getLocation().getLatitudeE6()), Integer.toString(_player.getLocation().getLongitudeE6()));
+							if(_player.getLocation().getLatitudeE6() != 0  && _player.getLocation().getLongitudeE6() != 0)
+							{
+								response = SocketConnect.Instance.HunterInGame(SocketConnect.Instance, SocketConnect.SessionID, 
+											Integer.toString(_player.getLocation().getLatitudeE6()), 
+											Integer.toString(_player.getLocation().getLongitudeE6()), null);
 							}
 							else
-								response = SocketConnect.Instance.HunterInGame(SocketConnect.Instance, SocketConnect.SessionID, "0.0", "0.0");
+								response = SocketConnect.Instance.HunterInGame(SocketConnect.Instance, SocketConnect.SessionID, "0.0", "0.0", null);
 						}
 	
 						HashMap<String, Object> values = SocketConnect.parse(response);
@@ -775,36 +802,11 @@ public class GameActivity extends MapActivity
 						// Set all players state
 						if (values.containsKey("USER")) 
 						{
-							for (String[] userData : ((HashMap<String, String[]>) values.get("USER")).values()) 
-							{
-								String id = userData[0];
-								Player player;
-								if (!_players.containsKey(id))
-									_players.put(id, new Player(id, _player.PlayerType, userData[1],
-											id == _player.ID));
-	
-								player = _players.get(id);
-	
-								if (getResources().getBoolean(R.bool.Debug)) 
-								{
-									if (player.Self) 
-									{
-										player.setLocation(_player.getLocation());
-									} 
-									else 
-									{
-										player.set(userData);
-	
-										player.setLocation(new GeoPoint(
-												(int) (_player.getLocation().getLatitudeE6() + player.getLocation().getLatitudeE6() * 0.5f),
-												(int) (_player.getLocation().getLongitudeE6() + player.getLocation().getLongitudeE6() * 0.5f)));
-									}
-								} 
-								else 
-								{
-									player.set(userData);
-								}
-							}
+							updatePlayers(((HashMap<String, String[]>)values.get("USER")).values(), true);
+						}
+						if (values.containsKey("HUNTER")) 
+						{
+							updatePlayers(((HashMap<String, String[]>)values.get("HUNTER")).values(), false);
 						}
 						
 					}
@@ -830,6 +832,41 @@ public class GameActivity extends MapActivity
 				catch (InterruptedException e) 
 				{
 					e.printStackTrace();
+				}
+			}
+		}
+		
+		void updatePlayers(Collection<String[]> values, boolean sameGroup)
+		{
+			for (String[] userData : values) 
+			{
+				String id = userData[0];
+				Player player;
+				if (!_players.containsKey(id))
+					_players.put(id, new Player(id, 
+							sameGroup ? _player.PlayerType : (_player.PlayerType == PlayerType.Player ? PlayerType.Hunter : PlayerType.Player)
+							, userData[1], id == _player.ID));
+
+				player = _players.get(id);
+
+				if (getResources().getBoolean(R.bool.Debug)) 
+				{
+					if (player.Self) 
+					{
+						player.setLocation(_player.getLocation());
+					} 
+					else 
+					{
+						player.set(userData);
+
+						player.setLocation(new GeoPoint(
+								(int) (_player.getLocation().getLatitudeE6() + player.getLocation().getLatitudeE6() * 0.5f),
+								(int) (_player.getLocation().getLongitudeE6() + player.getLocation().getLongitudeE6() * 0.5f)));
+					}
+				} 
+				else 
+				{
+					player.set(userData);
 				}
 			}
 		}
