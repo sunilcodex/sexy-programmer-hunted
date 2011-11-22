@@ -22,20 +22,27 @@ import android.widget.TextView;
 public class GameMenuAdapter extends BaseAdapter
 {
 	public static final int MENU_SURRENDER = 0;
+	public static final int MENU_ARREST = 0;
 	
 	public int MessageAlive = 30;
-	private String[] _menus;
+	private String[][] _menus;
 	private Bitmap[] _menuIcons;
 	private Context _context;
 	private int _textSize;
 	public int ItemHeight;
 	public int ItemPadding;
+	public int PlayerType;
 	
-	public GameMenuAdapter(Context context)
+	public GameMenuAdapter(Context context, int playerType)
 	{
 		_context = context;
-		_menus = new String[] { context.getResources().getString(R.string.surrender) };
+		_menus = new String[][] { 
+				{context.getResources().getString(R.string.surrender)},	// for player
+				{context.getResources().getString(R.string.arrest)}		// for hunter
+				};
 		_menuIcons = new Bitmap[] { BitmapFactory.decodeResource(context.getResources(), R.drawable.flag) };
+		
+		this.PlayerType = playerType;
 	}
 	
 	public void setTextSize(int pxSize)
@@ -51,13 +58,13 @@ public class GameMenuAdapter extends BaseAdapter
 	@Override
 	public int getCount()
 	{
-		return _menus.length;
+		return _menus[this.PlayerType].length;
 	}
 
 	@Override
 	public Object getItem(int index)
 	{
-		return _menus[index];
+		return _menus[this.PlayerType][index];
 	}
 
 	@Override
@@ -98,7 +105,7 @@ public class GameMenuAdapter extends BaseAdapter
 			item = (ItemViewHolder)itemView.getTag();
 		}
 		
-		String menu = _menus[index];
+		String menu = _menus[this.PlayerType][index];
 		//item.Icon.setImageBitmap(_menuIcons[index]);
 		item.Title.setText(menu);
 		

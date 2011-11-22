@@ -16,4 +16,5 @@
     <string name="hostid">Host ID</string>
     <string name="name">Name</string>
     <string name="gps_disabled">The GPS seems to be disabled, please enable it and try again.</string>
+    <string name="arrest">Arrest</string>
 </resources>

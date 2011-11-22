@@ -28,7 +28,7 @@ public class GameMenuActivity extends Activity
 		_uiHelper = new UIHelper(display.getWidth(), display.getHeight());
 				
 		// game menu
-		_menuView = new GameMenuView(this);
+		_menuView = new GameMenuView(this, this.getIntent().getIntExtra("playertype", PlayerType.Player));
 		_menuView.setVerticalScrollBarEnabled(false);
 		_menuView.setHorizontalScrollBarEnabled(false);
 		_menuView.setOnItemClickListener(new OnItemClickListener() {
@@ -46,7 +46,7 @@ public class GameMenuActivity extends Activity
 		menuAdapter.setTextSize(_uiHelper.scaleHeight(1280, 60));
 		menuAdapter.ItemHeight = _uiHelper.scaleHeight(1280, 150);
 		menuAdapter.ItemPadding = _uiHelper.scaleHeight(1280, 15);
-		
+
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams((int)(display.getWidth() * 0.8), menuAdapter.getCount() * menuAdapter.ItemHeight + 5);
 		params.addRule(RelativeLayout.CENTER_HORIZONTAL, 0);
 		params.addRule(RelativeLayout.CENTER_VERTICAL, 0);
