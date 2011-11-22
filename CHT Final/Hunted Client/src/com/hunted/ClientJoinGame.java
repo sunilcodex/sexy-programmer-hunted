@@ -39,7 +39,9 @@ public class ClientJoinGame extends ListActivity{
 	 Thread myRefreshThread = null;
 	 
 	 boolean readyOK = false;
-	 
+	 private Handler handler = new Handler(); 
+	  int waiting_time = 5;
+	  int start_count = 0;
 	 public int type;
 	  
 	  private List<String[]> list = new ArrayList<String[]>();
@@ -183,6 +185,7 @@ public class ClientJoinGame extends ListActivity{
 			}
         	if(ww){        		
         	myRefreshThread.interrupt();
+        	/*
 			try {
 				Thread.sleep(4000);
 				list = SocketConnect.Instance.Client_waiting_get(SocketConnect.Instance, SocketConnect.SessionID);
@@ -193,18 +196,22 @@ public class ClientJoinGame extends ListActivity{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			/*
-			Intent intent = new Intent();
-	        	intent.setClass(JoinGameActivity.this, Count.class);  
-	        	startActivity(intent); 
-	        	*/
+
     		Intent intent = new Intent();
           	intent.setClass(ClientJoinGame.this, GameActivity.class); 
           	intent.putExtra("single_player", false);
           	intent.putExtra("player_type", type);
           	intent.putExtra("player_name", realname);
-          	startActivity(intent); 
+          	startActivity(intent);
+          	*/ 
+			myRefreshThread.interrupt();
+			//設定定時要執行的方法
+	        handler.removeCallbacks(updateTimer);
+	        //設定Delay的時間
+	        handler.postDelayed(updateTimer, 1000);
+
         	}
+        	
         	else{
         	
         	//先清空list
@@ -243,6 +250,35 @@ public class ClientJoinGame extends ListActivity{
         } 
    };
     
+   //遊戲開始倒數
+   private Runnable updateTimer = new Runnable() {
+       public void run() {
+    	    try {
+				list = SocketConnect.Instance.Client_waiting_get(SocketConnect.Instance, SocketConnect.SessionID);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	    TextView r = (TextView) findViewById(R.id.textView3);
+	        String tmp = "剩餘" + String.valueOf(waiting_time - start_count) + "秒"; 
+	        r.setText(tmp);
+
+
+			if(start_count == waiting_time){
+	    		Intent intent = new Intent();
+	          	intent.setClass(ClientJoinGame.this, GameActivity.class); 
+	          	intent.putExtra("single_player", false);
+	          	intent.putExtra("player_type", type);
+	          	intent.putExtra("player_name", realname);
+	          	startActivity(intent);
+			}
+	        start_count++;
+			handler.postDelayed(this, 1000);
+       }
+   };
+/////////////////////////////////
+   
+   
     private void getPlayerList() throws IOException
     {
     	list = new ArrayList<String[]>();

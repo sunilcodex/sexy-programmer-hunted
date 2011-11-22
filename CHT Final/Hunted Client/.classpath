@@ -3,6 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry kind="lib" path="C:/Users/lowvoice/Desktop/Hami_Apps_SDK_20110628/Hami_Apps_SDK_V1.06_20110621.jar"/>
+	<classpathentry kind="lib" path="Hami_Apps_SDK_Dev_V1.06_20110621.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

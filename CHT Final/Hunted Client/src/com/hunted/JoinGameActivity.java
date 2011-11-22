@@ -23,10 +23,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.os.Message; 
 
@@ -40,8 +44,11 @@ public class JoinGameActivity extends ListActivity{
 	  public GameRoomAdapter gameroom;
 	  public int type;
 	  int allOK = 1;
+	  int waiting_time = 5;
+	  int start_count = 0;
 	  Button btnStart;
 	 Thread myRefreshThread = null;
+	 private Handler handler = new Handler(); 
 	  
 	  private List<String[]> list = new ArrayList<String[]>();
 	  //private Context cc = this;
@@ -55,6 +62,8 @@ public class JoinGameActivity extends ListActivity{
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         
+      
+        
         // create UI helper for ui scaling
         Display display = ((WindowManager)this.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 		UIHelper uiHelper = new UIHelper(display.getWidth(),display.getHeight());
@@ -67,6 +76,41 @@ public class JoinGameActivity extends ListActivity{
         setContentView(R.layout.join_game);
         TextView mtext = (TextView)findViewById(R.id.textView1);
         
+        TextView r = (TextView) findViewById(R.id.textView2);
+        r.setText("設定遊戲時間:");
+        
+        
+      //建立一個ArrayAdapter物件，並放置下拉選單的內容 
+        Spinner spinner = (Spinner) findViewById(R.id.spinner1); 
+       ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.settime_spinner,R.id.textview,new String[]{"1分鐘","10分鐘","30分鐘"});
+        //SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,android.R.layout.simple_spinner_item, R.layout.settime_spinner,cursor, new String[] { PutFieldName }, new int[] {android.R.id.text1});
+
+    //設定下拉選單的樣式 
+       //adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); 
+      spinner.setAdapter(adapter); 
+      
+      
+      //設定項目被選取之後的動作
+      //手動設定時間
+      spinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener(){
+          public void onItemSelected(AdapterView adapterView, View view, int position, long id){
+              //Toast.makeText(MainActivity.this, "您選擇"+adapterView.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
+        	  String[] time = adapterView.getSelectedItem().toString().split("分");
+        	  int int_time = Integer.valueOf(time[0]) * 60 + 2;
+        	  try {
+				SocketConnect.Instance.HostGameTime(SocketConnect.Instance, SocketConnect.SessionID, String.valueOf(int_time));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        	  
+        	  
+          }
+          public void onNothingSelected(AdapterView arg0) {
+              //Toast.makeText(MainActivity.this, "您沒有選擇任何項目", Toast.LENGTH_LONG).show();
+          }
+      });
+ 
         
         //get groupID and Name
         Bundle bundle = this.getIntent().getExtras();
@@ -78,7 +122,7 @@ public class JoinGameActivity extends ListActivity{
         
         
         //Start or Ready Button
-       btnStart = (Button) findViewById(R.id.button_start);
+        btnStart = (Button) findViewById(R.id.button_start);
         btnStart.setOnTouchListener(new Button.OnTouchListener()
         {
         	
@@ -87,22 +131,34 @@ public class JoinGameActivity extends ListActivity{
 				if(event.getAction() == MotionEvent.ACTION_DOWN){
 					if(allOK == 1)
 					btnStart.setBackgroundResource(R.drawable.botton3);
+					int i = 0;
+
 				}
 				else if(event.getAction() == MotionEvent.ACTION_UP){
 					if(allOK == 1){
 					btnStart.setBackgroundResource(R.drawable.botton);
 					//go to count down
 					try {
+						
 						list = SocketConnect.Instance.HostStart(SocketConnect.Instance, SocketConnect.SessionID);
+						
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					myRefreshThread.interrupt();
-					int i = 0;
-					while(true){
-						i++;
+					//設定定時要執行的方法
+			        handler.removeCallbacks(updateTimer);
+			        //設定Delay的時間
+			        handler.postDelayed(updateTimer, 1000);
+
+					
+					/*
+					for(int i = 0;i <= waiting_time ; i++){
 					try {
+				        TextView r = (TextView) findViewById(R.id.textView3);
+				        String tmp = "剩餘" + String.valueOf(waiting_time - i) + "秒";
+				        r.setText(tmp);
 						Thread.sleep(1000);
 						list = SocketConnect.Instance.Client_waiting_get(SocketConnect.Instance, SocketConnect.SessionID);
 					} catch (InterruptedException e) {
@@ -113,12 +169,7 @@ public class JoinGameActivity extends ListActivity{
 						e.printStackTrace();
 					}
 					
-					/*
-					Intent intent = new Intent();
-      	        	intent.setClass(JoinGameActivity.this, Count.class);  
-      	        	startActivity(intent); 
-      	        	*/
-					if(i == 5){
+					if(i == waiting_time){
 		    		Intent intent = new Intent();
 		          	intent.setClass(JoinGameActivity.this, GameActivity.class); 
 		          	intent.putExtra("single_player", false);
@@ -128,7 +179,11 @@ public class JoinGameActivity extends ListActivity{
 		          	startActivity(intent);
 		          	break;
 					}
+					else{	
 					}
+						
+					}
+					*/
 					}
 					
 				}
@@ -142,12 +197,6 @@ public class JoinGameActivity extends ListActivity{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
-
-				
-			
-			
 
     }
     
@@ -189,7 +238,7 @@ public class JoinGameActivity extends ListActivity{
         } 
    } 
     
-    
+    //隨時更新清單
     Handler myHandler = new Handler() {
         public void handleMessage(Message msg) { 
         	//先清空list
@@ -237,7 +286,38 @@ public class JoinGameActivity extends ListActivity{
              super.handleMessage(msg); 
         } 
    };
-    
+   ///////////////////////////////////////////////
+   
+   //遊戲開始倒數
+   private Runnable updateTimer = new Runnable() {
+       public void run() {
+    	    try {
+				list = SocketConnect.Instance.Client_waiting_get(SocketConnect.Instance, SocketConnect.SessionID);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	    TextView r = (TextView) findViewById(R.id.textView3);
+	        String tmp = "剩餘" + String.valueOf(waiting_time - start_count) + "秒"; 
+	        r.setText(tmp);
+
+
+			if(start_count == waiting_time){
+	    		Intent intent = new Intent();
+	          	intent.setClass(JoinGameActivity.this, GameActivity.class); 
+	          	intent.putExtra("single_player", false);
+	          	intent.putExtra("player_type", type);
+	          	System.out.println("Type!!!!!!!:"+type);
+	          	intent.putExtra("player_name", realname);
+	          	startActivity(intent);
+			}
+	        start_count++;
+			handler.postDelayed(this, 1000);
+       }
+   };
+/////////////////////////////////
+   
+   
     private void getPlayerList() throws IOException
     {
     	list = new ArrayList<String[]>();

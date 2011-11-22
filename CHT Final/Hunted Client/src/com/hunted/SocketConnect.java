@@ -1,4 +1,4 @@
-package com.hunted;
+
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -165,13 +165,19 @@ public class SocketConnect {
 			return "ClientReady Failed";
 	}
 
-	public String HunterInGame(SocketConnect client, String[] ID, String gpsX, String gpsY)
+	public String HunterInGame(SocketConnect client, String[] ID, String gpsX, String gpsY, String CAUGHT_ID)
 			throws IOException {
-		client.send("GET:" + ID[0] + "," + ID[1] + "\n" + "GPS:" + gpsX + "," + gpsY
-				+ "\n");
+		if (CAUGHT_ID == ""){
+			client.send("GET:" + ID[0] + "," + ID[1] + "\n" + "GPS:" + gpsX + "," + gpsY + "\n");
+		}
+		else{
+			client.send("GET:" + ID[0] + "," + ID[1] + "\n" + "GPS:" + gpsX + "," + gpsY + "\n" +  
+					"PLAYER:" + CAUGHT_ID + "CAUGHT\n");
+			CAUGHT_ID = "";
+		}
 		String response = client.recv();
 		
-		System.out.println("HOST in game:\n" + response);
+		System.out.println("HunterInGame: " + response);
 		Pattern p = Pattern.compile("^STATE_HUNTER_IN_GAME\\n.*",
 				Pattern.DOTALL);
 		Matcher m = p.matcher(response);
@@ -249,6 +255,9 @@ public class SocketConnect {
 			response = client.recv();
 			System.out.println("HOST in game:\n" + response);
 		}
+		
+		
+		
 		return response;
 	}
 
@@ -276,6 +285,23 @@ public class SocketConnect {
 		System.out.println(response);
 		return response;
 	}
+	
+	
+/*	
+	public ArrayList<String[]> PlayerCaught(SocketConnect client, String[] ID)throws IOException {
+		//List<String[]> list = new ArrayList<String[]>();
+		List<String[]> list = new ArrayList<String[]>();
+
+		client.send("GET:" + ID[0] + "," + ID[1] + "\n");
+
+		String response = client.recv();
+		System.out.println("STATE_PLAYER_CAUGHT_FUNC:" + response);
+
+		list = PlayInGameParser(response, "STATE_PLAYER_CAUGHT\\n");
+	
+		return (ArrayList<String[]>) list; 
+	}
+*/
 	
 	// Thread Running
 		public ArrayList<String[]> HostWaitChange(SocketConnect client, String[] ID, String user, String Type)throws IOException {
@@ -326,6 +352,31 @@ public class SocketConnect {
 		
 			return (ArrayList<String[]>) list; 
 		}
+		
+		
+		//Host send Game Time
+		public  void HostGameTime(SocketConnect client, String[] ID , String time)throws IOException {
+			//List<String[]> list = new ArrayList<String[]>();
+
+			client.send("GET:" + ID[0] + "," + ID[1] + "\nGAMETIME:"+time+"\n");
+			String response = client.recv();
+			//list = InfoParser(response, "STATE_HOST_WAITING\\n");
+		
+			//return (ArrayList<String[]>) list; 
+		}
+		
+		//Get Game Time
+		public  ArrayList<String[]> GetGameTime(SocketConnect client, String[] ID)throws IOException {
+			List<String[]> list = new ArrayList<String[]>();
+
+			client.send("GET:" + ID[0] + "," + ID[1] + "\n");
+			String response = client.recv();
+			list = TimeInfoParser(response, "STATE_HOST_WAITING\\n");
+		
+			return (ArrayList<String[]>) list; 
+		}
+		
+		
 
 		//client and other waitting
 		public ArrayList<String[]> Client_waiting_get(SocketConnect client, String[] ID)throws IOException {
@@ -335,6 +386,13 @@ public class SocketConnect {
 				client.send("GET:" + ID[0] + "," + ID[1] + "\n");
 
 				String response = client.recv();
+				if(response.equals("Invalid_group_id\n")){
+					System.out.println("get in!!!!!!!!!");
+					String[] a = {"wrong"};
+					list.add(a);
+					return (ArrayList<String[]>) list;					
+				}
+				
 				System.out.println(response);
 				list = InfoParser(response, "STATE_PLAYER_WAITING\\n");
 				return (ArrayList<String[]>) list; 
@@ -367,7 +425,14 @@ public class SocketConnect {
 				client.send("GET:" + ID[0] + "," + ID[1] + "\n");
 
 				String response = client.recv();
-				//System.out.println(response);
+				
+				if(response.equals("Invalid group_id")){
+					System.out.println("get in!!!!!!!!!");
+					String[] a = {"wrong"};
+					list.add(a);
+					return (ArrayList<String[]>) list;					
+				}
+				System.out.println(response);
 				list = InfoParser(response, "STATE_WAITING_OTHERS\\n");
 				return (ArrayList<String[]>) list; 
 
@@ -411,6 +476,96 @@ public class SocketConnect {
 	}
 		
 		public ArrayList<String[]> InfoParser(String response, String state)throws IOException{
+			List<String[]> list = new ArrayList<String[]>();
+			//Pattern p = Pattern.compile("^STATE_HOST_WAITING\\nGROUP_ID:([0-9]+)\\n.*", Pattern.DOTALL);
+			Pattern p = Pattern.compile(state + ".*", Pattern.DOTALL);
+			Matcher m = p.matcher(response);
+
+			if( m.matches() ){
+				
+				String[] packet_info = response.split("\n");
+				//System.out.println(packet_info[3]);
+				
+				Pattern user_pattern = Pattern.compile("USER:([0-9]+),([0-9a-zA-Z]+),[HP],[OX].*", Pattern.DOTALL);
+				for(int i=0;i < packet_info.length;i++){ 
+					
+					Matcher user_matcher = user_pattern.matcher(packet_info[i]);
+					
+					if( user_matcher.matches()){
+						System.out.println("HOST wait:" + response);
+						String[] user_info = user_matcher.group(0).split(":");
+						user_info = user_info[1].split(",");
+						//System.out.println("user_info: " + user_info[0]);
+						list.add(user_info);
+
+						}
+					}
+				}
+			return (ArrayList<String[]>) list;
+		}
+		
+		/*
+		public ArrayList<String[]> PlayInGameParser(String response, String state)throws IOException{
+			List<String[]> list = new ArrayList<String[]>();
+			//Pattern p = Pattern.compile("^STATE_HOST_WAITING\\nGROUP_ID:([0-9]+)\\n.*", Pattern.DOTALL);
+			Pattern p = Pattern.compile(state + ".*", Pattern.DOTALL);
+			Matcher m = p.matcher(response);
+
+			if( m.matches() ){
+				
+				String[] packet_info = response.split("\n");
+				//System.out.println(packet_info[3]);
+				
+				Pattern user_pattern = Pattern.compile("USER:([0-9]+),[HP],([0-9a-zA-Z]+),([0-9]+).([0-9]+),([0-9]+).([0-9]+).*", Pattern.DOTALL);
+				for(int i=0;i < packet_info.length;i++){ 
+					
+					Matcher user_matcher = user_pattern.matcher(packet_info[i]);
+					
+					if( user_matcher.matches()){
+						System.out.println("PlayerInGameParse:" + response);
+						String[] user_info = user_matcher.group(0).split(":");
+						user_info = user_info[1].split(",");
+						System.out.println("user_info: " + user_info[0]);
+						list.add(user_info);
+
+						}
+					}
+				}
+			return (ArrayList<String[]>) list;
+		}
+		*/
+		public ArrayList<String[]> MissionParser(String response, String state)throws IOException{
+			List<String[]> list = new ArrayList<String[]>();
+			//Pattern p = Pattern.compile("^STATE_HOST_WAITING\\nGROUP_ID:([0-9]+)\\n.*", Pattern.DOTALL);
+			Pattern p = Pattern.compile(state + ".*", Pattern.DOTALL);
+			Matcher m = p.matcher(response);
+
+			if( m.matches() ){
+				
+				String[] packet_info = response.split("\n");
+				//System.out.println(packet_info[3]);
+				
+				Pattern mission_pattern = Pattern.compile("MISSION_GPS:([0-9]+).([0-9]+),([0-9]+).([0-9]+).*", Pattern.DOTALL);
+				for(int i=0;i < packet_info.length;i++){ 
+					
+					Matcher mission_matcher = mission_pattern.matcher(packet_info[i]);
+					
+					if( mission_matcher.matches()){
+						System.out.println("MISSION PARSER");
+						System.out.println("HOST wait:" + response);
+						String[] user_info = mission_matcher.group(0).split(":");
+						user_info = user_info[1].split(",");
+						//System.out.println("user_info: " + user_info[0]);
+						list.add(user_info);
+						}
+
+					
+					}
+				}
+			return (ArrayList<String[]>) list;
+		}
+		
+		public ArrayList<String[]> TimeInfoParser(String response, String state)throws IOException{
 			List<String[]> list = new ArrayList<String[]>();
 			//Pattern p = Pattern.compile("^STATE_HOST_WAITING\\nGROUP_ID:([0-9]+)\\n.*", Pattern.DOTALL);
 			Pattern p = Pattern.compile(state + ".*", Pattern.DOTALL);
