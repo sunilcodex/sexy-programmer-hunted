@@ -3,7 +3,7 @@
     <string name="been_caught">被抓到了</string>
     <string name="surrendered">投降了</string>
     <string name="surrender">投降</string>
-    <string name="test_man">測試玩家</string>
+    <string name="test_man">挑戰者</string>
     <string name="timeout">遊戲結束</string>
     <string name="ok">確定</string>
     <string name="error">錯誤</string>
@@ -18,5 +18,6 @@
     <string name="hunter">獵人</string>
     <string name="challenger">挑戰者</string>
     <string name="player_group">玩家陣營</string>
+    <string name="app_name">Hunted</string>
     <string name="mission">任務</string>
 </resources>

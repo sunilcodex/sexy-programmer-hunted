@@ -34,6 +34,7 @@ public class GameMapView extends View
 	HashMap<String,Player> _players;
 	HashMap<Integer, Bitmap> _playerImages;
 	int _viewType;
+	boolean _pause; 
 	
 	int _mission_num = 0;
 	GeoPoint _missionPoint;
@@ -53,6 +54,8 @@ public class GameMapView extends View
 		_missionPoint = mpoint;
 	}
 
+	public void pauseUpdate() { _pause = true; }
+	public void resumeUpdate() { _pause = false; }
 	
 	@Override
 	protected void onDraw (Canvas canvas)
@@ -152,7 +155,8 @@ public class GameMapView extends View
 	        
 		}
 		
-		invalidate();
+		if(!_pause)
+			invalidate();
 	}
 	
 	public static List<Player> sortPlayer(final HashMap<String, Player> map) 
