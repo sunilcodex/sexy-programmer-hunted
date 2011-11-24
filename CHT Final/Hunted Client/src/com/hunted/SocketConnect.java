@@ -34,7 +34,7 @@ public class SocketConnect {
 		for (int i = 0; i < values.length; i++) {
 			String[] kv = lines[i].split(":");
 
-			if (kv[0].equals("USER") || kv[0].equals("HUNTER"))
+			if (kv[0].equals("USER") || kv[0].equals("Hunter"))
 			{
 				String label = kv[0];
 				// User data
@@ -47,6 +47,7 @@ public class SocketConnect {
 					
 				String[] tmp = kv[1].split(",");
 				userMap.put(tmp[0], tmp);
+				
 			}
 			else
 			{
@@ -54,11 +55,21 @@ public class SocketConnect {
 					map.put(kv[0], kv[1]);
 				else if (kv.length == 1)
 					map.put(kv[0], "");
+
 			}
 		}
 
 		return map;
 	}
+	
+	public void MissionSucess(SocketConnect client, String[] ID , String gpsX, String gpsY)
+			throws IOException {
+			client.send("GET:" + ID[0] + "," + ID[1] + "\nGPS:" + gpsX + ","+ gpsY + "\nMISSION_DONE\n");
+			String response = client.recv();
+
+			System.out.println("Missio sucess:" + response);
+
+		}
 
 	public SocketConnect(String address, int port) throws IOException {
 
@@ -255,6 +266,7 @@ public class SocketConnect {
 					+ gpsY + "\n");
 			response = client.recv();
 			System.out.println("HOST in game:\n" + response);
+			//System.out.println("NOOOOOOOOOOOOO:\n" + response);
 		}
 		
 		
@@ -540,7 +552,8 @@ public class SocketConnect {
 			//Pattern p = Pattern.compile("^STATE_HOST_WAITING\\nGROUP_ID:([0-9]+)\\n.*", Pattern.DOTALL);
 			Pattern p = Pattern.compile(state + ".*", Pattern.DOTALL);
 			Matcher m = p.matcher(response);
-
+			int count = 0;
+			
 			if( m.matches() ){
 				
 				String[] packet_info = response.split("\n");
@@ -558,14 +571,23 @@ public class SocketConnect {
 						user_info = user_info[1].split(",");
 						//System.out.println("user_info: " + user_info[0]);
 						list.add(user_info);
+						count++;	
 						}
 
-					
+
 					}
+				
+				if(count == 0){
+					String[] user_info = {"mission_not_yet"};
+					//System.out.println("user_info: " + user_info[0]);
+					list.add(user_info);
+					
+				}
+				
+				
 				}
 			return (ArrayList<String[]>) list;
 		}
-		
 		public ArrayList<String[]> TimeInfoParser(String response, String state)throws IOException{
 			List<String[]> list = new ArrayList<String[]>();
 			//Pattern p = Pattern.compile("^STATE_HOST_WAITING\\nGROUP_ID:([0-9]+)\\n.*", Pattern.DOTALL);

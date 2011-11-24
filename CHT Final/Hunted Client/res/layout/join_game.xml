@@ -3,16 +3,16 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:orientation="vertical"
   android:layout_width="fill_parent"
-  android:layout_height="fill_parent" android:background="#000000" android:duplicateParentState="false">
-    <ImageView android:layout_height="fill_parent" android:layout_width="fill_parent" android:src="@drawable/title_background" android:id="@+id/imageView1" android:scaleType="fitXY" android:layout_alignParentTop="true" android:layout_alignParentLeft="true"></ImageView>
+  android:layout_height="fill_parent" android:duplicateParentState="false" android:background="@drawable/title_background">
+    <ImageView android:layout_height="fill_parent" android:layout_width="fill_parent" android:id="@+id/imageView1" android:scaleType="fitXY" android:layout_alignParentTop="true" android:layout_alignParentLeft="true" android:src="@drawable/title_background"></ImageView>
     <RelativeLayout android:id="@+id/relativeLayout1" 
-    android:layout_width="fill_parent" android:layout_centerHorizontal="true" android:layout_alignParentTop="true" android:layout_marginLeft="50dp" android:layout_marginBottom="50dp" android:gravity="top" android:layout_height="fill_parent" android:paddingLeft="20dp" android:paddingRight="20dp" android:background="#cc000000" android:isScrollContainer="true">
+    android:layout_width="fill_parent" android:layout_centerHorizontal="true" android:layout_alignParentTop="true" android:layout_marginLeft="50dp" android:layout_marginBottom="50dp" android:gravity="top" android:layout_height="fill_parent" android:paddingLeft="20dp" android:paddingRight="20dp" android:isScrollContainer="true" android:background="#ba000000">
         <TextView android:textAppearance="?android:attr/textAppearanceMedium" android:layout_width="wrap_content" android:id="@+id/textView1" android:layout_height="wrap_content" android:layout_alignParentRight="true" android:layout_alignParentLeft="true" android:text="ID:123456"></TextView>
   	  <Button android:text="Start" android:id="@+id/button_start" android:layout_height="40dp" android:layout_width="wrap_content" android:layout_alignParentBottom="true" android:layout_marginBottom="34dp" android:layout_alignParentLeft="false" android:layout_centerHorizontal="true" android:background="@drawable/botton"></Button>
-  	  <ListView android:id="@android:id/list" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@+id/textView1" android:layout_alignLeft="@+id/textView2" android:layout_marginTop="32dp"></ListView>
   	  <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/textView2" android:layout_below="@+id/textView1" android:layout_alignLeft="@+id/textView1"></TextView>
-  	  <Spinner android:layout_height="50px" android:layout_width="wrap_content" android:id="@+id/spinner1" android:layout_alignTop="@+id/textView2" android:layout_centerHorizontal="true"></Spinner>
   	  <TextView android:id="@+id/textView3" android:layout_height="wrap_content" android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:layout_alignParentBottom="true" android:layout_alignParentRight="true"></TextView>
+  	  <Spinner android:layout_width="wrap_content" android:id="@+id/spinner1" android:layout_height="wrap_content" android:layout_below="@+id/textView2" android:layout_alignLeft="@android:id/list" android:layout_alignParentRight="true"></Spinner>
+  	  <ListView android:id="@android:id/list" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@+id/spinner1" android:layout_alignLeft="@+id/textView2"></ListView>
     </RelativeLayout>
     
 </RelativeLayout>

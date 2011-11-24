@@ -18,4 +18,5 @@
     <string name="hunter">獵人</string>
     <string name="challenger">挑戰者</string>
     <string name="player_group">玩家陣營</string>
+    <string name="mission">任務</string>
 </resources>

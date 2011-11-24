@@ -1,6 +1,7 @@
 package com.hunted;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,7 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.TrackballGestureDetector;
 
 import android.app.AlertDialog;
+import android.app.Service;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.ComponentName;
@@ -31,6 +33,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.provider.ContactsContract.Contacts.Data;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -100,6 +103,14 @@ public class GameActivity extends MapActivity
 	private boolean _initMapSuccessed;
 	
 	private String _locProvider;
+	
+	
+	int mission_num = 0;
+	ArrayList<String[]> mission;
+	private GameMapView gameMapView; 
+	private GeoPoint missionPoint = new GeoPoint(0,0);
+	int missiondemo = 0;
+	int missionfail = 0;
 	
 	@Override
 	protected void onCreate(Bundle icicle)
@@ -201,7 +212,7 @@ public class GameActivity extends MapActivity
 		int playerType = this.getIntent().getIntExtra("player_type", PlayerType.Player);
 		
 		// the following line is for testing
-		playerType = PlayerType.Hunter;
+		//playerType = PlayerType.Hunter;
 		
 		if(_singlePlayerMode)
 			SocketConnect.SessionID = new String[] { "100", "100" };	// create fake session id
@@ -235,7 +246,7 @@ public class GameActivity extends MapActivity
 		
 		
 		// Create players and map
-		GameMapView gameMapView = new GameMapView(this, mMapView01, _player.PlayerType, _uiHelper, _players);
+		gameMapView = new GameMapView(this, mMapView01, _player.PlayerType, _uiHelper, _players, mission_num, missionPoint);
 		_mainLayout.addView(gameMapView);
 		
 		// message list
@@ -745,8 +756,56 @@ public class GameActivity extends MapActivity
 				}
 			}
 
-			if(_gameState.Time == 0 || _gameState.Alive == 0)
+			
+			//mission
+			if (_player.PlayerType == PlayerType.Player && !_singlePlayerMode){
+			if(!mission.get(0)[0].equals("mission_not_yet") && mission_num == 0){
+				//System.out.println("MISSION OK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+mission.get(0)[0] +"/////"+mission.get(0)[1]);
+				System.out.println("MISSION OK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+				mission_num++;
+				
+				GeoPoint Point = new GeoPoint((int)Float.parseFloat(mission.get(0)[0]) + 100,(int)Float.parseFloat(mission.get(0)[1]) + 100);
+				gameMapView.changed_mission(mission_num,Point);
+				
+				Vibrator myVibrator = (Vibrator) getApplication().getSystemService(Service.VIBRATOR_SERVICE); 
+				//停0.01秒之後震動0.1秒(重覆三次) 
+				myVibrator.vibrate(new long[]{10, 500, 1000, 500, 1000, 500}, -1);				
+				mission_state(0);
+
+			}
+		
+			//check mission sucess or fail
+			if(!mission.get(0)[0].equals("mission_not_yet") && mission_num == 1){
+				/*
+				System.out.println("mission Start!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:" +(int)(_player.getLocation().getLatitudeE6()));
+				System.out.println("mission Start!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:" + (int)Float.parseFloat(mission.get(0)[0]));
+				
+				System.out.println("mission Start!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:" +(int)(_player.getLocation().getLongitudeE6()));
+				System.out.println("mission Start!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:" + (int)Float.parseFloat(mission.get(0)[1]));
+				 */
+				missiondemo +=20;
+				if(missionfail != -1){
+					System.out.println("mission NO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:"+mission_num);
+					mission_num++;
+					mission_state(2);	
+				}
+				
+				
+				if((int)(_player.getLocation().getLatitudeE6()) >= (int)Float.parseFloat(mission.get(0)[0]) + 1000 && (int) (_player.getLocation().getLongitudeE6()) >= (int)Float.parseFloat(mission.get(0)[1]) + 1000)
+					{
+					System.out.println("mission good!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:"+mission_num);
+					mission_num++;
+
+					mission_state(1);	
+
+					}
+					}
+			}
+			/////////////////////////////////
+			
+			if(_gameState.Time <= 0 || _gameState.Alive == 0)
 			{
+				System.out.println("OVER========="+ _gameState.Time +"ALIE:======"+_gameState.Alive);
 				_gameOver = true;
 				GameActivity.this.showDialog(GameActivity.this.TIMEOUT_DIALOG);
 			}
@@ -775,11 +834,31 @@ public class GameActivity extends MapActivity
 						if (_player.PlayerType == PlayerType.Player) 
 						{
 							if(_player.getLocation().getLatitudeE6() != 0  && _player.getLocation().getLongitudeE6() != 0){
-							response = SocketConnect.Instance.PlayerInGame(SocketConnect.Instance, SocketConnect.SessionID, 
-									Integer.toString(_player.getLocation().getLatitudeE6()), Integer.toString(_player.getLocation().getLongitudeE6()), _player.Status == PlayerStatus.Surrendered);
+								
+								//demo mission
+								String xx = Integer.toString(_player.getLocation().getLatitudeE6() + missiondemo) + ".0";
+								String yy = Integer.toString(_player.getLocation().getLongitudeE6() + missiondemo) + ".0";
+								
+								response = SocketConnect.Instance.PlayerInGame(SocketConnect.Instance, SocketConnect.SessionID, 
+										xx, yy, _player.Status == PlayerStatus.Surrendered);
+								
+							//response = SocketConnect.Instance.PlayerInGame(SocketConnect.Instance, SocketConnect.SessionID, 
+									//Integer.toString(_player.getLocation().getLatitudeE6()), Integer.toString(_player.getLocation().getLongitudeE6()), _player.Status == PlayerStatus.Surrendered);
 							}
-							else
-								response = SocketConnect.Instance.PlayerInGame(SocketConnect.Instance, SocketConnect.SessionID, "0.0", "0.0", _player.Status == PlayerStatus.Surrendered);	
+							else{
+								String xx = Integer.toString(missiondemo) + ".0";
+								String yy = Integer.toString(missiondemo) + ".0";
+								
+								response = SocketConnect.Instance.PlayerInGame(SocketConnect.Instance, SocketConnect.SessionID, xx, yy, _player.Status == PlayerStatus.Surrendered);
+								
+								//response = SocketConnect.Instance.PlayerInGame(SocketConnect.Instance, SocketConnect.SessionID, "0.0", "0.0", _player.Status == PlayerStatus.Surrendered);
+								
+							}
+							
+							
+							//mission
+						 mission = SocketConnect.Instance.MissionParser(response, "STATE_PLAYER_IN_GAME\\n");						 
+						 missionfail = response.indexOf("MISSION_UNDONE");
 						} 
 						else 
 						{
@@ -792,8 +871,11 @@ public class GameActivity extends MapActivity
 							else
 								response = SocketConnect.Instance.HunterInGame(SocketConnect.Instance, SocketConnect.SessionID, "0.0", "0.0", null);
 						}
+						
+						
 	
 						HashMap<String, Object> values = SocketConnect.parse(response);
+
 						_gameState.Set(values);
 	
 						// Set player state
@@ -871,4 +953,83 @@ public class GameActivity extends MapActivity
 			}
 		}
 	};
+	
+	public void mission_state(int state){
+		//start
+		if(state == 0){
+			final Dialog dialog = new Dialog(GameActivity.this, R.style.CustomDialog);
+        	//set ContentView
+        	  dialog.setContentView(R.layout.mission_dialog);
+        	  
+        	  
+        	  //OK button
+        	  Button OK = (Button) dialog.findViewById(R.id.ok2);
+        	  OK.setOnClickListener(new Button.OnClickListener()
+              {
+        		  public void onClick(View v)
+                  {
+        			  dialog.dismiss(); 	
+
+                  }
+              });
+        	  
+        	  dialog.show();	
+			
+		}
+		//success
+		else if(state == 1){
+			final Dialog dialog = new Dialog(GameActivity.this, R.style.CustomDialog);
+        	//set ContentView
+        	  dialog.setContentView(R.layout.mission_sucess_dialog);
+        	  
+        	  
+        	  //OK button
+        	  Button OK = (Button) dialog.findViewById(R.id.ok2);
+        	  OK.setOnClickListener(new Button.OnClickListener()
+              {
+        		  public void onClick(View v)
+                  {
+						String xx = Integer.toString(missiondemo) + ".0";
+						String yy = Integer.toString(missiondemo) + ".0";
+        			  try {
+						SocketConnect.Instance.MissionSucess(SocketConnect.Instance, SocketConnect.SessionID , xx ,yy);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+        			  dialog.dismiss(); 	
+
+                  }
+              });
+        	  
+        	  dialog.show();	
+	
+		}
+		//fail
+		else if(state == 2){
+			final Dialog dialog = new Dialog(GameActivity.this, R.style.CustomDialog);
+        	//set ContentView
+        	  dialog.setContentView(R.layout.mission_fail_dialog);
+        	  
+        	  
+        	  //OK button
+        	  Button OK = (Button) dialog.findViewById(R.id.ok2);
+        	  OK.setOnClickListener(new Button.OnClickListener()
+              {
+        		  public void onClick(View v)
+                  {
+        			  dialog.dismiss(); 	
+
+                  }
+              });
+        	  
+        	  dialog.show();	
+			
+		}
+		else
+			System.out.println("wrong!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");	
+		
+		
+		
+	}
 }
