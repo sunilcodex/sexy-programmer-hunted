@@ -19,6 +19,8 @@ import android.graphics.Paint.Style;
 import android.os.SystemClock;
 import android.view.SurfaceView;
 import android.view.View;
+
+import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Projection;
 
@@ -34,7 +36,10 @@ public class GameMapView extends View
 	int _viewType;
 	boolean _pause; 
 	
-	public GameMapView(Context context, MapView mapview, int viewType, UIHelper uiHelper, HashMap<String,Player> players)
+	int _mission_num = 0;
+	GeoPoint _missionPoint;
+	
+	public GameMapView(Context context, MapView mapview, int viewType, UIHelper uiHelper, HashMap<String,Player> players,int mission, GeoPoint mpoint)
 	{
 		super(context);
 		_mapview = mapview;
@@ -44,6 +49,9 @@ public class GameMapView extends View
 		_textureBitmap = BitmapFactory.decodeResource(this.getResources(), viewType == PlayerType.Player ? R.drawable.radar : R.drawable.radar_red);
 		_lastDrawTime = SystemClock.currentThreadTimeMillis();
 		_playerImages = new HashMap<Integer, Bitmap>();
+		///////////////////////
+		_mission_num = mission;
+		_missionPoint = mpoint;
 	}
 
 	public void pauseUpdate() { _pause = true; }
@@ -107,6 +115,10 @@ public class GameMapView extends View
 	        Point screenPts = new Point();
 	        projection.toPixels(player.getLocation(), screenPts);
 	        
+	        //get mission point to pixel
+	        Point screenPts2 = new Point();
+	        projection.toPixels(_missionPoint, screenPts2);
+	        
 	        int imgId;
 	        if(player.PlayerType == PlayerType.Player)
 	        {
@@ -135,6 +147,12 @@ public class GameMapView extends View
 	        canvas.drawText(player.Name, screenPts.x - paint.measureText(player.Name) / 2, screenPts.y + paint.getTextSize(), strokPaint);
 	        canvas.drawText(player.Name, screenPts.x - paint.measureText(player.Name) / 2, screenPts.y + paint.getTextSize(), paint);
 	        
+	        
+	        if(_mission_num >= 1){
+	        	Bitmap bmp2 = BitmapFactory.decodeResource(this.getResources(), R.drawable.mission_star);
+	        	canvas.drawBitmap(bmp2, screenPts2.x - bmp2.getWidth() / 2 , screenPts2.y - bmp2.getHeight(), null);
+	        }
+	        
 		}
 		
 		if(!_pause)
@@ -154,5 +172,11 @@ public class GameMapView extends View
 			}
         });
         return keys;
+    }
+	
+	public void changed_mission(int mission,GeoPoint missionPoint) 
+	{
+		_mission_num = mission;
+		_missionPoint = missionPoint;
     }
 }

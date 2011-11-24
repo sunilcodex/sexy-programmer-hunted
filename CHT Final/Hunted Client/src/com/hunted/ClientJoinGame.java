@@ -24,6 +24,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.os.Message; 
 
@@ -43,6 +44,7 @@ public class ClientJoinGame extends ListActivity{
 	  int waiting_time = 5;
 	  int start_count = 0;
 	 public int type;
+	 boolean thread_cancel = false;
 	  
 	  private List<String[]> list = new ArrayList<String[]>();
 	  private List<String[]> list2 = new ArrayList<String[]>();
@@ -77,6 +79,11 @@ public class ClientJoinGame extends ListActivity{
         
         TextView r = (TextView) findViewById(R.id.textView2);
         r.setText("請在Host確定身分後才按下Ready鍵");
+        
+        //消除spinner
+        Spinner spinner = (Spinner) findViewById(R.id.spinner1); 
+        spinner.setVisibility(View.GONE);
+        
         
         //Start or Ready Button
        btnStart = (Button) findViewById(R.id.button_start);
@@ -158,17 +165,20 @@ public class ClientJoinGame extends ListActivity{
     
     class myThread2 implements Runnable { 
         public void run() {
-             while (!Thread.currentThread().isInterrupted()) { 
-            	  
+             while (!Thread.currentThread().isInterrupted()) {
+            	 
+            	 if(!thread_cancel){
                   Message message = new Message(); 
                   message.what = JoinGameActivity.GUIUPDATEIDENTIFIER;                   
                   ClientJoinGame.this.myHandler.sendMessage(message);
- 
+            	 }
                   try { 
                        Thread.sleep(1000);  
                   } catch (InterruptedException e) { 
                        Thread.currentThread().interrupt(); 
                   } 
+            	 
+            	 
              } 
         } 
    } 
@@ -183,28 +193,9 @@ public class ClientJoinGame extends ListActivity{
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-        	if(ww){        		
+        	if(ww){    
+        		thread_cancel = true;
         	myRefreshThread.interrupt();
-        	/*
-			try {
-				Thread.sleep(4000);
-				list = SocketConnect.Instance.Client_waiting_get(SocketConnect.Instance, SocketConnect.SessionID);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-    		Intent intent = new Intent();
-          	intent.setClass(ClientJoinGame.this, GameActivity.class); 
-          	intent.putExtra("single_player", false);
-          	intent.putExtra("player_type", type);
-          	intent.putExtra("player_name", realname);
-          	startActivity(intent);
-          	*/ 
-			myRefreshThread.interrupt();
 			//設定定時要執行的方法
 	        handler.removeCallbacks(updateTimer);
 	        //設定Delay的時間
@@ -212,9 +203,9 @@ public class ClientJoinGame extends ListActivity{
 
         	}
         	
-        	else{
-        	
+        	else{        	
         	//先清空list
+        		
         	clear_info();
         	//逐一加新資訊
         	try {
@@ -226,10 +217,19 @@ public class ClientJoinGame extends ListActivity{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-        	//name=new ArrayList<String>();
-        	//status=new ArrayList<String>();
-            //第一筆設定為[回到根目錄] 
+        	System.out.println("get start!!!!!!!");	
+        	//System.out.println("get start!!!!!!!" + list.get(0)[0]);
+        	//如果傳回資訊為空字串則調出
         	
+        	if( list.get(0)[0].equals("wrong")){
+        		System.out.println("QUIT!!!!!!!");	
+        		finish();
+
+        	}
+        	
+        	
+        else{
+	
         for(int i = 0;i < list.size();i++){
         	if(list.get(i)[1].equals(realname)){
         		if(list.get(i)[2].equals("P"))
@@ -237,13 +237,14 @@ public class ClientJoinGame extends ListActivity{
         		else
         			type = 1;		
         	}
-        	System.out.println(list.get(i)[1]);
+        	//System.out.println(list.get(i)[1]);
          	name.add(list.get(i)[1]);
          	status.add(list.get(i)[2]);
             ready.add(list.get(i)[3]);
             }
         
 	        gameroom.notifyDataSetChanged();
+        	}
         	}
               
              super.handleMessage(msg); 

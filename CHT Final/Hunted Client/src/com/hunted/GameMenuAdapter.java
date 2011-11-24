@@ -37,7 +37,7 @@ public class GameMenuAdapter extends BaseAdapter
 	{
 		_context = context;
 		_menus = new String[][] { 
-				{context.getResources().getString(R.string.surrender)},	// for player
+				{context.getResources().getString(R.string.surrender),context.getResources().getString(R.string.mission)},	// for player
 				{context.getResources().getString(R.string.arrest)}		// for hunter
 				};
 		_menuIcons = new Bitmap[] { BitmapFactory.decodeResource(context.getResources(), R.drawable.flag) };

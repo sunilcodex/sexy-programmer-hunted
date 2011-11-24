@@ -19,4 +19,5 @@
     <string name="challenger">挑戰者</string>
     <string name="player_group">玩家陣營</string>
     <string name="app_name">Hunted</string>
+    <string name="mission">任務</string>
 </resources>

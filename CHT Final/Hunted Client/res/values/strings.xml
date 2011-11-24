@@ -20,4 +20,5 @@
     <string name="hunter">Hunter</string>
     <string name="challenger">Challenger</string>
     <string name="player_group">Player Group</string>
+    <string name="mission">mission</string>
 </resources>

@@ -47,6 +47,9 @@ public class JoinGameActivity extends ListActivity{
 	  int waiting_time = 5;
 	  int start_count = 0;
 	  Button btnStart;
+	  int init = 0;
+	  boolean thread_cancel = false;
+	  
 	 Thread myRefreshThread = null;
 	 private Handler handler = new Handler(); 
 	  
@@ -61,9 +64,7 @@ public class JoinGameActivity extends ListActivity{
     @Override 
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        
-      
-        
+
         // create UI helper for ui scaling
         Display display = ((WindowManager)this.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 		UIHelper uiHelper = new UIHelper(display.getWidth(),display.getHeight());
@@ -75,35 +76,50 @@ public class JoinGameActivity extends ListActivity{
               
         setContentView(R.layout.join_game);
         TextView mtext = (TextView)findViewById(R.id.textView1);
+       
         
         TextView r = (TextView) findViewById(R.id.textView2);
-        r.setText("設定遊戲時間:");
+        r.setVisibility(View.GONE);
         
         
       //建立一個ArrayAdapter物件，並放置下拉選單的內容 
         Spinner spinner = (Spinner) findViewById(R.id.spinner1); 
-       ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.settime_spinner,R.id.textview,new String[]{"1分鐘","10分鐘","30分鐘"});
+       ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.settime_spinner,R.id.textview,new String[]{"設定遊戲時間(預設1分鐘)","1分鐘","10分鐘","30分鐘","90分鐘"});
         //SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,android.R.layout.simple_spinner_item, R.layout.settime_spinner,cursor, new String[] { PutFieldName }, new int[] {android.R.id.text1});
 
     //設定下拉選單的樣式 
-       //adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); 
+      // adapter.setDropDownViewResource(android.R.layout.si); 
+       
       spinner.setAdapter(adapter); 
-      
+     adapter.remove("1");
+     spinner.setAdapter(adapter); 
       
       //設定項目被選取之後的動作
       //手動設定時間
       spinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener(){
           public void onItemSelected(AdapterView adapterView, View view, int position, long id){
-              //Toast.makeText(MainActivity.this, "您選擇"+adapterView.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
+            
+        	  if(!adapterView.getSelectedItem().toString().equals("設定遊戲時間(預設1分鐘)")){
         	  String[] time = adapterView.getSelectedItem().toString().split("分");
-        	  int int_time = Integer.valueOf(time[0]) * 60 + 2;
+        	 // int int_time = Integer.valueOf(time[0]) * 60 + 2;
+        	  int int_time = Integer.valueOf(time[0]) + 2;
         	  try {
 				SocketConnect.Instance.HostGameTime(SocketConnect.Instance, SocketConnect.SessionID, String.valueOf(int_time));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-        	  
+        	  }
+        	  else{
+             	  try {
+     				SocketConnect.Instance.HostGameTime(SocketConnect.Instance, SocketConnect.SessionID, "60");
+     			} catch (IOException e) {
+     				// TODO Auto-generated catch block
+     				e.printStackTrace();
+     			}  
+        		  
+        		  
+        	  }
         	  
           }
           public void onNothingSelected(AdapterView arg0) {
@@ -146,44 +162,13 @@ public class JoinGameActivity extends ListActivity{
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+					thread_cancel = true;
 					myRefreshThread.interrupt();
 					//設定定時要執行的方法
 			        handler.removeCallbacks(updateTimer);
 			        //設定Delay的時間
 			        handler.postDelayed(updateTimer, 1000);
 
-					
-					/*
-					for(int i = 0;i <= waiting_time ; i++){
-					try {
-				        TextView r = (TextView) findViewById(R.id.textView3);
-				        String tmp = "剩餘" + String.valueOf(waiting_time - i) + "秒";
-				        r.setText(tmp);
-						Thread.sleep(1000);
-						list = SocketConnect.Instance.Client_waiting_get(SocketConnect.Instance, SocketConnect.SessionID);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-					if(i == waiting_time){
-		    		Intent intent = new Intent();
-		          	intent.setClass(JoinGameActivity.this, GameActivity.class); 
-		          	intent.putExtra("single_player", false);
-		          	intent.putExtra("player_type", type);
-		          	System.out.println("Type!!!!!!!:"+type);
-		          	intent.putExtra("player_name", realname);
-		          	startActivity(intent);
-		          	break;
-					}
-					else{	
-					}
-						
-					}
-					*/
 					}
 					
 				}
@@ -206,7 +191,8 @@ public class JoinGameActivity extends ListActivity{
 	   
 	if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {  
 		System.out.println("QUIT");
-		myRefreshThread.interrupt();
+		Thread.currentThread().interrupt();
+		thread_cancel = true;
 		finish();
 		list = new ArrayList<String[]>();
     	try {
@@ -215,16 +201,18 @@ public class JoinGameActivity extends ListActivity{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 		return true;    
 	}   
 	      
 	return super.onKeyDown(keyCode, event);
     }
     
+    //thread running
     class myThread implements Runnable { 
         public void run() {
              while (!Thread.currentThread().isInterrupted()) { 
-            	  
+            	  if(!thread_cancel){
                   Message message = new Message(); 
                   message.what = JoinGameActivity.GUIUPDATEIDENTIFIER;                   
                   JoinGameActivity.this.myHandler.sendMessage(message);
@@ -235,6 +223,7 @@ public class JoinGameActivity extends ListActivity{
                        Thread.currentThread().interrupt(); 
                   } 
              } 
+             }
         } 
    } 
     

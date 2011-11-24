@@ -7,8 +7,8 @@ public class GameState
 {
 	public int PlayerNumber;
 	public int HunterNumber;
-	public int Alive;
-	public int Time;
+	public int Alive = 1;
+	public int Time = 10;
 	
 	public GameState()
 	{

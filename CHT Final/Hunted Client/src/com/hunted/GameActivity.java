@@ -1,6 +1,7 @@
 package com.hunted;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,7 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.TrackballGestureDetector;
 
 import android.app.AlertDialog;
+import android.app.Service;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.ComponentName;
@@ -31,6 +33,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.provider.ContactsContract.Contacts.Data;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -101,6 +104,14 @@ public class GameActivity extends MapActivity
 	private boolean _initMapSuccessed;
 	
 	private String _locProvider;
+	
+	
+	int mission_num = 0;
+	ArrayList<String[]> mission;
+	private GameMapView gameMapView; 
+	private GeoPoint missionPoint = new GeoPoint(0,0);
+	int missiondemo = 0;
+	int missionfail = 0;
 	
 	@Override
 	protected void onCreate(Bundle icicle)
@@ -205,7 +216,7 @@ public class GameActivity extends MapActivity
 		int playerType = this.getIntent().getIntExtra("player_type", PlayerType.Player);
 		
 		// the following line is for testing
-		playerType = PlayerType.Hunter;
+		//playerType = PlayerType.Hunter;
 		
 		if(_singlePlayerMode)
 			SocketConnect.SessionID = new String[] { "100", "100" };	// create fake session id
@@ -239,7 +250,7 @@ public class GameActivity extends MapActivity
 		
 		
 		// Create players and map
-		_gameMapView = new GameMapView(this, mMapView01, _player.PlayerType, _uiHelper, _players);
+		_gameMapView = new GameMapView(this, mMapView01, _player.PlayerType, _uiHelper, _players, mission_num, missionPoint);
 		_mainLayout.addView(_gameMapView);
 		
 		// message list
@@ -341,7 +352,7 @@ public class GameActivity extends MapActivity
 		mc.setZoom(intZoomLevel);
 		
 		
-		/* 建立LocationManager物件取得系統LOCATION服務 */
+		/* 建�LocationManager�件��系統LOCATION�� */
 		mLocationManager01 = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 		if(mLocationManager01 == null)
@@ -401,14 +412,14 @@ public class GameActivity extends MapActivity
 		@Override
 		public void onLocationChanged(Location location)
 		{
-			/* 當手機收到位置變更時，將location傳入取得地理座標 */
+			/* ��機收��置��，�location�入���座� */
 			processLocationUpdated(location);
 		}
 
 		@Override
 		public void onProviderDisabled(String provider)
 		{
-			/* 當Provider已離開服務範圍時 */
+			/* �Provider已離���� */
 		}
 
 		@Override
@@ -427,21 +438,21 @@ public class GameActivity extends MapActivity
 		String strReturn = "";
 		try
 		{
-			/* 當GeoPoint不等於null */
+			/* �GeoPoint不�null */
 			if (gp != null)
 			{
-				/* 建立Geocoder物件 */
+				/* 建�Geocoder�件 */
 				Geocoder gc = new Geocoder(GameActivity.this, Locale.getDefault());
 
-				/* 取出地理座標經緯度 */
+				/* �出��座�經緯�*/
 				double geoLatitude = (int) gp.getLatitudeE6() / 1E6;
 				double geoLongitude = (int) gp.getLongitudeE6() / 1E6;
 
-				/* 自經緯度取得地址（可能有多行地址） */
+				/* ��緯度���（可��多���*/
 				List<Address> lstAddress = gc.getFromLocation(geoLatitude, geoLongitude, 1);
 				StringBuilder sb = new StringBuilder();
 
-				/* 判斷地址是否為多行 */
+				/* �斷��否���*/
 				if (lstAddress.size() > 0)
 				{
 					Address adsLocation = lstAddress.get(0);
@@ -455,7 +466,7 @@ public class GameActivity extends MapActivity
 					sb.append(adsLocation.getCountryName());
 				}
 
-				/* 將擷取到的地址，組合後放在StringBuilder物件中輸出用 */
+				/* 將擷�到�地�，��在StringBuilder�件中輸�用 */
 				strReturn = sb.toString();
 			}
 		}
@@ -493,7 +504,7 @@ public class GameActivity extends MapActivity
 		GeoPoint gp = null;
 		try
 		{
-			/* 當Location存在 */
+			/* �Location存在 */
 			if (location != null)
 			{
 				double geoLatitude = location.getLatitude() * 1E6;
@@ -522,7 +533,7 @@ public class GameActivity extends MapActivity
 		}
 	}
 
-	/* 當手機收到位置變更時，將location傳入更新當下GeoPoint及MapView */
+	/* ��機收��置��，�location�入�新��GeoPoint�MapView */
 	private void processLocationUpdated(Location location)
 	{
 		if(location == null)
@@ -530,18 +541,18 @@ public class GameActivity extends MapActivity
 		
 		Log.i("mong", "loc: " + location.getLongitude() + "," + location.getLatitude());
 		
-		/* 傳入Location物件，取得GeoPoint地理座標 */
+		/* �入Location�件，�得GeoPoint��座� */
 		currentGeoPoint = getGeoByLocation(location);
 		
 		_player.setLocation(currentGeoPoint);
 
-		/* 更新MapView顯示Google Map */
+		/* �新MapView顯示Google Map */
 		refreshMapViewByGeoPoint(currentGeoPoint);
 
 		/*
 		 * mTextView01.setText (
 		 * getResources().getText(R.string.str_my_location).toString()+"\n"+ //
-		 * 延伸學習：取出GPS地理座標：
+		 * 延伸學�：�GPS��座��
 		 * 
 		 * getResources().getText(R.string.str_longitude).toString()+
 		 * String.valueOf((int)currentGeoPoint.getLongitudeE6()/1E6)+"\n"+
@@ -746,8 +757,57 @@ public class GameActivity extends MapActivity
 				}
 			}
 
-			if(_gameState.Time == 0 || _gameState.Alive == 0)
+			
+			//mission
+			if (_player.PlayerType == PlayerType.Player && !_singlePlayerMode){
+				//mission start
+			if(!mission.get(0)[0].equals("mission_not_yet") && mission_num == 0){
+				//System.out.println("MISSION OK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+mission.get(0)[0] +"/////"+mission.get(0)[1]);
+				System.out.println("MISSION OK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + mission.get(0)[0]);
+				mission_num++;
+				
+				GeoPoint Point = new GeoPoint((int)Float.parseFloat(mission.get(0)[0]) + 200,(int)Float.parseFloat(mission.get(0)[1]) + 200);
+				gameMapView.changed_mission(mission_num,Point);
+				
+				Vibrator myVibrator = (Vibrator) getApplication().getSystemService(Service.VIBRATOR_SERVICE); 
+				//.01秒�後�.1种�三次) 
+				myVibrator.vibrate(new long[]{10, 500, 1000, 500, 1000, 500}, -1);				
+				mission_state(0);
+
+			}
+		
+			//check mission sucess or fail
+			if(!mission.get(0)[0].equals("mission_not_yet") && mission_num == 1){
+				/*
+				System.out.println("mission Start!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:" +(int)(_player.getLocation().getLatitudeE6()));
+				System.out.println("mission Start!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:" + (int)Float.parseFloat(mission.get(0)[0]));
+				
+				System.out.println("mission Start!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:" +(int)(_player.getLocation().getLongitudeE6()));
+				System.out.println("mission Start!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:" + (int)Float.parseFloat(mission.get(0)[1]));
+				 */
+				missiondemo +=5;
+				if(missionfail != -1){
+					System.out.println("mission NO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:"+mission_num);
+					mission_num++;
+					mission_state(2);	
+				}
+				
+				
+				if((int)(_player.getLocation().getLatitudeE6()) >= (int)Float.parseFloat(mission.get(0)[0]) + 2000 && (int) (_player.getLocation().getLongitudeE6()) >= (int)Float.parseFloat(mission.get(0)[1]) + 2000)
+					{
+					System.out.println("mission good!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:"+mission_num);
+					mission_num++;
+
+					mission_state(1);	
+
+					}
+					}
+			}
+			/////////////////////////////////
+			
+			if(_gameState.Time <= 1 || _gameState.Alive == 0)
 			{
+				System.out.println("OVER========="+ _gameState.Time +"ALIE:======"+_gameState.Alive);
 				_gameOver = true;
 				GameActivity.this.showDialog(GameActivity.this.TIMEOUT_DIALOG);
 			}
@@ -776,11 +836,31 @@ public class GameActivity extends MapActivity
 						if (_player.PlayerType == PlayerType.Player) 
 						{
 							if(_player.getLocation().getLatitudeE6() != 0  && _player.getLocation().getLongitudeE6() != 0){
-							response = SocketConnect.Instance.PlayerInGame(SocketConnect.Instance, SocketConnect.SessionID, 
-									Integer.toString(_player.getLocation().getLatitudeE6()), Integer.toString(_player.getLocation().getLongitudeE6()), _player.Status == PlayerStatus.Surrendered);
+								
+								//demo mission
+								String xx = Integer.toString(_player.getLocation().getLatitudeE6() + missiondemo) + ".0";
+								String yy = Integer.toString(_player.getLocation().getLongitudeE6() + missiondemo) + ".0";
+								
+								response = SocketConnect.Instance.PlayerInGame(SocketConnect.Instance, SocketConnect.SessionID, 
+										xx, yy, _player.Status == PlayerStatus.Surrendered);
+								
+							//response = SocketConnect.Instance.PlayerInGame(SocketConnect.Instance, SocketConnect.SessionID, 
+									//Integer.toString(_player.getLocation().getLatitudeE6()), Integer.toString(_player.getLocation().getLongitudeE6()), _player.Status == PlayerStatus.Surrendered);
 							}
-							else
-								response = SocketConnect.Instance.PlayerInGame(SocketConnect.Instance, SocketConnect.SessionID, "0.0", "0.0", _player.Status == PlayerStatus.Surrendered);	
+							else{
+								String xx = Integer.toString(missiondemo) + ".0";
+								String yy = Integer.toString(missiondemo) + ".0";
+								
+								response = SocketConnect.Instance.PlayerInGame(SocketConnect.Instance, SocketConnect.SessionID, xx, yy, _player.Status == PlayerStatus.Surrendered);
+								
+								//response = SocketConnect.Instance.PlayerInGame(SocketConnect.Instance, SocketConnect.SessionID, "0.0", "0.0", _player.Status == PlayerStatus.Surrendered);
+								
+							}
+							
+							
+							//mission
+						 mission = SocketConnect.Instance.MissionParser(response, "STATE_PLAYER_IN_GAME\\n");						 
+						 missionfail = response.indexOf("MISSION_UNDONE");
 						} 
 						else 
 						{
@@ -793,8 +873,11 @@ public class GameActivity extends MapActivity
 							else
 								response = SocketConnect.Instance.HunterInGame(SocketConnect.Instance, SocketConnect.SessionID, "0.0", "0.0", null);
 						}
+						
+						
 	
 						HashMap<String, Object> values = SocketConnect.parse(response);
+
 						_gameState.Set(values);
 	
 						// Set player state
@@ -872,4 +955,82 @@ public class GameActivity extends MapActivity
 			}
 		}
 	};
+	
+	public void mission_state(int state){
+		//start
+		if(state == 0){
+			final Dialog dialog = new Dialog(GameActivity.this, R.style.CustomDialog);
+        	//set ContentView
+        	  dialog.setContentView(R.layout.mission_dialog);
+        	  
+        	  
+        	  //OK button
+        	  Button OK = (Button) dialog.findViewById(R.id.ok2);
+        	  OK.setOnClickListener(new Button.OnClickListener()
+              {
+        		  public void onClick(View v)
+                  {
+        			  dialog.dismiss(); 	
+
+                  }
+              });
+        	  
+        	  dialog.show();	
+			
+		}
+		//success
+		else if(state == 1){
+			final Dialog dialog = new Dialog(GameActivity.this, R.style.CustomDialog);
+        	//set ContentView
+        	  dialog.setContentView(R.layout.mission_sucess_dialog);
+        	  
+        	  
+        	  //OK button
+        	  Button OK = (Button) dialog.findViewById(R.id.ok2);
+        	  OK.setOnClickListener(new Button.OnClickListener()
+              {
+        		  public void onClick(View v)
+                  {
+						String xx = Integer.toString(missiondemo) + ".0";
+						String yy = Integer.toString(missiondemo) + ".0";
+        			  try {
+						SocketConnect.Instance.MissionSucess(SocketConnect.Instance, SocketConnect.SessionID , xx ,yy);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+        			  dialog.dismiss(); 	
+
+                  }
+              });
+        	  
+        	  dialog.show();	
+	
+		}
+		//fail
+		else if(state == 2){
+			final Dialog dialog = new Dialog(GameActivity.this, R.style.CustomDialog);
+        	//set ContentView
+        	  dialog.setContentView(R.layout.mission_fail_dialog);
+
+        	  //OK button
+        	  Button OK = (Button) dialog.findViewById(R.id.ok2);
+        	  OK.setOnClickListener(new Button.OnClickListener()
+              {
+        		  public void onClick(View v)
+                  {
+        			  dialog.dismiss(); 	
+
+                  }
+              });
+        	  
+        	  dialog.show();	
+			
+		}
+		else
+			System.out.println("wrong!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");	
+		
+		
+		
+	}
 }
