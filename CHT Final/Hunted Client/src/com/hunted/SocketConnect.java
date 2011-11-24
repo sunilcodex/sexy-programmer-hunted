@@ -573,16 +573,14 @@ public class SocketConnect {
 						list.add(user_info);
 						count++;	
 						}
-
-
 					}
-				
-				if(count == 0){
-					String[] user_info = {"mission_not_yet"};
-					//System.out.println("user_info: " + user_info[0]);
-					list.add(user_info);
-					
 				}
+			
+			if(count == 0){
+				String[] user_info = {"mission_not_yet"};
+				//System.out.println("user_info: " + user_info[0]);
+				list.add(user_info);
+				
 				
 				
 				}

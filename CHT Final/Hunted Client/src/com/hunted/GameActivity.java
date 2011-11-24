@@ -759,12 +759,13 @@ public class GameActivity extends MapActivity
 			
 			//mission
 			if (_player.PlayerType == PlayerType.Player && !_singlePlayerMode){
+				//mission start
 			if(!mission.get(0)[0].equals("mission_not_yet") && mission_num == 0){
 				//System.out.println("MISSION OK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+mission.get(0)[0] +"/////"+mission.get(0)[1]);
-				System.out.println("MISSION OK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+				System.out.println("MISSION OK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + mission.get(0)[0]);
 				mission_num++;
 				
-				GeoPoint Point = new GeoPoint((int)Float.parseFloat(mission.get(0)[0]) + 100,(int)Float.parseFloat(mission.get(0)[1]) + 100);
+				GeoPoint Point = new GeoPoint((int)Float.parseFloat(mission.get(0)[0]) + 200,(int)Float.parseFloat(mission.get(0)[1]) + 200);
 				gameMapView.changed_mission(mission_num,Point);
 				
 				Vibrator myVibrator = (Vibrator) getApplication().getSystemService(Service.VIBRATOR_SERVICE); 
@@ -783,7 +784,7 @@ public class GameActivity extends MapActivity
 				System.out.println("mission Start!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:" +(int)(_player.getLocation().getLongitudeE6()));
 				System.out.println("mission Start!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:" + (int)Float.parseFloat(mission.get(0)[1]));
 				 */
-				missiondemo +=20;
+				missiondemo +=5;
 				if(missionfail != -1){
 					System.out.println("mission NO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:"+mission_num);
 					mission_num++;
@@ -791,7 +792,7 @@ public class GameActivity extends MapActivity
 				}
 				
 				
-				if((int)(_player.getLocation().getLatitudeE6()) >= (int)Float.parseFloat(mission.get(0)[0]) + 1000 && (int) (_player.getLocation().getLongitudeE6()) >= (int)Float.parseFloat(mission.get(0)[1]) + 1000)
+				if((int)(_player.getLocation().getLatitudeE6()) >= (int)Float.parseFloat(mission.get(0)[0]) + 2000 && (int) (_player.getLocation().getLongitudeE6()) >= (int)Float.parseFloat(mission.get(0)[1]) + 2000)
 					{
 					System.out.println("mission good!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:"+mission_num);
 					mission_num++;
@@ -803,7 +804,7 @@ public class GameActivity extends MapActivity
 			}
 			/////////////////////////////////
 			
-			if(_gameState.Time <= 0 || _gameState.Alive == 0)
+			if(_gameState.Time <= 1 || _gameState.Alive == 0)
 			{
 				System.out.println("OVER========="+ _gameState.Time +"ALIE:======"+_gameState.Alive);
 				_gameOver = true;
@@ -1010,8 +1011,7 @@ public class GameActivity extends MapActivity
 			final Dialog dialog = new Dialog(GameActivity.this, R.style.CustomDialog);
         	//set ContentView
         	  dialog.setContentView(R.layout.mission_fail_dialog);
-        	  
-        	  
+
         	  //OK button
         	  Button OK = (Button) dialog.findViewById(R.id.ok2);
         	  OK.setOnClickListener(new Button.OnClickListener()

@@ -84,7 +84,7 @@ public class JoinGameActivity extends ListActivity{
         
       //建立一個ArrayAdapter物件，並放置下拉選單的內容 
         Spinner spinner = (Spinner) findViewById(R.id.spinner1); 
-       ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.settime_spinner,R.id.textview,new String[]{"設定遊戲時間","1分鐘","10分鐘","30分鐘","90分鐘"});
+       ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.settime_spinner,R.id.textview,new String[]{"設定遊戲時間(預設1分鐘)","1分鐘","10分鐘","30分鐘","90分鐘"});
         //SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,android.R.layout.simple_spinner_item, R.layout.settime_spinner,cursor, new String[] { PutFieldName }, new int[] {android.R.id.text1});
 
     //設定下拉選單的樣式 
@@ -99,7 +99,7 @@ public class JoinGameActivity extends ListActivity{
       spinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener(){
           public void onItemSelected(AdapterView adapterView, View view, int position, long id){
             
-        	  if(!adapterView.getSelectedItem().toString().equals("設定遊戲時間")){
+        	  if(!adapterView.getSelectedItem().toString().equals("設定遊戲時間(預設1分鐘)")){
         	  String[] time = adapterView.getSelectedItem().toString().split("分");
         	 // int int_time = Integer.valueOf(time[0]) * 60 + 2;
         	  int int_time = Integer.valueOf(time[0]) + 2;
@@ -109,6 +109,16 @@ public class JoinGameActivity extends ListActivity{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+        	  }
+        	  else{
+             	  try {
+     				SocketConnect.Instance.HostGameTime(SocketConnect.Instance, SocketConnect.SessionID, "60");
+     			} catch (IOException e) {
+     				// TODO Auto-generated catch block
+     				e.printStackTrace();
+     			}  
+        		  
+        		  
         	  }
         	  
           }
