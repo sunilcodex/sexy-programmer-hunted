@@ -259,12 +259,17 @@ public class SocketConnect {
 					+ gpsY + "\nWITHDREW\n");
 			response = client.recv();
 			System.out.println("HOST in game:\n" + response);
-		} else {
+			while(response == ""){				client.send("GET:" + ID[0] + "," + ID[1] + "\nGPS:" + gpsX + ","						+ gpsY + "\nWITHDREW\n");				}								} else {
 			client.send("GET:" + ID[0] + "," + ID[1] + "\nGPS:" + gpsX + ","
 					+ gpsY + "\n");
 			System.out.println("GET:" + ID[0] + "," + ID[1] + "\nGPS:" + gpsX + ","
 					+ gpsY + "\n");
 			response = client.recv();
+			while(response == ""){
+				client.send("GET:" + ID[0] + "," + ID[1] + "\nGPS:" + gpsX + ","
+						+ gpsY + "\n");				
+			}
+			
 			System.out.println("HOST in game:\n" + response);
 			//System.out.println("NOOOOOOOOOOOOO:\n" + response);
 		}
