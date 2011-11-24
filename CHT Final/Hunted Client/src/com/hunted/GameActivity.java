@@ -88,7 +88,8 @@ public class GameActivity extends MapActivity
 	private Handler _uiUpdateHandler;
 	
 	private MessageListView _messageListView;
-
+	private GameMapView _gameMapView;
+	
 	private UIHelper _uiHelper;
 	private final int MENU_REQUEST = 0;
 	private final int ARREST_REQUEST = 1;
@@ -124,6 +125,7 @@ public class GameActivity extends MapActivity
 	{
 		super.onResume();
 		
+		_gameMapView.resumeUpdate();
 		//processLocationUpdated(mLocationManager01.getLastKnownLocation(_locProvider));
 		
 		if(!_locProvider.equals(LocationManager.NETWORK_PROVIDER))
@@ -146,6 +148,8 @@ public class GameActivity extends MapActivity
 	protected void onPause()
 	{
 		super.onPause();
+		
+		_gameMapView.pauseUpdate();
 		
 		mLocationManager01.removeUpdates(mLocationListener01);
 		
@@ -235,8 +239,8 @@ public class GameActivity extends MapActivity
 		
 		
 		// Create players and map
-		GameMapView gameMapView = new GameMapView(this, mMapView01, _player.PlayerType, _uiHelper, _players);
-		_mainLayout.addView(gameMapView);
+		_gameMapView = new GameMapView(this, mMapView01, _player.PlayerType, _uiHelper, _players);
+		_mainLayout.addView(_gameMapView);
 		
 		// message list
 		_messageListView.setVerticalScrollBarEnabled(false);

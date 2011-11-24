@@ -32,6 +32,7 @@ public class GameMapView extends View
 	HashMap<String,Player> _players;
 	HashMap<Integer, Bitmap> _playerImages;
 	int _viewType;
+	boolean _pause; 
 	
 	public GameMapView(Context context, MapView mapview, int viewType, UIHelper uiHelper, HashMap<String,Player> players)
 	{
@@ -45,6 +46,8 @@ public class GameMapView extends View
 		_playerImages = new HashMap<Integer, Bitmap>();
 	}
 
+	public void pauseUpdate() { _pause = true; }
+	public void resumeUpdate() { _pause = false; }
 	
 	@Override
 	protected void onDraw (Canvas canvas)
@@ -134,7 +137,8 @@ public class GameMapView extends View
 	        
 		}
 		
-		invalidate();
+		if(!_pause)
+			invalidate();
 	}
 	
 	public static List<Player> sortPlayer(final HashMap<String, Player> map) 

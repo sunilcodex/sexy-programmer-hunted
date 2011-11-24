@@ -2,46 +2,49 @@
 <manifest android:versionCode="1" android:versionName="1.0"
     package="com.hunted" xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-sdk android:minSdkVersion="10"/>
-     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION"/>
     <uses-permission android:name="android.permission.INTERNET"/>
-   
-    
-    <uses-feature android:name="android.hardware.camera" />
-	<uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature android:name="android.hardware.camera"/>
+    <uses-feature android:name="android.hardware.camera.autofocus"/>
     <application android:icon="@drawable/icon" android:label="@string/app_name">
         <uses-library android:name="com.google.android.maps"/>
         <activity android:label="@string/app_name"
-            android:launchMode="singleTask" android:name=".MainActivity"/>
+            android:launchMode="singleTask" android:name="MainActivity"/>
         <activity android:name=".JoinGameActivity" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"/>
-        <activity android:name=".MainMenu" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"/>
+        <activity android:name="GameMenuActivity" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"/>
         <activity android:name=".GameActivity" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"/>
         <activity android:name=".GameMenuActivity" android:theme="@android:style/Theme.Panel"/>
         <activity android:name=".GameoverActivity" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"/>
         <activity android:name="ClientJoinGame" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"/>
         <activity android:name="Count" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"/>
-        <activity android:label="Hunted" android:launchMode="standard" android:name=".CheckLicense">
-            <intent-filter>
+        <activity android:name="test" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+            
+        </activity>
+        <activity android:label="@string/app_name"  android:launchMode="standard" android:name=".CheckLicense">
+     	   <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        
         <activity android:name=".GameStatusActivity" android:theme="@android:style/Theme.Panel"/>
-        <activity android:name="com.google.zxing.client.android.CaptureActivity"
-		   android:screenOrientation="landscape"
-		   android:configChanges="orientation|keyboardHidden"
-		   android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-		   android:windowSoftInputMode="stateAlwaysHidden" android:permission="android.permission.CAMERA">
-		   <intent-filter>
-		      <action android:name="android.intent.action.MAIN"/>
-		      <category android:name="android.intent.category.DEFAULT"/>
-		   </intent-filter>
-		   <intent-filter>
-		      <action android:name="com.google.zxing.client.android.SCAN"/>
-		      <category android:name="android.intent.category.DEFAULT"/>
-		    </intent-filter>
-		</activity>
+        <activity
+            android:name="com.google.zxing.client.android.CaptureActivity"
+            android:permission="android.permission.CAMERA"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:windowSoftInputMode="stateAlwaysHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.google.zxing.client.android.SCAN1"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".test"/>
     </application>
 </manifest>
