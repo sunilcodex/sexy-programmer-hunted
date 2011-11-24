@@ -3,8 +3,8 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry kind="lib" path="Hami_Apps_SDK_Dev_V1.06_20110621.jar"/>
+	<classpathentry kind="lib" path="D:/Developments/CHT innovation/hunted/CHT Final/Hunted Client/core.jar"/>
 	<classpathentry kind="src" path="ZXing_src"/>
-	<classpathentry kind="lib" path="../core.jar"/>
+	<classpathentry kind="lib" path="Hami_Apps_SDK_Dev_V1.06_20110621.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

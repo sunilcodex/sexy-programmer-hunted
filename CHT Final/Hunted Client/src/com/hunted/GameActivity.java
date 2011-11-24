@@ -625,10 +625,7 @@ public class GameActivity extends MapActivity
 							Integer.toString(_player.getLocation().getLatitudeE6()), 
 							Integer.toString(_player.getLocation().getLongitudeE6()), contents);
 				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
+				catch(Exception ex) {}
 			}
 		}
 	}

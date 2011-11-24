@@ -78,7 +78,7 @@ public class MainActivity extends Activity implements View.OnTouchListener{
 		bgimg = (ImageView) findViewById(R.id.imageView1);
 		
 		bgimg.setOnTouchListener(this);
-		
+
 	}
     
     @Override
