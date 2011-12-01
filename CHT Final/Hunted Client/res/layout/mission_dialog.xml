@@ -2,13 +2,14 @@
 <LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:orientation="vertical"
-  android:minWidth="300dp" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_gravity="center_vertical|center_horizontal" android:layout_marginLeft="20dp" android:layout_marginRight="20dp" android:background="@drawable/mission_corner">
+  android:minWidth="300dp" android:layout_width="wrap_content" android:layout_gravity="center_vertical|center_horizontal" android:layout_marginLeft="20dp" android:layout_marginRight="20dp" android:background="@drawable/mission_corner" android:weightSum="1" android:layout_height="250dp">
     <TextView android:id="@+id/textView1" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_height="wrap_content" android:textStyle="bold" android:layout_width="fill_parent" android:paddingRight="5dp" android:layout_marginTop="-2dp" android:textSize="35sp" android:text="Mission" android:gravity="top|center_vertical|center_horizontal" android:textColor="#000000"></TextView>
     <ImageView android:id="@+id/imageView1" android:src="@drawable/missionline" android:layout_width="match_parent" android:layout_height="wrap_content"></ImageView>
-    <LinearLayout android:id="@+id/linearLayout2" android:layout_marginBottom="20dp" android:layout_marginRight="25dp" android:layout_height="wrap_content" android:layout_marginLeft="25dp" android:orientation="vertical" android:layout_width="match_parent">
-        <TextView android:textColor="#000000" android:layout_height="wrap_content" android:id="@+id/textView2" android:textAppearance="?android:attr/textAppearanceMedium" android:text="大象群要來了!!!快逃往星星處以得到對抗大象的武器，失敗者將被大象的腳踢出遊戲!" android:layout_width="match_parent"></TextView>
-        <LinearLayout android:id="@+id/linearLayout1" android:layout_marginTop="15dp" android:layout_height="wrap_content" android:gravity="center_vertical|center_horizontal" android:layout_width="match_parent">
-            <Button android:textSize="20sp" android:id="@+id/ok2" android:layout_marginRight="5dp" android:layout_height="fill_parent" android:padding="5dp" android:gravity="center_vertical|center_horizontal" android:minHeight="30dp" android:background="@drawable/rounded_button" android:text="@string/ok" android:layout_width="124dp"></Button>
+    <LinearLayout android:layout_width="match_parent" android:id="@+id/linearLayout2" android:layout_marginRight="25dp" android:layout_marginLeft="25dp" android:orientation="vertical" android:layout_marginBottom="10dp" android:layout_height="match_parent">
+        <TextView android:layout_height="wrap_content" android:textColor="#000000" android:layout_width="match_parent" android:textAppearance="?android:attr/textAppearanceMedium" android:id="@+id/textView2" android:text="大象群要來了!!!快逃往星星處以得到對抗大象的武器，失敗者將被大象的腳踢出遊戲!"></TextView>
+        <TextView android:layout_height="wrap_content" android:textColor="#000000" android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:id="@+id/textView3" android:text="此任務限時10秒鐘!!"></TextView>
+        <LinearLayout android:layout_width="match_parent" android:gravity="center_vertical|center_horizontal" android:layout_height="wrap_content" android:id="@+id/linearLayout1" android:layout_marginTop="15dp">
+            <Button android:text="收到" android:layout_height="wrap_content" android:textSize="20sp" android:layout_width="124dp" android:gravity="center_vertical|center_horizontal" android:minHeight="30dp" android:padding="5dp" android:layout_marginRight="5dp" android:background="@drawable/rounded_button" android:id="@+id/ok2"></Button>
         </LinearLayout>
     </LinearLayout>
     

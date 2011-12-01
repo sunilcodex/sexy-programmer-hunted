@@ -23,6 +23,7 @@ public class GameMenuAdapter extends BaseAdapter
 {
 	public static final int MENU_SURRENDER = 0;
 	public static final int MENU_ARREST = 0;
+	public static final int MENU_MISSION = 1;
 	
 	public int MessageAlive = 30;
 	private String[][] _menus;

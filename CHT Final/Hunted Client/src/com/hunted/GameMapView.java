@@ -130,6 +130,9 @@ public class GameMapView extends View
 	        	case Surrendered:
 	        		imgId = R.drawable.boy_small_f;
 	        		break;
+	        	case MissionFail:
+	        		imgId = R.drawable.boy_small;
+					break;
 	        	default:
 	        		imgId = R.drawable.boy_small;
 	        		break;

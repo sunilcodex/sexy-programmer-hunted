@@ -16,7 +16,7 @@ public class SocketConnect {
 	public static SocketConnect Instance;
 	public static String[] SessionID;
 	public static String Player;
-	public final static String DefaultIP = "140.113.166.42";
+	public final static String DefaultIP = "192.168.0.99";
 	public final static int DefaultPort = 5050;
 	
 
@@ -259,7 +259,9 @@ public class SocketConnect {
 					+ gpsY + "\nWITHDREW\n");
 			response = client.recv();
 			System.out.println("HOST in game:\n" + response);
-			while(response == ""){				client.send("GET:" + ID[0] + "," + ID[1] + "\nGPS:" + gpsX + ","						+ gpsY + "\nWITHDREW\n");				}								} else {
+			while(response == ""){	
+				client.send("GET:" + ID[0] + "," + ID[1] + "\nGPS:" + gpsX + ","+ gpsY + "\nWITHDREW\n");		
+			}								} else {
 			client.send("GET:" + ID[0] + "," + ID[1] + "\nGPS:" + gpsX + ","
 					+ gpsY + "\n");
 			System.out.println("GET:" + ID[0] + "," + ID[1] + "\nGPS:" + gpsX + ","
@@ -273,9 +275,7 @@ public class SocketConnect {
 			System.out.println("HOST in game:\n" + response);
 			//System.out.println("NOOOOOOOOOOOOO:\n" + response);
 		}
-		
-		
-		
+
 		return response;
 	}
 
@@ -410,6 +410,16 @@ public class SocketConnect {
 					list.add(a);
 					return (ArrayList<String[]>) list;					
 				}
+				
+				/*
+				else if(response.equals("")){
+					System.out.println("Space!!!!!!!!!");
+					String[] a = {"space"};
+					list.add(a);
+					return (ArrayList<String[]>) list;		
+					
+				}
+				*/
 				
 				System.out.println(response);
 				list = InfoParser(response, "STATE_PLAYER_WAITING\\n");

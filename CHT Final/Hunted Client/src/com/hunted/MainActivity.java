@@ -249,6 +249,7 @@ public class MainActivity extends Activity implements View.OnTouchListener{
 				      	        	
 				      	        	//?澆銝??ctivity 
 				      	        	startActivity(intent);
+				      	        	
 			  			            }
 								} catch (IOException e) {
 									// TODO Auto-generated catch block
@@ -492,8 +493,8 @@ public class MainActivity extends Activity implements View.OnTouchListener{
 		
 		// set UI to proper location and size
 		_uiHelper.SetImageView(btnSinglePlayer, 720, 1280, 255, 710);
-		_uiHelper.SetImageView(btnNewGame, 720, 1280, 295, 810);
-		_uiHelper.SetImageView(btnJoinGame, 720, 1280, 310, 920);
+		_uiHelper.SetImageView(btnNewGame, 720, 1280, 340, 820);
+		_uiHelper.SetImageView(btnJoinGame, 720, 1280, 350, 920);
 		
 		_mainLayout.removeView(_loading);
 		_mainLayout.addView(btnSinglePlayer);

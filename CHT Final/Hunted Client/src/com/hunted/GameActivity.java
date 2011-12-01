@@ -76,6 +76,7 @@ public class GameActivity extends MapActivity
 	private GeoPoint currentGeoPoint;
 	private int intZoomLevel = 20;
 	private MyLocationOverlay mylayer;
+	
 	private MapController mapController;
 	
 	private TextView _txtHunterNum;
@@ -112,6 +113,11 @@ public class GameActivity extends MapActivity
 	private GeoPoint missionPoint = new GeoPoint(0,0);
 	int missiondemo = 0;
 	int missionfail = 0;
+	boolean _mission_msg = true;
+	int dist_to_missionX = 0;
+	int dist_to_missionY = 0;
+	boolean mission_f = true;
+	int old_mission_time = 0;
 	
 	@Override
 	protected void onCreate(Bundle icicle)
@@ -607,7 +613,40 @@ public class GameActivity extends MapActivity
 					{  
 					case GameMenuAdapter.MENU_SURRENDER:
 						_player.Surrender();
+						
+						//pop up surrender picture
+						_mission_msg = false;
+						final Dialog dialog = new Dialog(GameActivity.this, R.style.CustomDialog);
+				    	//set ContentView
+				    	  dialog.setContentView(R.layout.surrendered_pic);
+				    	  
+				    	  
+				    	  //OK button
+				    	  ImageButton OK = (ImageButton) dialog.findViewById(R.id.imageButton1);
+				    	  OK.setOnClickListener(new ImageButton.OnClickListener()
+				          {
+				    		  public void onClick(View v)
+				              {
+				    			  _mission_msg = true;
+				    			  dialog.dismiss(); 	
+
+				              }
+				          });
+				    	  
+				    	  dialog.show();	
 						break;
+						
+						//mission menu
+					case GameMenuAdapter.MENU_MISSION:
+						if(mission_num == 1){
+							
+							mission_state(0);
+						}
+						else{
+							mission_state(3);
+							
+						}
+	
 					default:
 						break;
 					}
@@ -691,6 +730,7 @@ public class GameActivity extends MapActivity
 			intent.setClass(GameActivity.this, GameoverActivity.class);
 			intent.putExtra("player_win", _gameState.Alive > 0);
 			startActivity(intent);
+			finish();
 		}
 	};
 	
@@ -726,7 +766,12 @@ public class GameActivity extends MapActivity
 		{
 			_txtPlayerNum.setText(Integer.toString(_gameState.Alive) + "/" + Integer.toString(_gameState.PlayerNumber));
 			_txtHunterNum.setText(Integer.toString(_gameState.HunterNumber));
-			_txtTime.setText(DateUtils.formatElapsedTime(_gameState.Time));
+			
+			if(_gameState.Time <=1)
+				_txtTime.setText(DateUtils.formatElapsedTime(0));
+			else
+				_txtTime.setText(DateUtils.formatElapsedTime(_gameState.Time));
+			
 			_txtMoney.setText(Integer.toString(_player.Money));
 			
 			refreshMapViewByGeoPoint(_player.getLocation());
@@ -743,78 +788,149 @@ public class GameActivity extends MapActivity
 					{
 					case Caught:
 						msg.Message = player.Name + " " + getResources().getString(R.string.been_caught);
+						 if(player.Self){
+							// _mission_msg = false;
+						/////////////////pop up caught picture
+						final Dialog dialog = new Dialog(GameActivity.this, R.style.CustomDialog);
+				    	//set ContentView
+				    	  dialog.setContentView(R.layout.caught_pic);
+				    	  
+				    	  
+				    	  //OK button
+				    	  ImageButton OK = (ImageButton) dialog.findViewById(R.id.imageButton1);
+				    	  OK.setOnClickListener(new ImageButton.OnClickListener()
+				          {
+				    		  public void onClick(View v)
+				              {
+				    			  //_mission_msg = true;
+				    			  dialog.dismiss(); 	
+
+				              }
+				          });
+				    	  
+				    	  dialog.show();
+				    	  ///////////////////////////////////////
+						 }
+				    	  
 						break;
 					case Surrendered:
 						msg.Message = player.Name + " " + getResources().getString(R.string.surrendered);
 						break;
+					case MissionFail:
+						msg.Message = player.Name + " " + getResources().getString(R.string.missionfailed);
+						break;
+							
 					default:
 						continue;
 					}
 					
-					msg.Time = _gameState.Time;
+					if(_gameState.Time <= 1)
+						msg.Time = 0;
+					else
+						msg.Time = _gameState.Time;
+					
+					
 					msg.Icon = BitmapFactory.decodeResource(getResources(), R.drawable.boy_small);
 					GameActivity.this.AddMessage(msg);
 				}
 			}
 
 			
-			//mission
+			//mission start
 			if (_player.PlayerType == PlayerType.Player && !_singlePlayerMode){
 				//mission start
 			if(!mission.get(0)[0].equals("mission_not_yet") && mission_num == 0){
 				//System.out.println("MISSION OK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+mission.get(0)[0] +"/////"+mission.get(0)[1]);
+				int progess = 200;
 				System.out.println("MISSION OK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + mission.get(0)[0]);
 				mission_num++;
+				old_mission_time = _gameState.Time;
+				missionPoint = new GeoPoint((int)Float.parseFloat(mission.get(0)[0]) + 200,(int)Float.parseFloat(mission.get(0)[1]) + 200);
+				_gameMapView.changed_mission(mission_num,missionPoint);
 				
-				GeoPoint Point = new GeoPoint((int)Float.parseFloat(mission.get(0)[0]) + 200,(int)Float.parseFloat(mission.get(0)[1]) + 200);
-				gameMapView.changed_mission(mission_num,Point);
 				
 				Vibrator myVibrator = (Vibrator) getApplication().getSystemService(Service.VIBRATOR_SERVICE); 
 				//.01秒�後�.1种�三次) 
 				myVibrator.vibrate(new long[]{10, 500, 1000, 500, 1000, 500}, -1);				
 				mission_state(0);
-
+				
+				//(int)Float.parseFloat(mission.get(0)[0]) + 200,
+				//(int)Float.parseFloat(mission.get(0)[1]) + 200
+				//dist_to_missionX = (((int)Float.parseFloat(mission.get(0)[0]) + 200) - _player.getLocation().getLatitudeE6())/progess; 
+				//dist_to_missionY = (((int)Float.parseFloat(mission.get(0)[1]) + 200) - _player.getLocation().getLongitudeE6())/progess;  
+				//dist_to_missionX = 0;
+				//dist_to_missionY = 0;
+				
 			}
 		
 			//check mission sucess or fail
 			if(!mission.get(0)[0].equals("mission_not_yet") && mission_num == 1){
-				/*
-				System.out.println("mission Start!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:" +(int)(_player.getLocation().getLatitudeE6()));
-				System.out.println("mission Start!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:" + (int)Float.parseFloat(mission.get(0)[0]));
 				
-				System.out.println("mission Start!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:" +(int)(_player.getLocation().getLongitudeE6()));
-				System.out.println("mission Start!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:" + (int)Float.parseFloat(mission.get(0)[1]));
-				 */
-				missiondemo +=5;
+				//dist_to_missionX+=dist_to_missionX;
+				//dist_to_missionY+=dist_to_missionY;
+				dist_to_missionX++;
+				dist_to_missionY++;
+				
+				/*
+				//mission fail
 				if(missionfail != -1){
 					System.out.println("mission NO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:"+mission_num);
+					dist_to_missionX = 0;
+					dist_to_missionY = 0;
 					mission_num++;
+					mission_f = false;
 					mission_state(2);	
 				}
+				*/
 				
-				
+				//mission sucess 
 				if((int)(_player.getLocation().getLatitudeE6()) >= (int)Float.parseFloat(mission.get(0)[0]) + 200 && (int) (_player.getLocation().getLongitudeE6()) >= (int)Float.parseFloat(mission.get(0)[1]) + 200)
 					{
 					System.out.println("mission good!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:"+mission_num);
+					dist_to_missionX = 0;
+					dist_to_missionY = 0;
 					mission_num++;
-
+					
 					mission_state(1);	
 
 					}
+				
+				//mission timer
+				else if(old_mission_time - _gameState.Time >= 20){
+					System.out.println("mission good!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:"+mission_num);
+					dist_to_missionX = 0;
+					dist_to_missionY = 0;
+					mission_num++;
+					
+					mission_state(1);	
+					
+				}
+				////////////////////////////////////////
+				
+					
 					}
+					
 			}
 			/////////////////////////////////
 			
-			if(_gameState.Time <= 1 || _gameState.Alive == 0)
+			//game over
+			if((_gameState.Time <= 1 || _gameState.Alive == 0 ) && _mission_msg)
 			{
 				System.out.println("OVER========="+ _gameState.Time +"ALIE:======"+_gameState.Alive);
 				_gameOver = true;
 				GameActivity.this.showDialog(GameActivity.this.TIMEOUT_DIALOG);
+				
 			}
+
+			
 			else
 			{
 				_uiUpdateHandler.postDelayed(_uiUpdateProcess, 500);
 			}
+			
+			
+			
+			
 		}
 	};
 
@@ -838,8 +954,8 @@ public class GameActivity extends MapActivity
 							if(_player.getLocation().getLatitudeE6() != 0  && _player.getLocation().getLongitudeE6() != 0){
 								
 								//demo mission
-								String xx = Integer.toString(_player.getLocation().getLatitudeE6() + missiondemo) + ".0";
-								String yy = Integer.toString(_player.getLocation().getLongitudeE6() + missiondemo) + ".0";
+								String xx = Integer.toString(_player.getLocation().getLatitudeE6() + dist_to_missionX) + ".0";
+								String yy = Integer.toString(_player.getLocation().getLongitudeE6() + dist_to_missionY) + ".0";
 								
 								response = SocketConnect.Instance.PlayerInGame(SocketConnect.Instance, SocketConnect.SessionID, 
 										xx, yy, _player.Status == PlayerStatus.Surrendered);
@@ -848,8 +964,8 @@ public class GameActivity extends MapActivity
 									//Integer.toString(_player.getLocation().getLatitudeE6()), Integer.toString(_player.getLocation().getLongitudeE6()), _player.Status == PlayerStatus.Surrendered);
 							}
 							else{
-								String xx = Integer.toString(missiondemo) + ".0";
-								String yy = Integer.toString(missiondemo) + ".0";
+								String xx = Integer.toString(dist_to_missionX) + ".0";
+								String yy = Integer.toString(dist_to_missionY) + ".0";
 								
 								response = SocketConnect.Instance.PlayerInGame(SocketConnect.Instance, SocketConnect.SessionID, xx, yy, _player.Status == PlayerStatus.Surrendered);
 								
@@ -881,8 +997,11 @@ public class GameActivity extends MapActivity
 						_gameState.Set(values);
 	
 						// Set player state
-						_player.Money = Integer.parseInt((String) values.get("MONEY"));
-	
+						//if(mission_f)
+							_player.Money = Integer.parseInt((String) values.get("MONEY"));
+						//else
+							//_player.Money = Integer.parseInt((String) values.get("MONEY"))/2;
+						
 						// Set all players state
 						if (values.containsKey("USER")) 
 						{
@@ -959,6 +1078,7 @@ public class GameActivity extends MapActivity
 	public void mission_state(int state){
 		//start
 		if(state == 0){
+			_mission_msg = false;
 			final Dialog dialog = new Dialog(GameActivity.this, R.style.CustomDialog);
         	//set ContentView
         	  dialog.setContentView(R.layout.mission_dialog);
@@ -970,6 +1090,7 @@ public class GameActivity extends MapActivity
               {
         		  public void onClick(View v)
                   {
+        			  _mission_msg = true;
         			  dialog.dismiss(); 	
 
                   }
@@ -980,6 +1101,7 @@ public class GameActivity extends MapActivity
 		}
 		//success
 		else if(state == 1){
+			_mission_msg = false;
 			final Dialog dialog = new Dialog(GameActivity.this, R.style.CustomDialog);
         	//set ContentView
         	  dialog.setContentView(R.layout.mission_sucess_dialog);
@@ -991,6 +1113,7 @@ public class GameActivity extends MapActivity
               {
         		  public void onClick(View v)
                   {
+        			  _mission_msg = true;
 						String xx = Integer.toString(missiondemo) + ".0";
 						String yy = Integer.toString(missiondemo) + ".0";
         			  try {
@@ -1009,6 +1132,7 @@ public class GameActivity extends MapActivity
 		}
 		//fail
 		else if(state == 2){
+			_mission_msg = false;
 			final Dialog dialog = new Dialog(GameActivity.this, R.style.CustomDialog);
         	//set ContentView
         	  dialog.setContentView(R.layout.mission_fail_dialog);
@@ -1019,6 +1143,7 @@ public class GameActivity extends MapActivity
               {
         		  public void onClick(View v)
                   {
+        			  _mission_msg = true;
         			  dialog.dismiss(); 	
 
                   }
@@ -1027,6 +1152,26 @@ public class GameActivity extends MapActivity
         	  dialog.show();	
 			
 		}
+		else if(state == 3){
+		_mission_msg = false;
+		final Dialog dialog2 = new Dialog(GameActivity.this, R.style.CustomDialog);
+    	//set ContentView
+    	  dialog2.setContentView(R.layout.mission_notyet);
+    	  //OK button
+    	  Button OK2 = (Button) dialog2.findViewById(R.id.ok2);
+    	  OK2.setOnClickListener(new Button.OnClickListener()
+          {
+    		  public void onClick(View v)
+              {
+    			  _mission_msg = true;
+    			  dialog2.dismiss(); 	
+
+              }
+          });
+    	  
+    	  dialog2.show();								
+	}
+		
 		else
 			System.out.println("wrong!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");	
 		

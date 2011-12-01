@@ -5,5 +5,6 @@ public enum PlayerStatus
 	Alive,
 	Caught,
 	Surrendered,
-	Timeout
+	Timeout,
+	MissionFail
 }

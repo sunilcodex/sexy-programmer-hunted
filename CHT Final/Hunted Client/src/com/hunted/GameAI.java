@@ -27,16 +27,16 @@ public class GameAI
 		//TODO: implement this
 		this.Players.put(this.Player.ID, this.Player);	// player self
 		
-		this.Players.put("001", new Player("001", PlayerType.Hunter, "貓", false));
-		this.Players.put("002", new Player("002", PlayerType.Hunter, "Angel", false));
-		this.Players.put("003", new Player("003", PlayerType.Hunter, "柏丞", false));
+		//this.Players.put("001", new Player("001", PlayerType.Hunter, "貓", false));
+		//this.Players.put("002", new Player("002", PlayerType.Hunter, "Angel", false));
+		//this.Players.put("003", new Player("003", PlayerType.Hunter, "柏丞", false));
 		
 		this.Players.put("004", new Player("004", PlayerType.Player, "孟孟", false));
 		this.Players.put("005", new Player("005", PlayerType.Player, "Kailin", false));
 		this.Players.put("006", new Player("006", PlayerType.Player, "文翔", false));
 		this.Players.put("007", new Player("007", PlayerType.Player, "Ken", false));
 		
-		GameState.Time = 60;
+		GameState.Time = 30;
 		GameState.PlayerNumber = 4;
 		GameState.HunterNumber = 3;
 		GameState.Alive = 4;

@@ -77,8 +77,8 @@ public class ClientJoinGame extends ListActivity{
         realname = bundle.getString("Name");
         
         
-        TextView r = (TextView) findViewById(R.id.textView2);
-        r.setText("請在Host確定身分後才按下Ready鍵");
+        //TextView r = (TextView) findViewById(R.id.textView2);
+        //r.setText("請在Host確定身分後才按下Ready鍵");
         
         //消除spinner
         Spinner spinner = (Spinner) findViewById(R.id.spinner1); 
@@ -165,7 +165,7 @@ public class ClientJoinGame extends ListActivity{
     
     class myThread2 implements Runnable { 
         public void run() {
-             while (!Thread.currentThread().isInterrupted()) {
+             while (!Thread.currentThread().isInterrupted() || !thread_cancel) {
             	 
             	 if(!thread_cancel){
                   Message message = new Message(); 
@@ -224,7 +224,6 @@ public class ClientJoinGame extends ListActivity{
         	if( list.get(0)[0].equals("wrong")){
         		System.out.println("QUIT!!!!!!!");	
         		finish();
-
         	}
         	
         	
@@ -274,7 +273,13 @@ public class ClientJoinGame extends ListActivity{
 	          	startActivity(intent);
 			}
 	        start_count++;
+	        
+	        if(start_count <= 5){
 			handler.postDelayed(this, 1000);
+	        }
+	        
+	        else
+	        	finish();
        }
    };
 /////////////////////////////////

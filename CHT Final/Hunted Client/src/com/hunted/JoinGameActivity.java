@@ -84,7 +84,7 @@ public class JoinGameActivity extends ListActivity{
         
       //建立一個ArrayAdapter物件，並放置下拉選單的內容 
         Spinner spinner = (Spinner) findViewById(R.id.spinner1); 
-       ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.settime_spinner,R.id.textview,new String[]{"設定遊戲時間(預設1分鐘)","1分鐘","10分鐘","30分鐘","90分鐘"});
+       ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.settime_spinner,R.id.textview,new String[]{"設定遊戲時間(預設1分鐘)","1秒鐘","10秒鐘","30秒鐘","90秒鐘","300秒鐘"});
         //SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,android.R.layout.simple_spinner_item, R.layout.settime_spinner,cursor, new String[] { PutFieldName }, new int[] {android.R.id.text1});
 
     //設定下拉選單的樣式 
@@ -100,9 +100,9 @@ public class JoinGameActivity extends ListActivity{
           public void onItemSelected(AdapterView adapterView, View view, int position, long id){
             
         	  if(!adapterView.getSelectedItem().toString().equals("設定遊戲時間(預設1分鐘)")){
-        	  String[] time = adapterView.getSelectedItem().toString().split("分");
+        	  String[] time = adapterView.getSelectedItem().toString().split("秒");
         	 // int int_time = Integer.valueOf(time[0]) * 60 + 2;
-        	  int int_time = Integer.valueOf(time[0]) + 2;
+        	  int int_time = Integer.valueOf(time[0]) + 3;
         	  try {
 				SocketConnect.Instance.HostGameTime(SocketConnect.Instance, SocketConnect.SessionID, String.valueOf(int_time));
 			} catch (IOException e) {
@@ -112,7 +112,7 @@ public class JoinGameActivity extends ListActivity{
         	  }
         	  else{
              	  try {
-     				SocketConnect.Instance.HostGameTime(SocketConnect.Instance, SocketConnect.SessionID, "60");
+     				SocketConnect.Instance.HostGameTime(SocketConnect.Instance, SocketConnect.SessionID, "63");
      			} catch (IOException e) {
      				// TODO Auto-generated catch block
      				e.printStackTrace();
@@ -211,7 +211,7 @@ public class JoinGameActivity extends ListActivity{
     //thread running
     class myThread implements Runnable { 
         public void run() {
-             while (!Thread.currentThread().isInterrupted()) { 
+             while (!Thread.currentThread().isInterrupted() || !thread_cancel) { 
             	  if(!thread_cancel){
                   Message message = new Message(); 
                   message.what = JoinGameActivity.GUIUPDATEIDENTIFIER;                   
@@ -268,8 +268,7 @@ public class JoinGameActivity extends ListActivity{
 	            	btnStart.setBackgroundResource(R.drawable.botton);
 	        }
         }
-        	
-        
+  
 	        gameroom.notifyDataSetChanged();
               
              super.handleMessage(msg); 
@@ -301,7 +300,11 @@ public class JoinGameActivity extends ListActivity{
 	          	startActivity(intent);
 			}
 	        start_count++;
+	        
+	        if(start_count <= 5)
 			handler.postDelayed(this, 1000);
+	        else
+	        	finish();
        }
    };
 /////////////////////////////////

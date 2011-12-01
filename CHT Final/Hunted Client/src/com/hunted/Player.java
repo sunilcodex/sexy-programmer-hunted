@@ -3,7 +3,10 @@ package com.hunted;
 
 import java.io.IOException;
 
+import android.app.Dialog;
 import android.location.Location;
+import android.view.View;
+import android.widget.Button;
 
 import com.google.android.maps.GeoPoint;
 
@@ -52,7 +55,8 @@ public class Player
 	
 	public void Surrender()
 	{
-		this.setStatus(PlayerStatus.Surrendered);	
+		this.setStatus(PlayerStatus.Surrendered);
+
 	}
 	
 	public void setLocation(GeoPoint loc)

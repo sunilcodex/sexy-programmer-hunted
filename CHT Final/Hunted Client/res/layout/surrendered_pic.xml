@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_gravity="center_vertical|center_horizontal" android:layout_marginLeft="10dp" android:layout_marginRight="10dp" android:visibility="visible" android:layout_height="fill_parent" android:layout_width="fill_parent">
+    <ImageButton android:scaleType="fitXY" android:background="#000000" android:src="@drawable/surrender" android:id="@+id/imageButton1" android:layout_marginLeft="20dp" android:layout_marginRight="20dp" android:layout_marginTop="20dp" android:layout_height="440dp" android:layout_width="260dp"></ImageButton>
+    
+</LinearLayout>
